@@ -4,6 +4,11 @@
   "outputDirectory": "dist",
   "installCommand": "echo \"Sin dependencias npm\"",
   "framework": null,
+  "functions": {
+    "api/statement-pdf.py": {
+      "maxDuration": 30
+    }
+  },
   "rewrites": [
     { "source": "/", "destination": "/register.html" },
     { "source": "/register", "destination": "/register.html" },
