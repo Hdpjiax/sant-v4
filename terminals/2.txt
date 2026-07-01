@@ -1,0 +1,20 @@
+---
+pid: 16396
+cwd: "C:\Users\Antonio Garcia\pagina snatnder\sant v4"
+command: "cd \"C:\\Users\\Antonio Garcia\\pagina snatnder\\sant v4\"; $env:PORT=\"3001\"; npm run dev"
+started_at: 2026-07-01T19:17:02.493Z
+running_for_ms: 910006   
+---
+
+> santander-demo@1.0.0 dev
+> node scripts/dev-server.js
+
+
+  Servidor local listo
+  → http://localhost:3001
+  → http://localhost:3001/login.html
+  → http://localhost:3001/register.html
+
+  Edita archivos y recarga el navegador (sin rebuild).
+  NO abras los .html con doble clic (file:// bloquea Supabase).
+

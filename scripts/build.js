@@ -59,18 +59,40 @@ function cleanDist() {
     ensureDir(DIST);
 }
 
+function readConfigFromFile() {
+    const configPath = path.join(ROOT, "js", "config.js");
+    if (!fs.existsSync(configPath)) return {};
+
+    const content = fs.readFileSync(configPath, "utf8");
+    const readValue = (key) => {
+        const match = content.match(new RegExp(`window\\.${key}\\s*=\\s*["']([^"']+)["']`));
+        return match ? match[1] : "";
+    };
+
+    return {
+        url: readValue("SUPABASE_URL"),
+        key: readValue("SUPABASE_ANON_KEY"),
+        adminCode: readValue("ADMIN_REGISTRATION_CODE")
+    };
+}
+
 loadEnvFile();
 
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "";
-const adminCode = process.env.ADMIN_REGISTRATION_CODE || "SANTANDER_ADMIN_2026";
+const fileConfig = readConfigFromFile();
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("\n❌ Faltan variables de entorno:");
+let supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || fileConfig.url || "";
+let supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || fileConfig.key || "";
+const adminCode = process.env.ADMIN_REGISTRATION_CODE || fileConfig.adminCode || "SANTANDER_ADMIN_2026";
+
+const isPlaceholder = (value) =>
+    !value || value.includes("TU_PROYECTO") || value.includes("TU_ANON");
+
+if (isPlaceholder(supabaseUrl) || isPlaceholder(supabaseAnonKey)) {
+    console.error("\n❌ Faltan credenciales de Supabase:");
     console.error("   SUPABASE_URL");
     console.error("   SUPABASE_ANON_KEY");
     console.error("\nConfigúralas en Vercel → Settings → Environment Variables");
-    console.error("o crea un archivo .env local (usa .env.example como guía).\n");
+    console.error("o en js/config.js / .env local (usa .env.example como guía).\n");
     process.exit(1);
 }
 
@@ -84,7 +106,9 @@ const staticFiles = [
     "script.js",
     "styles.css",
     "auth.css",
-    "image.png"
+    "image.png",
+    "1.webp",
+    "estado de cuenta.pdf"
 ];
 
 staticFiles.forEach((file) => {
@@ -100,7 +124,7 @@ if (fs.existsSync(path.join(ROOT, "assets"))) {
 
 ensureDir(path.join(DIST, "js"));
 
-const jsFiles = ["supabase-client.js", "auth.js", "settings-service.js", "register.js", "login.js", "admin.js"];
+const jsFiles = ["supabase-errors.js", "supabase-client.js", "auth.js", "settings-service.js", "statement-pdf.js", "register.js", "login.js", "admin.js"];
 jsFiles.forEach((file) => {
     copyRecursive(path.join(ROOT, "js", file), path.join(DIST, "js", file));
 });

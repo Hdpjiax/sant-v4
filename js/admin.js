@@ -1,5 +1,18 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    const auth = await window.SantanderAuth.requireAdmin();
+    try {
+        window.ensureSupabaseReady();
+    } catch (error) {
+        document.body.innerHTML = `<main class="admin-container"><div class="admin-empty">${window.formatSupabaseError(error)}</div></main>`;
+        return;
+    }
+
+    let auth;
+    try {
+        auth = await window.SantanderAuth.requireAdmin();
+    } catch (error) {
+        document.body.innerHTML = `<main class="admin-container"><div class="admin-empty">${window.formatSupabaseError(error)}</div></main>`;
+        return;
+    }
     if (!auth) return;
 
     const { profile } = auth;
@@ -157,7 +170,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
             });
         } catch (err) {
-            tableBody.innerHTML = `<tr><td colspan="6" class="admin-empty">Error: ${escapeHtml(err.message)}</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="6" class="admin-empty">Error: ${escapeHtml(window.formatSupabaseError(err))}</td></tr>`;
         }
     }
 

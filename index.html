@@ -307,7 +307,6 @@
                         <span id="overview-card-power-text">Prender o apagar tarjeta</span>
                         <span class="material-icons-outlined" id="overview-card-power-icon">add</span>
                     </button>
-                    </button>
 
                     <button class="account-option-row" id="btn-overview-card-info">
                         <span>Actualizar tarjeta digital</span>
@@ -320,6 +319,14 @@
                     <button class="account-option-row" id="btn-overview-movements">
                         <span>Movimientos</span>
                         <span class="material-icons-outlined">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-statement">
+                        <span>Estado de cuenta</span>
+                        <span class="account-option-right">
+                            <span class="material-icons-outlined statement-pdf-hint">picture_as_pdf</span>
+                            <span class="material-icons-outlined">chevron_right</span>
+                        </span>
                     </button>
 
                     <button class="account-option-row" id="btn-overview-pay">
@@ -523,15 +530,16 @@
         <div id="statement-view" class="hidden-view">
             <header class="detail-header">
                 <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
-                <h2>Estado de Cuenta</h2>
-                <span class="material-icons-outlined icon-red">get_app</span>
+                <h2>Estado de cuenta</h2>
+                <span class="material-icons-outlined icon-red statement-download-icon" id="btn-header-download-pdf"
+                    style="cursor:pointer;">get_app</span>
             </header>
-            <div class="page-content" style="padding: 0; background-color: #FFFFFF;">
-                <div class="statement-header">
-                    <h3>Últimos Movimientos</h3>
-                    <p>Consulta el detalle de tus transacciones</p>
-                </div>
-                <div id="statement-movements-container"></div>
+            <div class="statement-page">
+                <div id="account-statement-document" class="santander-statement-doc"></div>
+                <button type="button" class="statement-download-btn" id="btn-download-statement-pdf">
+                    <span class="material-icons-outlined">picture_as_pdf</span>
+                    Descargar estado de cuenta (PDF)
+                </button>
             </div>
         </div>
 
@@ -893,11 +901,15 @@
     </div>
     <div id="toast-container" class="toast-container"></div>
 
+    <script src="js/dev-check.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
+    <script src="js/supabase-errors.js"></script>
     <script src="js/supabase-client.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/settings-service.js"></script>
+    <script src="js/statement-pdf.js"></script>
     <script src="script.js"></script>
 </body>
 

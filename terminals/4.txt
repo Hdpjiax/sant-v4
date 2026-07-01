@@ -1,0 +1,20 @@
+---
+pid: 11696
+cwd: "C:\Users\Antonio Garcia\pagina snatnder\sant v4"
+command: "pip install pymupdf -q; python -c \"
+import fitz
+doc = fitz.open(r'C:\\Users\\Antonio Garcia\\pagina snatnder\\sant v4\\estado de cuenta.pdf')
+for i in range(min(2, len(doc))):
+    page = doc[i]
+    pix = page.get_pixmap(matrix=fitz.Matrix(2,2))
+    pix.save(r'C:\\Users\\Antonio Garcia\\pagina snatnder\\sant v4\\pdf-page-'+str(i+1)+'.png')
+    print('saved page', i+1, 'size', pix.width, pix.height)
+\""
+started_at: 2026-07-01T19:34:24.607Z
+running_for_ms: 5240004  
+---
+WARNING: Ignoring invalid distribution ~elethon (C:\Users\Antonio Garcia\AppData\Local\Programs\Python\Python312\Lib\site-packages)
+WARNING: Ignoring invalid distribution ~elethon (C:\Users\Antonio Garcia\AppData\Local\Programs\Python\Python312\Lib\site-packages)
+WARNING: Ignoring invalid distribution ~elethon (C:\Users\Antonio Garcia\AppData\Local\Programs\Python\Python312\Lib\site-packages)
+saved page 1 size 1224 1584
+saved page 2 size 1224 1584

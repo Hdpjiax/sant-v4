@@ -1099,6 +1099,661 @@ body {
     opacity: 0.9;
 }
 
+.statement-pdf-hint {
+    font-size: 18px !important;
+    color: var(--santander-red);
+    margin-right: 2px;
+}
+
+.statement-page {
+    background: #D8D8D8;
+    padding: 10px 8px 24px;
+    flex: 1;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.santander-statement-doc {
+    font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
+    color: #000;
+    line-height: 1.2;
+    -webkit-font-smoothing: antialiased;
+}
+
+.stmt-sheet {
+    background: #FFF;
+    min-width: 680px;
+    min-height: 978px;
+    padding: 18px 22px 14px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.stmt-sheet-break {
+    page-break-before: always;
+    break-before: page;
+}
+
+.stmt-top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.stmt-brand-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.stmt-santander-logo {
+    width: 118px;
+    height: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.stmt-legal-lines p {
+    font-size: 8px;
+    font-weight: 400;
+    line-height: 1.35;
+    margin: 0;
+}
+
+.stmt-doc-title {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: right;
+    line-height: 1;
+    letter-spacing: 0;
+    margin: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.stmt-client-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin: 8px 0 14px;
+    border: none;
+}
+
+.stmt-client-left {
+    flex: 1;
+    min-width: 0;
+    max-width: 52%;
+}
+
+.stmt-client-right {
+    flex: 0 0 240px;
+    text-align: left;
+}
+
+.stmt-addr-main {
+    font-size: 11px;
+    font-weight: 700;
+    margin: 0 0 3px;
+    text-transform: uppercase;
+}
+
+.stmt-addr-line {
+    font-size: 10px;
+    font-weight: 700;
+    margin: 0 0 2px;
+    text-transform: uppercase;
+    line-height: 1.25;
+}
+
+.stmt-addr-cp {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.stmt-postal-ref {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: none;
+}
+
+.stmt-barcode-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.stmt-barcode-prefix {
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1;
+    padding-bottom: 14px;
+    flex-shrink: 0;
+}
+
+.stmt-barcode-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.stmt-barcode-svg {
+    width: 100%;
+    max-width: 360px;
+    height: 34px;
+    display: block;
+}
+
+.stmt-barcode-human {
+    display: block;
+    font-size: 7px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+    margin-top: 2px;
+}
+
+.stmt-meta-client-code {
+    font-size: 12px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    line-height: 1.2;
+}
+
+.stmt-meta-line {
+    display: flex;
+    gap: 8px;
+    margin: 0 0 3px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.stmt-meta-line-lg {
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.stmt-meta-label {
+    flex: 0 0 58px;
+}
+
+.stmt-meta-value {
+    flex: 1;
+}
+
+.stmt-subsection-title {
+    font-size: 12px;
+    font-weight: 400;
+    margin: 2px 0 6px;
+    color: #000;
+}
+
+.stmt-section-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #EC0000;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 12px 0 8px;
+    line-height: 1.1;
+}
+
+.stmt-section-head-chart {
+    color: #000;
+    font-size: 10px;
+    font-weight: 400;
+    margin: 0 0 8px;
+}
+
+.stmt-section-head-alert .stmt-section-icon-img {
+    width: 14px;
+    height: 14px;
+}
+
+.stmt-section-icon-img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.stmt-bank-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+    margin-bottom: 4px;
+}
+
+.stmt-table-spaced {
+    margin-bottom: 10px;
+}
+
+.stmt-bank-table th,
+.stmt-bank-table td {
+    border: 1px solid #000;
+    padding: 3px 4px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.stmt-bank-table tbody td {
+    font-size: 9px;
+}
+
+.stmt-bank-table tbody .stmt-row-total td {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.stmt-bank-table th {
+    font-weight: 700;
+    background: #D9D9D9;
+    font-size: 10px;
+    text-align: center;
+}
+
+.stmt-balance-summary th {
+    text-align: center;
+}
+
+.stmt-row-total td {
+    font-weight: 700;
+}
+
+.stmt-td-num {
+    text-align: right !important;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.stmt-account-head,
+.stmt-account-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    font-weight: 700;
+    margin: 4px 0 2px;
+    padding: 0 2px;
+}
+
+.stmt-account-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    background: #D9D9D9;
+    border: 1px solid #000;
+    padding: 4px 6px;
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.stmt-sucursal-line {
+    font-size: 8px;
+    font-weight: 700;
+    margin: 4px 0 8px;
+}
+
+.stmt-clabe {
+    color: #EC0000;
+    font-size: 8px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.stmt-checks-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 18px;
+    margin-bottom: 12px;
+    font-size: 10px;
+    align-items: start;
+}
+
+.stmt-checks-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stmt-check-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    line-height: 1.35;
+}
+
+.stmt-check-row-strong span:first-child {
+    font-weight: 700;
+}
+
+.stmt-check-row-final {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.stmt-email-notice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    text-align: center;
+    max-width: 92px;
+    line-height: 1.2;
+    padding-top: 12px;
+}
+
+.stmt-email-icon-img {
+    width: 42px;
+    height: auto;
+    object-fit: contain;
+}
+
+.stmt-chart-block {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 12px;
+    align-items: center;
+    margin: 8px 0 14px;
+    min-height: 150px;
+}
+
+.stmt-chart-left {
+    align-self: start;
+}
+
+.stmt-chart-account {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    line-height: 1.2;
+}
+
+.stmt-chart-opening {
+    font-size: 12px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.stmt-chart-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.stmt-pie-solid {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: #EC0000;
+    margin-bottom: 8px;
+}
+
+.stmt-pie-final {
+    font-size: 10px;
+    font-weight: 400;
+    text-align: center;
+}
+
+.stmt-detail-table {
+    font-size: 7px;
+    margin-bottom: 12px;
+}
+
+.stmt-detail-table .stmt-td-desc {
+    font-size: 7px;
+    line-height: 1.25;
+}
+
+.stmt-detail-table .stmt-td-desc span {
+    color: #444;
+    font-size: 6.5px;
+}
+
+.stmt-compact-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    border-top: 1px solid #000;
+    margin-top: 6px;
+    padding-top: 6px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.stmt-compact-name {
+    text-transform: uppercase;
+}
+
+.stmt-compact-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    text-align: right;
+}
+
+.stmt-prev-balance-bar {
+    background: #D9D9D9;
+    border: 1px solid #000;
+    padding: 4px 6px;
+    font-size: 8px;
+    font-weight: 700;
+    margin: 6px 0;
+}
+
+.stmt-mov-wrap {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: stretch;
+    margin-bottom: 10px;
+}
+
+.stmt-final-balance-box {
+    background: #FFF200;
+    border: 1px solid #000;
+    padding: 8px 10px;
+    font-size: 8px;
+    font-weight: 700;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.stmt-abbr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+    margin-bottom: 10px;
+}
+
+.stmt-abbr-col p {
+    font-size: 6.5px;
+    line-height: 1.35;
+    margin-bottom: 1px;
+}
+
+.stmt-abbr-code {
+    color: #EC0000;
+    font-weight: 700;
+}
+
+.stmt-legal-text {
+    font-size: 6.5px;
+    line-height: 1.35;
+    text-align: justify;
+    margin-bottom: 8px;
+}
+
+.stmt-important-box {
+    border: 1px solid #EC0000;
+    padding: 8px;
+    margin-top: 10px;
+}
+
+.stmt-important-title {
+    color: #EC0000;
+    font-size: 10px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.stmt-ipab-footer {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    gap: 12px;
+    align-items: start;
+    border: 1px solid #000;
+    padding: 10px;
+    margin-top: auto;
+}
+
+.stmt-ipab-logo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 7px;
+}
+
+.stmt-ipab-logo strong {
+    color: #1B7F3B;
+    font-size: 16px;
+}
+
+.stmt-ipab-legal {
+    margin: 0;
+}
+
+.stmt-paperless {
+    font-size: 7px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.stmt-page-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+.stmt-footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #000;
+    font-weight: 400;
+    font-size: 10px;
+}
+
+.stmt-footer-prefix {
+    color: #000;
+}
+
+.stmt-footer-brand img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+}
+
+/* Contenedor oculto para captura PDF — ancho carta fijo */
+.pdf-export-root {
+    position: fixed;
+    left: -12000px;
+    top: 0;
+    width: 756px;
+    background: #ffffff;
+    z-index: -1;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.pdf-export-root .stmt-sheet {
+    min-width: 0 !important;
+    width: 756px !important;
+    max-width: 756px !important;
+    min-height: 978px !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 18px 22px 14px !important;
+    page-break-before: auto !important;
+    break-before: auto !important;
+}
+
+.pdf-export-root .stmt-santander-logo {
+    width: 118px;
+}
+
+.pdf-export-root .stmt-doc-title {
+    font-size: 22px;
+}
+
+.pdf-export-root .stmt-client-block {
+    gap: 24px;
+}
+
+.pdf-export-root .stmt-barcode-svg {
+    max-width: 360px;
+}
+
+.pdf-export-root .stmt-chart-block {
+    grid-template-columns: 1.1fr 0.9fr;
+    min-height: 150px;
+}
+
+.pdf-export-root .stmt-pie-solid {
+    width: 130px;
+    height: 130px;
+}
+
+.statement-download-btn {
+    width: 100%;
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: var(--santander-red);
+    color: #FFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(236, 0, 0, 0.25);
+}
+
+.statement-download-btn:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.statement-download-btn .material-icons-outlined {
+    font-size: 20px;
+}
+
 /* PANTALLAS DE ÉXITO (RECIBOS) */
 .success-header-bg {
     background-color: var(--success-green);
@@ -4898,7 +5553,8 @@ body {
 #nip-view,
 #wallets-view,
 #spending-control-view,
-#defer-view {
+#defer-view,
+#statement-view {
     min-height: 100% !important;
     height: 100% !important;
     background: #F7F9FA !important;
@@ -4931,9 +5587,15 @@ body {
 #nip-view.view-active,
 #wallets-view.view-active,
 #spending-control-view.view-active,
-#defer-view.view-active {
+#defer-view.view-active,
+#statement-view.view-active {
     display: flex !important;
     flex-direction: column !important;
+}
+
+#statement-view .statement-page {
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 /* Evita que tarjetas o formularios se desborden hacia la derecha */

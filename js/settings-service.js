@@ -58,6 +58,7 @@ window.SettingsService = {
             balance: settings.balance || "0.00",
             account: settings.account || "14**0000",
             phone: settings.phone || "",
+            product: settings.product || "",
             full_card: settings.full_card || "4152 0000 0000 0000",
             brand: settings.brand || "VISA",
             exp: settings.exp || "12/28",
@@ -66,11 +67,15 @@ window.SettingsService = {
         };
     },
 
+    _client() {
+        return window.ensureSupabaseReady();
+    },
+
     async getMySettings() {
         const session = await window.SantanderAuth.getSession();
         if (!session) return null;
 
-        const { data, error } = await window.sb
+        const { data, error } = await this._client()
             .from("user_settings")
             .select("*")
             .eq("user_id", session.user.id)
@@ -81,14 +86,14 @@ window.SettingsService = {
     },
 
     async getAllUsersWithSettings() {
-        const { data: profiles, error: profilesError } = await window.sb
+        const { data: profiles, error: profilesError } = await this._client()
             .from("profiles")
             .select("id, email, role, created_at")
             .order("created_at", { ascending: false });
 
         if (profilesError) throw profilesError;
 
-        const { data: allSettings, error: settingsError } = await window.sb
+        const { data: allSettings, error: settingsError } = await this._client()
             .from("user_settings")
             .select("*");
 
@@ -106,7 +111,7 @@ window.SettingsService = {
     },
 
     async getSettingsByUserId(userId) {
-        const { data, error } = await window.sb
+        const { data, error } = await this._client()
             .from("user_settings")
             .select("*")
             .eq("user_id", userId)
@@ -129,7 +134,7 @@ window.SettingsService = {
             movements: payload.movements
         };
 
-        const { data, error } = await window.sb
+        const { data, error } = await this._client()
             .from("user_settings")
             .update(updateData)
             .eq("user_id", userId)

@@ -74,6 +74,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (element) element.addEventListener(eventName, handler);
     }
 
+    const LOADER = {
+        NAV: 1200,
+        BACK: 850,
+        SHORT: 1600,
+        MEDIUM: 2400,
+        LONG: 3200,
+        XL: 4200
+    };
+
     // ==================== AUTENTICACIÓN Y AJUSTES REMOTOS ====================
     const session = await window.SantanderAuth.requireSession("register.html");
     if (!session) return;
@@ -82,22 +91,553 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let userSettings;
     try {
+        window.ensureSupabaseReady();
         userSettings = await window.SettingsService.getMySettings();
     } catch (error) {
         console.error("Error cargando ajustes:", error);
-        alert("No se pudieron cargar tus ajustes. Contacta al administrador.");
+        alert(window.formatSupabaseError(error));
+        window.location.href = "login.html";
         return;
     }
 
     let currentMovs = userSettings.movements;
     let movementFilter = "all";
 
+    function formatStatementDate(dateInput) {
+        if (!dateInput) return "—";
+        const parts = dateInput.split("-");
+        if (parts.length !== 3) return dateInput;
+
+        const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+        const day = parseInt(parts[2], 10);
+        const month = months[parseInt(parts[1], 10) - 1] || "";
+        return `${day.toString().padStart(2, "0")}/${month}/${parts[0]}`;
+    }
+
+    function formatStatementPeriodDate(date) {
+        const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+        return `${date.getDate().toString().padStart(2, "0")}-${months[date.getMonth()]}-${date.getFullYear()}`;
+    }
+
+    function formatStatementMovDate(dateInput) {
+        if (!dateInput) return "";
+        const parts = dateInput.split("-");
+        if (parts.length !== 3) return dateInput;
+        const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+        return `${parts[2].padStart(2, "0")}-${months[parseInt(parts[1], 10) - 1]}-${parts[0]}`;
+    }
+
+    function parseAmount(value) {
+        return Number(String(value || "0").replace(/[^\d.-]/g, "")) || 0;
+    }
+
+    function formatAccountSantander(account) {
+        const digits = String(account || "").replace(/\D/g, "").padStart(10, "0").slice(-10);
+        return `${digits.slice(0, 2)}-${digits.slice(2, 9)}-${digits.slice(9)}`;
+    }
+
+    function generateClabe(account) {
+        const accountDigits = String(account || "").replace(/\D/g, "").padStart(11, "0").slice(-11);
+        const base = `014129${accountDigits}`;
+        const weights = [3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7];
+        let sum = 0;
+
+        for (let i = 0; i < 17; i++) {
+            sum += (Number(base[i]) * weights[i]) % 10;
+        }
+
+        const check = (10 - (sum % 10)) % 10;
+        return `${base}${check}`;
+    }
+
+    function generateClientCode(account) {
+        const digits = String(account || "").replace(/\D/g, "").padStart(8, "0").slice(-8);
+        return digits;
+    }
+
+    function generateRfc(name, subtitle) {
+        const n = String(name || "USUARIO").trim().toUpperCase().split(/\s+/);
+        const s = String(subtitle || "SN").trim().toUpperCase().split(/\s+/);
+        const p1 = (n[0] || "X").charAt(0);
+        const p2 = (n[1] || n[0] || "X").charAt(0);
+        const p3 = (s[0] || "X").charAt(0);
+        const p4 = (s[1] || s[0] || "X").charAt(0);
+        return `${p1}${p2}${p3}${p4}900101XX0`.slice(0, 13);
+    }
+
+    function generateStatementBarcodeData(clientCode, account) {
+        const cc = String(clientCode || "").replace(/\D/g, "").padStart(8, "0").slice(-8);
+        const accountDigits = String(account || "").replace(/\D/g, "").padStart(10, "0").slice(-10);
+        const prefix = cc.slice(-7).padStart(7, "0");
+        const payload = `06243030${cc}${accountDigits}0040037`;
+        const postalRef = `P0${cc}`.slice(0, 9);
+        return { prefix, payload, postalRef };
+    }
+
+    window.initStatementBarcodes = function initStatementBarcodes(root) {
+        if (!root || typeof JsBarcode !== "function") return;
+
+        root.querySelectorAll(".stmt-barcode-svg[data-barcode]").forEach(svg => {
+            const value = svg.getAttribute("data-barcode");
+            if (!value) return;
+
+            try {
+                JsBarcode(svg, value, {
+                    format: "CODE128",
+                    width: 1.05,
+                    height: 34,
+                    displayValue: false,
+                    margin: 0,
+                    background: "#ffffff",
+                    lineColor: "#000000"
+                });
+            } catch (error) {
+                console.error("Error generando código de barras:", error);
+            }
+        });
+    };
+
+    function renderStatementMetaLine(label, value, large = false) {
+        const cls = large ? "stmt-meta-line stmt-meta-line-lg" : "stmt-meta-line";
+        return `<p class="${cls}"><span class="stmt-meta-label">${escapeHtml(label)}</span><span class="stmt-meta-value">${escapeHtml(value)}</span></p>`;
+    }
+
+    function renderStatementSectionHead(icon, text, variant = "primary") {
+        const iconFile = variant === "alert" ? "stmt-icon-alert.png" : icon;
+        return `
+            <div class="stmt-section-head stmt-section-head-${variant}">
+                <img src="assets/${iconFile}" alt="" class="stmt-section-icon-img">
+                <span>${escapeHtml(text)}</span>
+            </div>
+        `;
+    }
+
+    const STMT_ABBREVIATIONS = [
+        ["ABO", "ABONO (S)"], ["DEB", "DEBITO"], ["NO", "NUMERO"], ["ANUL", "ANULACION"], ["DEP", "DEPOSITO"],
+        ["NOM", "NOMINA"], ["ANT", "ANTICIPO"], ["DESEM", "DESEMPLEO"], ["ORD", "ORDEN"], ["ANTICIP", "ANTICIPADO"],
+        ["DEV", "DEVOLUCION (ES)"], ["P", "POR"], ["ASEG", "ASEGURAMIENTO"], ["DISP", "DISPOSICION"], ["PAG", "PAGARE (S)"],
+        ["AUT", "AUTOMATICO"], ["DOMIC", "DOMICILIACION"], ["PER", "PERIODO"], ["AUTO", "AUTOMOVIL, AUTOMOTRIZ"],
+        ["EFEC", "EFECTIVO"], ["PGO", "PAGO"], ["BME", "NUMERO DE CONTRATO DE FONDOS DE INVERSION"], ["ELEC", "ELECTRONICO (A)"],
+        ["PZO", "PLAZO"], ["BONI", "BONIFICACION"], ["EQUIV", "EQUIVALENTE"], ["REC", "RECIBO"], ["C", "CON"],
+        ["ESQ", "ESQUEMA"], ["REF", "REFERENCIA"], ["C/U", "CADA UNO (A)"], ["FACT", "FACTURACION"], ["REN", "RENDIMIENTO"],
+        ["C.A.T.", "COSTO ANUAL TOTAL"], ["FEC", "FECHA"], ["S", "SOBRE"], ["C.E.R.", "COSTO EFECTIVO REMANENTE"],
+        ["FED", "FEDERAL (ES)"], ["SBC", "SALVO BUEN COBRO"], ["CAJ", "CAJERO (S)"], ["G.A.T.", "GANANCIA ANUAL TOTAL"],
+        ["SDO", "SALDO"], ["CANC", "CANCELACION"], ["IMPTO", "IMPUESTO (S)"], ["SEG", "SEGURO (S)"], ["CAP", "CAPITAL"],
+        ["INI", "INICIAL"], ["SER", "SERVICIO"], ["CDMX", "CIUDAD DE MEXICO"], ["INT / INTS", "INTERES (ES)"],
+        ["SPEI", "SISTEMA DE PAGOS ELECTRONICOS"], ["CERTIF", "CERTIFICADO"], ["INTAL", "INTERNACIONAL"], ["SUC", "SUCURSAL"],
+        ["CGO", "CARGO"], ["INV", "INVERSION"], ["T", "TASA"], ["CH", "CHEQUE (S, RA)"], ["INVALID", "INVALIDEZ"],
+        ["TARJ", "TARJETA (S)"], ["COB", "COBRO"], ["LCI", "LINEA DE CREDITO INMEDIATA"], ["TEF", "TRANSFERENCIA ELECTRONICA DE FONDOS"],
+        ["COM", "COMISION"], ["LIQ", "LIQUIDACION"], ["TPV", "TERMINAL PUNTO DE VENTA"], ["CR", "CREDITO"], ["LOC", "LINEA DE COBERTURA"],
+        ["TRANSF", "TRANSFERENCIA"], ["CRED", "CREDITO"], ["LPI", "LINEA DE PROTECCION INMEDIATA"], ["VTA", "VENTA (S)"],
+        ["CTA", "CUENTA (S)"], ["MORA", "MORATORIO (S)"], ["VTO", "VENCIMIENTO"], ["CTA VIRT", "CUENTA VIRTUAL N."],
+        ["N. OP", "NUMERO DE OPERACION (ES)"]
+    ];
+
+    function formatStatementDistributionPct(amount) {
+        return parseAmount(amount) > 0 ? "100.00" : "0.00";
+    }
+
+    function renderStatementAbbreviations() {
+        const midpoint = Math.ceil(STMT_ABBREVIATIONS.length / 2);
+        const left = STMT_ABBREVIATIONS.slice(0, midpoint);
+        const right = STMT_ABBREVIATIONS.slice(midpoint);
+
+        const renderColumn = items => items.map(([code, label]) => (
+            `<p><span class="stmt-abbr-code">${escapeHtml(code)}</span>= ${escapeHtml(label)}</p>`
+        )).join("");
+
+        return `
+            <div class="stmt-abbr-grid">
+                <div class="stmt-abbr-col">${renderColumn(left)}</div>
+                <div class="stmt-abbr-col">${renderColumn(right)}</div>
+            </div>
+        `;
+    }
+
+    function renderStatementTopHeader() {
+        return `
+            <header class="stmt-top-header">
+                <div class="stmt-brand-block">
+                    <img src="assets/stmt-santander-logo.png" alt="Santander" class="stmt-santander-logo">
+                    <div class="stmt-legal-lines">
+                        <p>Banco Santander México, S.A.,</p>
+                        <p>Institución de Banca Múltiple,</p>
+                        <p>Grupo Financiero Santander México.</p>
+                    </div>
+                </div>
+                <h1 class="stmt-doc-title">ESTADO DE CUENTA</h1>
+            </header>
+        `;
+    }
+
+    function renderStatementCompactHeader(clientName, clientCode, periodText) {
+        return `
+            ${renderStatementTopHeader()}
+            <div class="stmt-compact-meta">
+                <span class="stmt-compact-name">${escapeHtml(clientName)}</span>
+                <div class="stmt-compact-right">
+                    <span>CODIGO DE CLIENTE NO. ${escapeHtml(clientCode)}</span>
+                    <span>PERIODO DEL ${escapeHtml(periodText)}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderAccountStatement() {
+        const container = document.getElementById("account-statement-document");
+        if (!container) return;
+
+        const movs = [...currentMovs].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const balance = parseAmount(userSettings.balance);
+        const accountFmt = formatAccountSantander(userSettings.account);
+        const clabe = generateClabe(userSettings.account);
+        const clientCode = generateClientCode(userSettings.account);
+        const namePart = String(userSettings.name || "USUARIO").trim().toUpperCase();
+        const subtitlePart = String(userSettings.subtitle || "MÉXICO").trim().toUpperCase();
+        const clientName = `${namePart} ${subtitlePart}`.trim();
+        const addressLines = subtitlePart.split(/\s+/).filter(Boolean);
+        const rfc = generateRfc(userSettings.name, userSettings.subtitle);
+        const phoneDigits = String(userSettings.phone || "5555555500").replace(/\D/g, "").padStart(10, "0").slice(-10);
+        const phoneFmt = `${phoneDigits.slice(0, 2)} ${phoneDigits.slice(2, 6)} ${phoneDigits.slice(6)}`;
+        const barcodeData = generateStatementBarcodeData(clientCode, userSettings.account);
+        const docId = `0${clientCode}`.slice(-7).padStart(7, "0");
+
+        let totalCharges = 0;
+        let totalCredits = 0;
+        const comisiones = 0;
+
+        movs.forEach(m => {
+            const amount = parseAmount(m.amount);
+            if (m.type === "positive") totalCredits += amount;
+            else totalCharges += amount;
+        });
+
+        const openingBalance = balance - totalCredits + totalCharges;
+
+        let periodStart = new Date();
+        let periodEnd = new Date();
+
+        if (movs.length) {
+            periodStart = new Date(movs[0].date);
+            periodEnd = new Date(movs[movs.length - 1].date);
+        }
+
+        const periodStartFmt = formatStatementPeriodDate(periodStart);
+        const periodEndFmt = formatStatementPeriodDate(periodEnd);
+        const periodText = `${periodStartFmt} AL ${periodEndFmt}`;
+        const periodTextDel = `${periodStartFmt}  AL  ${periodEndFmt}`;
+        const cutDate = periodEndFmt;
+        const daysPeriod = Math.max(1, Math.ceil((periodEnd - periodStart) / (1000 * 60 * 60 * 24)) + 1);
+        const totalPages = 4;
+        const prevMonthPct = formatStatementDistributionPct(openingBalance);
+        const currMonthPct = formatStatementDistributionPct(balance);
+        const avgBalance = (openingBalance + balance) / 2;
+
+        let runningBalance = openingBalance;
+        const detailRows = movs.map(m => {
+            const amount = parseAmount(m.amount);
+            const isPositive = m.type === "positive";
+            const retiro = isPositive ? "" : formatAmount(amount);
+            const deposito = isPositive ? formatAmount(amount) : "";
+            const description = m.location
+                ? `${m.title} ${m.location}`
+                : m.title;
+
+            if (isPositive) runningBalance += amount;
+            else runningBalance -= amount;
+
+            return `
+                <tr>
+                    <td>${escapeHtml(formatStatementMovDate(m.date))}</td>
+                    <td>${escapeHtml(m.reference || "")}</td>
+                    <td class="stmt-td-desc">${escapeHtml(description)}</td>
+                    <td class="stmt-td-num">${deposito}</td>
+                    <td class="stmt-td-num">${retiro}</td>
+                    <td class="stmt-td-num">${formatAmount(runningBalance)}</td>
+                </tr>
+            `;
+        }).join("");
+
+        container.innerHTML = `
+            <div class="stmt-sheet">
+                ${renderStatementTopHeader()}
+
+                <div class="stmt-client-block">
+                    <div class="stmt-client-left">
+                        <p class="stmt-addr-main">${escapeHtml(namePart)}</p>
+                        ${addressLines.map(line => `<p class="stmt-addr-line">${escapeHtml(line)}</p>`).join("")}
+                        <p class="stmt-addr-line">CIUDAD DE MÉXICO, MÉXICO</p>
+                        <p class="stmt-addr-line stmt-addr-cp">C.P. 06000 <span class="stmt-postal-ref">${escapeHtml(barcodeData.postalRef)}</span></p>
+                        <div class="stmt-barcode-row">
+                            <span class="stmt-barcode-prefix">${escapeHtml(barcodeData.prefix)}</span>
+                            <div class="stmt-barcode-body">
+                                <svg class="stmt-barcode-svg" data-barcode="${escapeHtml(barcodeData.payload)}"></svg>
+                                <span class="stmt-barcode-human">${escapeHtml(barcodeData.payload)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stmt-client-right">
+                        <p class="stmt-meta-client-code">CODIGO DE CLIENTE NO. ${escapeHtml(clientCode)}</p>
+                        ${renderStatementMetaLine("R.F.C.", rfc, true)}
+                        ${renderStatementMetaLine("MONEDA", "MONEDA NACIONAL")}
+                        ${renderStatementMetaLine("SUCURSAL", "0129 SUC. DIGITAL")}
+                        ${renderStatementMetaLine("TELEFONO", phoneFmt)}
+                        ${renderStatementMetaLine("PERIODO", `DEL ${periodTextDel}`)}
+                        ${renderStatementMetaLine("CORTE AL", cutDate)}
+                    </div>
+                </div>
+
+                ${renderStatementSectionHead("stmt-icon-doc.png", "Resumen informativo.")}
+                <p class="stmt-subsection-title">Resumen intereses y comisiones.</p>
+                <table class="stmt-bank-table">
+                    <thead>
+                        <tr>
+                            <th>PRODUCTO</th>
+                            <th>NUMERO DE CUENTA</th>
+                            <th>INTERESES BRUTOS</th>
+                            <th>ISR RETENIDO (0.50%)</th>
+                            <th>INTERESES NETOS</th>
+                            <th>COMISIONES COBRADAS</th>
+                            <th>GAT NOMINAL*</th>
+                            <th>GAT REAL**</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CUENTA DIGITAL</td>
+                            <td>${escapeHtml(accountFmt)}</td>
+                            <td class="stmt-td-num">0.00</td>
+                            <td class="stmt-td-num">0.00</td>
+                            <td class="stmt-td-num">0.00</td>
+                            <td class="stmt-td-num">${formatAmount(comisiones)}</td>
+                            <td class="stmt-td-num">0.00</td>
+                            <td class="stmt-td-num">0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="stmt-subsection-title">Resumen saldos.</p>
+                <table class="stmt-bank-table stmt-balance-summary">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">PRODUCTO</th>
+                            <th rowspan="2">NUMERO DE CUENTA</th>
+                            <th colspan="2">MES ANTERIOR</th>
+                            <th colspan="2">MES ACTUAL</th>
+                        </tr>
+                        <tr>
+                            <th>Monto</th>
+                            <th>% de distribución</th>
+                            <th>Monto</th>
+                            <th>% de distribución</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CUENTA DIGITAL</td>
+                            <td>${escapeHtml(accountFmt)}</td>
+                            <td class="stmt-td-num">${formatAmount(openingBalance)}</td>
+                            <td class="stmt-td-num">${prevMonthPct}%</td>
+                            <td class="stmt-td-num">${formatAmount(balance)}</td>
+                            <td class="stmt-td-num">${currMonthPct}%</td>
+                        </tr>
+                        <tr class="stmt-row-total">
+                            <td>TOTAL</td>
+                            <td></td>
+                            <td class="stmt-td-num">${formatAmount(openingBalance)}</td>
+                            <td class="stmt-td-num">${prevMonthPct}%</td>
+                            <td class="stmt-td-num">${formatAmount(balance)}</td>
+                            <td class="stmt-td-num">${currMonthPct}%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                ${renderStatementSectionHead("stmt-icon-doc.png", "Cuenta de cheques.")}
+
+                <div class="stmt-account-banner">
+                    <span>CUENTA DIGITAL</span>
+                    <span>${escapeHtml(accountFmt)}</span>
+                    <span>CUENTA CLABE: ${escapeHtml(clabe)}</span>
+                </div>
+                <p class="stmt-sucursal-line">SUCURSAL 0129 SUC. DIGITAL</p>
+
+                <div class="stmt-checks-summary">
+                    <div class="stmt-checks-col">
+                        <div class="stmt-check-row"><span>Saldo promedio</span><span class="stmt-td-num">${formatAmount(avgBalance)}</span></div>
+                        <div class="stmt-check-row stmt-check-row-strong"><span>Tasa bruta de interés anual</span><span class="stmt-td-num">0.0000%</span></div>
+                        <div class="stmt-check-row"><span>Días del periodo</span><span class="stmt-td-num">${daysPeriod}</span></div>
+                        <div class="stmt-check-row"><span>Saldo promedio mínimo</span><span class="stmt-td-num">3,000.00</span></div>
+                    </div>
+                    <div class="stmt-checks-col">
+                        <div class="stmt-check-row"><span>Saldo inicial</span><span class="stmt-td-num">${formatAmount(openingBalance)}</span></div>
+                        <div class="stmt-check-row"><span>+Depósitos</span><span class="stmt-td-num">${formatAmount(totalCredits)}</span></div>
+                        <div class="stmt-check-row"><span>- Retiros</span><span class="stmt-td-num">${formatAmount(totalCharges)}</span></div>
+                        <div class="stmt-check-row stmt-check-row-final"><span>= Saldo final</span><span class="stmt-td-num">${formatAmount(balance)}</span></div>
+                    </div>
+                    <div class="stmt-email-notice">
+                        <img src="assets/stmt-icon-secure.png" alt="" class="stmt-email-icon-img">
+                        <span>Estado de cuenta enviado por e-mail cifrado</span>
+                    </div>
+                </div>
+
+                <div class="stmt-chart-block">
+                    <div class="stmt-chart-left">
+                        ${renderStatementSectionHead("stmt-icon-chart.png", "Gráfico cuenta de cheques.", "chart")}
+                        <p class="stmt-chart-account">CUENTA DIGITAL</p>
+                        <p class="stmt-chart-account">No. de cuenta ${escapeHtml(accountFmt)}</p>
+                        <p class="stmt-chart-opening">Saldo inicial de $${formatAmount(openingBalance)}</p>
+                    </div>
+                    <div class="stmt-chart-visual">
+                        <div class="stmt-pie-solid"></div>
+                        <p class="stmt-pie-final">Saldo final $${formatAmount(balance)}</p>
+                    </div>
+                </div>
+
+                ${renderStatementFooter(1, totalPages, docId)}
+            </div>
+
+            <div class="stmt-sheet stmt-sheet-break">
+                ${renderStatementCompactHeader(clientName, clientCode, periodTextDel)}
+
+                ${renderStatementSectionHead("stmt-icon-doc.png", "Detalle de movimientos cuenta de cheques.")}
+                <div class="stmt-account-inline">
+                    <strong>CUENTA DIGITAL</strong>
+                    <strong>${escapeHtml(accountFmt)}</strong>
+                </div>
+                <div class="stmt-prev-balance-bar">SALDO FINAL DEL PERIODO ANTERIOR: $${formatAmount(openingBalance)}</div>
+
+                <div class="stmt-mov-wrap">
+                    <table class="stmt-bank-table stmt-detail-table">
+                        <thead>
+                            <tr>
+                                <th>FECHA</th>
+                                <th>FOLIO</th>
+                                <th>DESCRIPCION</th>
+                                <th>DEPOSITO</th>
+                                <th>RETIRO</th>
+                                <th>SALDO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${detailRows}
+                            <tr class="stmt-row-total">
+                                <td colspan="3">TOTAL</td>
+                                <td class="stmt-td-num">${formatAmount(totalCredits)}</td>
+                                <td class="stmt-td-num">${formatAmount(totalCharges)}</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="stmt-final-balance-box">SALDO FINAL DEL PERIODO: $${formatAmount(balance)}</div>
+                </div>
+
+                ${renderStatementSectionHead("stmt-icon-doc.png", "Significado de abreviaturas utilizadas en el estado de cuenta:")}
+                ${renderStatementAbbreviations()}
+
+                ${renderStatementSectionHead("stmt-icon-doc.png", "Mensajes importantes.", "alert")}
+                <p class="stmt-legal-text">BANCO SANTANDER MEXICO, S.A., INSTITUCION DE BANCA MULTIPLE, GRUPO FINANCIERO SANTANDER MEXICO RECIBE LAS CONSULTAS, RECLAMACIONES O ACLARACIONES, EN SU UNIDAD ESPECIALIZADA DE ATENCION A USUARIOS, UBICADA EN EDIFICIO SANTANDER 490 ESQUINA ROBERTO MEDELLIN, PISO 4 A, COL. SANTA FE, ALCALDIA ALVARO OBREGON, C.P. 01219 CDMX, ACCESO POR ALFONSO NAPOLES GANDARA Y POR CORREO ELECTRONICO ueac@santander.com.mx O A LOS TELEFONOS 51 694 328 EN LA CIUDAD DE MEXICO Y AREA METROPOLITANA Y AL 01 55 51 694 328 DEL INTERIOR DE LA REPUBLICA, ASI COMO EN CUALQUIERA DE SUS SUCURSALES U OFICINAS. EN EL CASO DE NO OBTENER UNA RESPUESTA SATISFACTORIA, PODRA ACUDIR A LA COMISION NACIONAL PARA LA PROTECCION Y DEFENSA DE LOS USUARIOS DE SERVICIOS FINANCIEROS, DIRECCION EN INTERNET: www.condusef.gob.mx O A LOS TELEFONOS: 55 5340 0999 Y 800 999 8080.</p>
+
+                ${renderStatementFooter(2, totalPages, docId)}
+            </div>
+
+            <div class="stmt-sheet stmt-sheet-break">
+                ${renderStatementCompactHeader(clientName, clientCode, periodTextDel)}
+                <p class="stmt-legal-text">SANTANDER PONE A SUS SERVICIOS, LAS 24 HORAS DEL DIA, LOS 365 DIAS PARA LA ATENCION DE ACLARACIONES LA SUPERLINEA, CUYOS TELEFONOS SON 5551 69 43 00 EN LA CIUDAD DE MEXICO Y DESDE CUALQUIER PARTE DE LA REPUBLICA. ESTIMADO CLIENTE, CON OBJETO DE QUE SU ESTADO DE CUENTA TENGA VALIDEZ FISCAL ASI COMO INFORMACION CORRECTA, ES INDISPENSABLE QUE EL DATO DE RFC, NOMBRE O RAZON SOCIAL, DOMICILIO FISCAL Y REGIMEN FISCAL, SE ENCUENTREN ACTUALIZADOS Y CORRESPONDAN A LOS QUE TIENE REGISTRADOS EN EL SAT. SI ESTE DATO NO ES CORRECTO, DEBERA REALIZAR LAS MODIFICACIONES PERTINENTES EN SU BANCA ELECTRONICA (SUPERNET/SUPERMOVIL/BET ENLACE) O ACUDIENDO CON UN EJECUTIVO DE SU SUCURSAL TITULAR CON UNA COPIA DE SU CONSTANCIA DE SITUACION FISCAL. SI DESEA RECIBIR TRANSFERENCIAS ELECTRONICAS DE FONDOS INTERBANCARIAS, DEBERA INFORMAR A LA PERSONA QUE LE ENVIARA LA O LAS TRANSFERENCIAS RESPECTIVAS, EL NUMERO DE CLAVE BANCARIA ESTANDARIZADA (CLABE) DE LA CUENTA RECEPTORA DE LOS FONDOS, SEGUN SE INDICA EN ESTE ESTADO DE CUENTA, ASI COMO EL NOMBRE DE ESTE BANCO. ESTIMADO CLIENTE: POR MEDIO DEL PRESENTE LE RECORDAMOS QUE TODAS LAS TRANSACCIONES/OPERACIONES REALIZADAS CON CHEQUES PROVENIENTES DE OTROS BANCOS, (INCLUSO CHEQUES CERTIFICADOS Y DE CAJA) AL SER RECIBIDOS EN NUESTRAS SUCURSALES, LA DISPONIBILIDAD DE LOS FONDOS (SIN QUE HAYA ALGUNA CAUSA PREVIA DE RECHAZO U ORDEN DE NO PAGO DE CHEQUE POR EL OTRO BANCO) SERA AL DIA SIGUIENTE HABIL A SU DEPOSITO, DESPUES DE LAS 12:00 HORAS. EN CONSECUENCIA, LE RECORDAMOS TOMAR LAS PRECAUCIONES NECESARIAS Y CONVENIENTES PARA EVITAR LA ENTREGA DE PRODUCTOS, MERCANCIAS, BIENES Y/O DOCUMENTOS OBJETO DE LAS TRANSACCIONES, HASTA QUE CUENTE CON LA DISPONIBILIDAD DE LOS RECURSOS EN SU CUENTA. INCUMPLIR SUS OBLIGACIONES LE PUEDE GENERAR COMISIONES. BANCO SANTANDER MEXICO, S.A., HACE DEL CONOCIMIENTO DEL CLIENTE QUE UNICAMENTE ESTAN GARANTIZADOS POR EL INSTITUTO PARA LA PROTECCION AL AHORRO BANCARIO (IPAB), LOS DEPOSITOS BANCARIOS DE DINERO: A LA VISTA, RETIRABLES EN DIAS PREESTABLECIDOS, DE AHORRO, Y A PLAZO O CON PREVIO AVISO, ASI COMO LOS PRESTAMOS Y CREDITOS QUE ACEPTE LA INSTITUCION, HASTA POR EL EQUIVALENTE A CUATROCIENTAS MIL UDIS POR PERSONA, CUALQUIERA QUE SEA EL NUMERO, TIPO Y CLASE DE DICHAS OBLIGACIONES A SU FAVOR Y A CARGO DE LA INSTITUCION DE BANCA MULTIPLE. PARA MAS INFORMACION VISITA https://www.gob.mx/ipab</p>
+                <div class="stmt-important-box">
+                    <p class="stmt-important-title">¡IMPORTANTE!</p>
+                    <p class="stmt-legal-text">El comprobante fiscal del estado de cuenta se emite conforme a las disposiciones fiscales vigentes. Si requiere factura, acuda a las oficinas del SAT. Mantenga actualizados sus datos fiscales en sucursal o banca electrónica.</p>
+                </div>
+                ${renderStatementFooter(3, totalPages, docId)}
+            </div>
+
+            <div class="stmt-sheet stmt-sheet-break">
+                ${renderStatementCompactHeader(clientName, clientCode, periodTextDel)}
+                <div class="stmt-ipab-footer">
+                    <div class="stmt-ipab-logo">
+                        <strong>IPAB</strong>
+                        <span>Instituto para la Protección al Ahorro Bancario</span>
+                        <span>www.ipab.org.mx</span>
+                    </div>
+                    <p class="stmt-legal-text stmt-ipab-legal">BANCO SANTANDER MEXICO S.A., INSTITUCION DE BANCA MULTIPLE, GRUPO FINANCIERO SANTANDER MEXICO, R.F.C. BSM970519DU8 PROLONGACION PASEO DE LA REFORMA NO. 500 PISO 2 MOD. 206 COL. LOMAS DE SANTA FE, ALCALDIA ALVARO OBREGON, C.P. 01219, CIUDAD DE MEXICO. AGRADECEREMOS NOS COMUNIQUE SUS OBJECIONES EN UN PLAZO DE 90 DIAS DE LO CONTRARIO CONSIDERAREMOS SU CONFORMIDAD.</p>
+                    <p class="stmt-paperless">Suscríbase a Paperless aquí.</p>
+                </div>
+                ${renderStatementFooter(4, totalPages, docId)}
+            </div>
+        `;
+
+        initStatementBarcodes(container);
+    }
+
+    function renderStatementFooter(page, total, docId) {
+        return `
+            <footer class="stmt-page-footer">
+                <span>Página ${page} de ${total}.</span>
+                <span class="stmt-footer-brand">
+                    <span class="stmt-footer-prefix">P</span>
+                    <img src="assets/santander-flame.png" alt="">
+                    <span>${escapeHtml(docId)}</span>
+                </span>
+            </footer>
+        `;
+    }
+
+    let statementDownloading = false;
+
+    async function downloadStatementPdf() {
+        if (statementDownloading) return;
+
+        const downloadBtn = document.getElementById("btn-download-statement-pdf");
+        const headerBtn = document.getElementById("btn-header-download-pdf");
+
+        if (!window.StatementPdf) {
+            window.showToast("No se pudo generar el PDF.");
+            return;
+        }
+
+        statementDownloading = true;
+
+        const resetButtons = () => {
+            statementDownloading = false;
+            if (downloadBtn) {
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = '<span class="material-icons-outlined">picture_as_pdf</span> Descargar estado de cuenta (PDF)';
+            }
+            if (headerBtn) headerBtn.style.pointerEvents = "";
+        };
+
+        if (downloadBtn) {
+            downloadBtn.disabled = true;
+            downloadBtn.innerHTML = '<span class="material-icons-outlined">hourglass_top</span> Generando PDF...';
+        }
+        if (headerBtn) headerBtn.style.pointerEvents = "none";
+
+        window.showLoader("Generando PDF...");
+
+        try {
+            const fileName = `EstadoCuenta_Santander_${userSettings.account?.replace(/\*/g, "") || "cuenta"}_${new Date().toISOString().slice(0, 10)}.pdf`;
+            await window.StatementPdf.download({
+                name: userSettings.name,
+                subtitle: userSettings.subtitle,
+                balance: userSettings.balance,
+                account: userSettings.account,
+                phone: userSettings.phone,
+                product: userSettings.product,
+                movements: currentMovs
+            }, fileName);
+            window.showToast("Estado de cuenta descargado");
+        } catch (error) {
+            console.error(error);
+            window.showToast("Error al generar el PDF. Usa npm run dev.");
+        } finally {
+            window.hideLoader();
+            resetButtons();
+        }
+    }
+
     function renderMovsApp() {
         const containerDetail = document.getElementById("movements-container");
-        const containerStatement = document.getElementById("statement-movements-container");
 
         let htmlDetail = "";
-        let htmlStatement = "";
 
         const sortedMovs = [...currentMovs].sort((a, b) => new Date(b.date) - new Date(a.date));
         const filteredMovs = sortedMovs.filter(m => movementFilter === "all" ? true : m.type === movementFilter);
@@ -152,29 +692,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             htmlDetail = `<div class="empty-movements">No hay movimientos para este filtro.</div>`;
         }
 
-        sortedMovs.forEach(m => {
-            const isPositive = m.type === "positive";
-            const formattedDate = formatDateString(m.date);
-            const amount = formatAmount(m.amount);
-
-            htmlStatement += `
-                <div class="movement-item" style="background: #FFF; padding-left: 20px; padding-right: 20px;">
-                    <div class="mov-icon ${isPositive ? "green-icon" : ""}">
-                        <span class="material-icons-outlined">${isPositive ? "arrow_downward" : "shopping_cart"}</span>
-                    </div>
-                    <div class="mov-details">
-                        <span class="mov-title">${escapeHtml(m.title)}</span>
-                        <span class="mov-date">${escapeHtml(formattedDate)}</span>
-                    </div>
-                    <div class="mov-amount ${isPositive ? "positive" : ""}">
-                        ${isPositive ? "+" : "-"}$${amount}
-                    </div>
-                </div>
-            `;
-        });
-
         if (containerDetail) containerDetail.innerHTML = htmlDetail;
-        if (containerStatement) containerStatement.innerHTML = htmlStatement;
+        renderAccountStatement();
     }
 
     // ==================== FUNCIONES DE CARGA ====================
@@ -417,7 +936,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             digitalCardModal.setAttribute("aria-hidden", "false");
 
             startModalCvvTimer();
-        }, 900);
+        }, LOADER.SHORT);
     }
 
     function closeDigitalCardModal() {
@@ -443,7 +962,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     on("btn-copy-modal-exp", "click", () => {
         copyText(userSettings.exp);
     });
-    function navigateTo(viewId, loaderMsg = "Cargando...", delay = 400) {
+    function navigateTo(viewId, loaderMsg = "Cargando...", delay = LOADER.NAV) {
 
         const currentView = historyStack[historyStack.length - 1];
         if (currentView === viewId) return;
@@ -488,7 +1007,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
 
                 window.hideLoader();
-            }, 300);
+            }, LOADER.BACK);
         }
     }
 
@@ -516,28 +1035,31 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             historyStack = ["home-view"];
             window.hideLoader();
-        }, 300);
+        }, LOADER.BACK);
     };
 
     document.querySelectorAll(".back-btn").forEach(btn => btn.addEventListener("click", goBack));
     document.querySelectorAll(".btn-home-action").forEach(btn => btn.addEventListener("click", window.goHome));
 
-    on("open-card-details", "click", () => navigateTo("account-overview-view", "Consultando cuenta...", 600));
+    on("open-card-details", "click", () => navigateTo("account-overview-view", "Consultando cuenta...", LOADER.MEDIUM));
     on("btn-open-card-info", "click", openDigitalCardModal);
     on("btn-open-card-info-from-overview", "click", openDigitalCardModal);
     on("btn-overview-card-info", "click", openDigitalCardModal);
-    on("btn-overview-movements", "click", () => navigateTo("detail-view", "Consultando movimientos...", 600));
-    on("btn-overview-transfer", "click", () => navigateTo("transfer-view", "Preparando módulo de pagos..."));
-    on("btn-overview-pay", "click", () => navigateTo("pay-cards-view", "Consultando adeudos..."));
-    on("btn-overview-topup", "click", () => navigateTo("topup-view"));
-    on("btn-overview-cardless", "click", () => navigateTo("cardless-view", "Conectando con red de cajeros..."));
-    on("btn-nav-transfer", "click", () => navigateTo("transfer-view", "Preparando módulo de pagos..."));
-    on("btn-nav-retiro", "click", () => navigateTo("cardless-view", "Conectando con red de cajeros..."));
-    on("btn-nav-pagar", "click", () => navigateTo("pay-cards-view", "Consultando adeudos..."));
-    on("btn-nav-recargar", "click", () => navigateTo("topup-view"));
-    on("btn-nav-ofertas", "click", () => navigateTo("offers-view", "Buscando beneficios..."));
-    on("btn-action-transfer", "click", () => navigateTo("transfer-view", "Preparando pago...", 500));
-    on("btn-action-statement", "click", () => navigateTo("statement-view", "Descargando movimientos...", 800));
+    on("btn-overview-movements", "click", () => navigateTo("detail-view", "Consultando movimientos...", LOADER.MEDIUM));
+    on("btn-overview-statement", "click", downloadStatementPdf);
+    on("btn-overview-transfer", "click", () => navigateTo("transfer-view", "Preparando módulo de pagos...", LOADER.MEDIUM));
+    on("btn-overview-pay", "click", () => navigateTo("pay-cards-view", "Consultando adeudos...", LOADER.MEDIUM));
+    on("btn-overview-topup", "click", () => navigateTo("topup-view", "Cargando recargas...", LOADER.NAV));
+    on("btn-overview-cardless", "click", () => navigateTo("cardless-view", "Conectando con red de cajeros...", LOADER.LONG));
+    on("btn-nav-transfer", "click", () => navigateTo("transfer-view", "Preparando módulo de pagos...", LOADER.MEDIUM));
+    on("btn-nav-retiro", "click", () => navigateTo("cardless-view", "Conectando con red de cajeros...", LOADER.LONG));
+    on("btn-nav-pagar", "click", () => navigateTo("pay-cards-view", "Consultando adeudos...", LOADER.MEDIUM));
+    on("btn-nav-recargar", "click", () => navigateTo("topup-view", "Cargando recargas...", LOADER.NAV));
+    on("btn-nav-ofertas", "click", () => navigateTo("offers-view", "Buscando beneficios...", LOADER.MEDIUM));
+    on("btn-action-transfer", "click", () => navigateTo("transfer-view", "Preparando pago...", LOADER.MEDIUM));
+    on("btn-action-statement", "click", downloadStatementPdf);
+    on("btn-download-statement-pdf", "click", downloadStatementPdf);
+    on("btn-header-download-pdf", "click", downloadStatementPdf);
 
     // ==================== ACORDEONES Y TOASTS ====================
     document.querySelectorAll(".menu-accordion").forEach(acc => {
@@ -560,6 +1082,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     on("btn-sync", "click", async () => {
         window.showLoader("Sincronizando información...");
+        await new Promise(resolve => setTimeout(resolve, LOADER.MEDIUM));
         try {
             const freshSettings = await window.SettingsService.getMySettings();
             applyUserSettings(freshSettings);
@@ -616,7 +1139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (cardStatusText) cardStatusText.textContent = "Activa";
                 window.showToast("Tarjeta encendida y lista para usarse.");
             }
-        }, 1200);
+        }, LOADER.MEDIUM);
     });
     // ==================== FUNCIONALIDADES CUENTA DIGITAL ====================
     const overviewMainCard = document.querySelector("#account-overview-view .account-main-card");
@@ -655,7 +1178,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.hideLoader();
 
             window.showToast(cardIsActive ? "Tarjeta digital prendida." : "Tarjeta digital apagada.");
-        }, 900);
+        }, LOADER.SHORT);
     }
 
     on("btn-overview-toggle-card", "click", toggleDigitalCardStatus);
@@ -706,7 +1229,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     on("btn-overview-defer", "click", () => {
         renderDeferrablePurchases();
-        navigateTo("defer-view", "Buscando compras diferibles...", 700);
+        navigateTo("defer-view", "Buscando compras diferibles...", LOADER.MEDIUM);
     });
 
     on("btn-confirm-defer", "click", () => {
@@ -717,7 +1240,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => {
             window.hideLoader();
             window.showToast(`Compra diferida a ${months} meses correctamente.`);
-        }, 1200);
+        }, LOADER.MEDIUM);
     });
 
     // Generación de NIP
@@ -757,8 +1280,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     on("btn-overview-nip", "click", () => {
-        navigateTo("nip-view", "Generando NIP seguro...", 900);
-        setTimeout(startNipTimer, 950);
+        navigateTo("nip-view", "Generando NIP seguro...", LOADER.LONG);
+        setTimeout(startNipTimer, LOADER.LONG + 100);
     });
 
     on("btn-regenerate-nip", "click", () => {
@@ -768,7 +1291,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.hideLoader();
             startNipTimer();
             window.showToast("Nuevo NIP generado.");
-        }, 900);
+        }, LOADER.SHORT);
     });
 
     // Control de gasto
@@ -800,7 +1323,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     on("btn-overview-spending-control", "click", () => {
-        navigateTo("spending-control-view", "Consultando límites...", 700);
+        navigateTo("spending-control-view", "Consultando límites...", LOADER.MEDIUM);
     });
 
     on("btn-save-spending-control", "click", () => {
@@ -809,7 +1332,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => {
             window.hideLoader();
             window.showToast("Control de gasto actualizado.");
-        }, 1000);
+        }, LOADER.SHORT);
     });
 
     // Billeteras digitales
@@ -834,11 +1357,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             window.hideLoader();
             window.showToast("Tarjeta agregada a la billetera digital.");
-        }, 1300);
+        }, LOADER.MEDIUM);
     }
 
     on("btn-overview-wallets", "click", () => {
-        navigateTo("wallets-view", "Consultando billeteras digitales...", 700);
+        navigateTo("wallets-view", "Consultando billeteras digitales...", LOADER.MEDIUM);
     });
 
     document.querySelectorAll("[data-wallet]").forEach(btn => {
@@ -856,7 +1379,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const concept = document.getElementById("transfer-concept")?.value || "Sin concepto";
         const numericAmount = Number(String(amount).replace(/,/g, "")) || 0;
 
-        navigateTo("transfer-success-view", "Conectando con red SPEI...", 1800);
+        navigateTo("transfer-success-view", "Conectando con red SPEI...", LOADER.XL);
 
         setTimeout(() => {
             const successAmount = document.getElementById("success-transfer-amount");
@@ -868,14 +1391,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (successDest) successDest.textContent = dest;
             if (successConcept) successConcept.textContent = concept;
             if (successDate) successDate.textContent = getTodayString();
-        }, 1800);
+        }, LOADER.XL);
     });
 
     // ==================== RETIRO SIN TARJETA ====================
     on("btn-do-cardless", "click", () => {
         const amount = document.getElementById("cardless-amount")?.value || "500.00";
 
-        navigateTo("cardless-active-view", "Generando clave dinámica...", 1500);
+        navigateTo("cardless-active-view", "Generando clave dinámica...", LOADER.LONG);
 
         setTimeout(() => {
             const cardlessAmount = document.getElementById("cardless-active-amount");
@@ -904,7 +1427,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             updateTimer();
             cardlessInterval = setInterval(updateTimer, 1000);
-        }, 1500);
+        }, LOADER.LONG);
     });
 
     // ==================== RECARGAS CELULAR ====================
@@ -914,7 +1437,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const amount = document.getElementById("topup-amount")?.value || "100.00";
         const numericAmount = Number(String(amount).replace(/,/g, "")) || 0;
 
-        navigateTo("topup-success-view", "Validando número y conectando...", 2000);
+        navigateTo("topup-success-view", "Validando número y conectando...", LOADER.XL);
 
         setTimeout(() => {
             const successAmount = document.getElementById("success-topup-amount");
@@ -926,7 +1449,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (successPhone) successPhone.textContent = phone;
             if (successCompany) successCompany.textContent = company;
             if (successDate) successDate.textContent = getTodayString();
-        }, 2000);
+        }, LOADER.XL);
     });
 
     // ==================== RELOJ ====================

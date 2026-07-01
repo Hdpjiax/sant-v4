@@ -4,17 +4,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     const successEl = document.getElementById("auth-success");
     const submitBtn = document.getElementById("btn-register");
 
-    const session = await window.SantanderAuth.getSession();
-    if (session) {
-        const profile = await window.SantanderAuth.getProfile();
-        window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
-        return;
-    }
-
-    function showError(msg) {
-        errorEl.textContent = msg;
+    function showError(err) {
+        errorEl.textContent = typeof err === "string" ? err : window.formatSupabaseError(err);
         errorEl.classList.add("visible");
         successEl.classList.remove("visible");
+    }
+
+    try {
+        window.ensureSupabaseReady();
+        const session = await window.SantanderAuth.getSession();
+        if (session) {
+            const profile = await window.SantanderAuth.getProfile();
+            window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
+            return;
+        }
+    } catch (err) {
+        showError(err);
+        if (submitBtn) submitBtn.disabled = true;
+        return;
     }
 
     function showSuccess(msg) {
@@ -62,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 window.location.href = "login.html";
             }, 2500);
         } catch (err) {
-            showError(err.message || "Error al registrarse. Intenta de nuevo.");
+            showError(err);
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = "Registrarse";

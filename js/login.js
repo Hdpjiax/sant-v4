@@ -3,10 +3,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     const errorEl = document.getElementById("auth-error");
     const submitBtn = document.getElementById("btn-login");
 
-    const session = await window.SantanderAuth.getSession();
-    if (session) {
-        const profile = await window.SantanderAuth.getProfile();
-        window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
+    function showError(err) {
+        errorEl.textContent = window.formatSupabaseError(err);
+        errorEl.classList.add("visible");
+    }
+
+    try {
+        window.ensureSupabaseReady();
+        const session = await window.SantanderAuth.getSession();
+        if (session) {
+            const profile = await window.SantanderAuth.getProfile();
+            window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
+            return;
+        }
+    } catch (err) {
+        showError(err);
+        if (submitBtn) submitBtn.disabled = true;
         return;
     }
 
@@ -30,8 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 window.location.href = "index.html";
             }
         } catch (err) {
-            errorEl.textContent = err.message || "Credenciales incorrectas.";
-            errorEl.classList.add("visible");
+            showError(err);
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = "Entrar";
