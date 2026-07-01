@@ -1,0 +1,10 @@
+{
+  "name": "santander-demo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "npx serve dist -l 3000",
+    "preview": "npm run build && npm run dev"
+  }
+}

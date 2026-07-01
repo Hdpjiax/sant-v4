@@ -1,0 +1,9 @@
+# No subir credenciales reales — usa config.example.js o .env como plantilla
+js/config.js
+.env
+.env.local
+
+# Build y Vercel
+dist/
+.vercel
+node_modules

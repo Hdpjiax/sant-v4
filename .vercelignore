@@ -1,0 +1,8 @@
+mcps
+.git
+supabase
+.env
+.env.*
+node_modules
+js/config.js
+dist

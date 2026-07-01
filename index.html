@@ -891,54 +891,13 @@
             </section>
         </div>
     </div>
-    <div class="config-modal" id="config-modal">
-        <div class="modal-content">
-            <h2>Configuración de la Demo</h2>
-
-            <label>Nombre de usuario:</label>
-            <input type="text" id="input-name" value="Juan Antonio">
-
-            <label>Apellido / Subtítulo:</label>
-            <input type="text" id="input-subtitle" value="García Nievez">
-
-            <label>Saldo General:</label>
-            <input type="text" id="input-balance" value="0.00">
-
-            <label>Cuenta Corta (Inicio):</label>
-            <input type="text" id="input-account" value="14**9096">
-
-            <label>Celular (Cuenta principal):</label>
-            <input type="text" id="input-phone" value="4431318488">
-
-            <label>Tarjeta Completa (Detalles):</label>
-            <input type="text" id="input-full-card" value="4152 3140 8080 9096">
-
-            <label>Tipo de red (Franquicia):</label>
-            <select id="input-brand">
-                <option value="VISA">VISA</option>
-                <option value="Mastercard">Mastercard</option>
-            </select>
-
-            <label>Vencimiento:</label>
-            <input type="text" id="input-exp" value="12/28">
-
-            <fieldset style="margin-top: 15px; border: 1px solid #CCC; padding: 10px; border-radius: 8px;">
-                <legend style="padding: 0 5px; font-weight: bold; font-size:12px;">Administrar Movimientos</legend>
-                <div id="config-movements-list"></div>
-                <button type="button"
-                    style="width: 100%; margin-top: 5px; padding: 6px; font-weight: bold; cursor:pointer;"
-                    id="btn-add-mov-row">+ Añadir Movimiento</button>
-            </fieldset>
-
-            <div class="modal-buttons">
-                <button id="save-config" class="btn-save">Guardar Todo</button>
-                <button id="close-config" class="btn-cancel">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
     <div id="toast-container" class="toast-container"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/settings-service.js"></script>
     <script src="script.js"></script>
 </body>
 

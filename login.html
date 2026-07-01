@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión — Santander</title>
+    <link rel="icon" type="image/svg+xml"
+        href="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg">
+    <link rel="stylesheet" href="auth.css">
+</head>
+
+<body class="auth-body">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg" alt="Santander">
+            <span>Mi Banco</span>
+        </div>
+
+        <h1>Iniciar sesión</h1>
+        <p class="subtitle">Accede a tu banca digital con tu correo y contraseña.</p>
+
+        <div id="auth-error" class="auth-error"></div>
+
+        <form id="login-form">
+            <div class="auth-field">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" placeholder="tu@email.com" required autocomplete="email">
+            </div>
+
+            <div class="auth-field">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" placeholder="Tu contraseña" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="auth-btn" id="btn-login">Entrar</button>
+        </form>
+
+        <p class="auth-link">¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/login.js"></script>
+</body>
+
+</html>

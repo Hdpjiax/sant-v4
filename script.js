@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
     // ==================== UTILIDADES BÁSICAS ====================
     function formatDateString(dateInput) {
@@ -74,53 +74,22 @@ document.addEventListener("DOMContentLoaded", () => {
         if (element) element.addEventListener(eventName, handler);
     }
 
-    // ==================== MOVIMIENTOS ====================
-    const MOVS_STORAGE_KEY = "demo_movs_v3";
+    // ==================== AUTENTICACIÓN Y AJUSTES REMOTOS ====================
+    const session = await window.SantanderAuth.requireSession("register.html");
+    if (!session) return;
 
-    const defaultMovs = [
-        {
-            title: "METROBUSL1PA",
-            location: "CIUDAD DE MEX",
-            reference: "8673274",
-            date: "2026-06-15",
-            amount: "6.00",
-            type: "negative"
-        },
-        {
-            title: "SUPERVASCO D",
-            location: "MEXICO DF",
-            reference: "4651485",
-            date: "2026-06-15",
-            amount: "38.00",
-            type: "negative"
-        },
-        {
-            title: "REBEL WINGS",
-            location: "CIUDAD DE MEX",
-            reference: "9267919",
-            date: "2026-06-14",
-            amount: "338.80",
-            type: "negative"
-        },
-        {
-            title: "Transferencia",
-            location: "",
-            reference: "",
-            date: "2026-06-14",
-            amount: "500.00",
-            type: "positive"
-        }
-    ];
+    const userProfile = await window.SantanderAuth.getProfile();
 
-    let currentMovs;
-
+    let userSettings;
     try {
-        currentMovs = JSON.parse(localStorage.getItem(MOVS_STORAGE_KEY)) || defaultMovs;
-        if (!Array.isArray(currentMovs)) currentMovs = defaultMovs;
+        userSettings = await window.SettingsService.getMySettings();
     } catch (error) {
-        currentMovs = defaultMovs;
+        console.error("Error cargando ajustes:", error);
+        alert("No se pudieron cargar tus ajustes. Contacta al administrador.");
+        return;
     }
 
+    let currentMovs = userSettings.movements;
     let movementFilter = "all";
 
     function renderMovsApp() {
@@ -225,17 +194,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const sidebar = document.getElementById("sidebar-menu");
     const sidebarOverlay = document.getElementById("sidebar-overlay");
 
-    const inputElements = ["name", "subtitle", "balance", "account", "phone", "full-card", "brand", "exp"].reduce((acc, curr) => {
-        acc[curr] = document.getElementById("input-" + curr);
-        return acc;
-    }, {});
-
     function openSidebar() {
         if (sidebarOverlay) sidebarOverlay.classList.add("active");
         if (sidebar) sidebar.classList.add("active");
 
         const sidebarName = document.getElementById("sidebar-name");
-        if (sidebarName && inputElements.name) sidebarName.textContent = inputElements.name.value;
+        if (sidebarName) sidebarName.textContent = userSettings.name;
     }
 
     function closeSidebar() {
@@ -253,106 +217,29 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     if (sidebarOverlay) sidebarOverlay.addEventListener("click", closeSidebar);
 
-    // ==================== CONFIGURACIÓN MAESTRA ====================
-    const modal = document.getElementById("config-modal");
-    const movsListConfig = document.getElementById("config-movements-list");
+    // Ocultar ajustes locales — el admin los gestiona remotamente
+    const settingsLink = document.getElementById("open-config-from-sidebar");
+    if (settingsLink) settingsLink.style.display = "none";
 
-    on("open-config-from-sidebar", "click", (e) => {
-        e.preventDefault();
-        closeSidebar();
-
-        if (modal) modal.style.display = "flex";
-        if (movsListConfig) movsListConfig.innerHTML = "";
-
-        currentMovs.forEach(m => addMovConfigRow(
-            m.title,
-            m.date,
-            m.amount,
-            m.type,
-            m.location || "",
-            m.reference || ""
-        ));
-    });
-
-    function addMovConfigRow(title = "", date = "", amount = "", type = "negative", location = "", reference = "") {
-        if (!movsListConfig) return;
-
-        const row = document.createElement("div");
-        row.className = "config-mov-row";
-        row.innerHTML = `
-            <input type="text" placeholder="Establecimiento" value="${escapeHtml(title)}" style="margin-bottom:4px;">
-            <div class="config-mov-row-inputs">
-                <input type="text" placeholder="Lugar" value="${escapeHtml(location)}" style="flex:1;">
-                <input type="text" placeholder="Referencia" value="${escapeHtml(reference)}" style="flex:1;">
-            </div>
-            <div class="config-mov-row-inputs">
-                <input type="date" value="${escapeHtml(date)}" style="flex:1.5;">
-                <input type="text" placeholder="Monto" value="${escapeHtml(amount)}" style="flex:1;">
-                <select style="flex:0.8;">
-                    <option value="negative" ${type === "negative" ? "selected" : ""}>-</option>
-                    <option value="positive" ${type === "positive" ? "selected" : ""}>+</option>
-                </select>
-                <button type="button" class="btn-del-mov">X</button>
-            </div>
-        `;
-
-        const deleteBtn = row.querySelector(".btn-del-mov");
-        if (deleteBtn) deleteBtn.addEventListener("click", () => row.remove());
-
-        movsListConfig.appendChild(row);
+    if (userProfile?.role === "admin") {
+        const sidebarLinks = document.querySelector(".sidebar-links");
+        if (sidebarLinks) {
+            const adminLink = document.createElement("a");
+            adminLink.href = "admin.html";
+            adminLink.innerHTML = '<span class="material-icons-outlined">admin_panel_settings</span> Panel Admin';
+            adminLink.style.color = "var(--santander-red)";
+            adminLink.style.fontWeight = "600";
+            sidebarLinks.insertBefore(adminLink, sidebarLinks.querySelector("hr"));
+        }
     }
 
-    on("btn-add-mov-row", "click", () => {
-        const todayStr = new Date().toISOString().split("T")[0];
-        addMovConfigRow("NUEVO ESTABLECIMIENTO", todayStr, "100.00", "negative", "CIUDAD DE MEX", "0000000");
-    });
-
-    on("close-config", "click", () => {
-        if (modal) modal.style.display = "none";
-    });
-
-    on("save-config", "click", () => {
-        window.showLoader("Guardando cambios...");
-
-        setTimeout(() => {
-            Object.keys(inputElements).forEach(k => {
-                if (inputElements[k]) localStorage.setItem("demo_v2_" + k, inputElements[k].value);
-            });
-
-            const updatedMovs = Array.from(document.querySelectorAll(".config-mov-row")).map(r => {
-                const txtInputs = r.querySelectorAll("input");
-                const select = r.querySelector("select");
-
-                return {
-                    title: txtInputs[0]?.value.trim() || "Establecimiento",
-                    location: txtInputs[1]?.value.trim() || "",
-                    reference: txtInputs[2]?.value.trim() || "",
-                    date: txtInputs[3]?.value || "",
-                    amount: txtInputs[4]?.value.trim() || "0.00",
-                    type: select?.value || "negative"
-                };
-            });
-
-            currentMovs = updatedMovs;
-            localStorage.setItem(MOVS_STORAGE_KEY, JSON.stringify(currentMovs));
-            location.reload();
-        }, 800);
+    document.querySelector(".logout-link")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        closeSidebar();
+        window.SantanderAuth.signOut();
     });
 
     // ==================== CARGAR DATOS VISIBLES ====================
-    Object.keys(inputElements).forEach(k => {
-        const savedValue = localStorage.getItem("demo_v2_" + k);
-        if (savedValue && inputElements[k]) inputElements[k].value = savedValue;
-    });
-
-    const userName = inputElements.name?.value || "Juan Antonio";
-    const userSubtitle = inputElements.subtitle?.value || "García Nievez";
-    const balance = inputElements.balance?.value || "0.00";
-    const formattedBalance = formatAmount(balance);
-    const account = inputElements.account?.value || "14**9096";
-    const phone = inputElements.phone?.value || "4431318488";
-    const fullCard = inputElements["full-card"]?.value || "4152 3140 8080 9096";
-    const brand = inputElements.brand?.value || "VISA";
     function renderCardNetworkLogo(container, brandValue) {
         if (!container) return;
 
@@ -370,13 +257,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderAllCardNetworkLogos() {
+        const brandValue = userSettings?.brand || "VISA";
         document.querySelectorAll(".dynamic-card-network").forEach(container => {
-            renderCardNetworkLogo(container, brand);
+            renderCardNetworkLogo(container, brandValue);
         });
     }
-    const exp = inputElements.exp?.value || "12/28";
-    const maskedCardRef = getMaskedCardReference(fullCard);
-
     const displayName = document.getElementById("display-name");
     const displaySubtitle = document.getElementById("display-subtitle");
     const displayAccount = document.getElementById("display-account");
@@ -390,25 +275,47 @@ document.addEventListener("DOMContentLoaded", () => {
     const overviewCardRef = document.getElementById("overview-card-ref");
     const displayAccountDetail = document.getElementById("display-account-detail");
 
-    if (displayName) displayName.textContent = userName;
-    if (displaySubtitle) displaySubtitle.textContent = userSubtitle;
-    if (displayAccount) displayAccount.textContent = account;
-    if (displayPhone) displayPhone.textContent = phone;
-    if (displayFullCard) displayFullCard.textContent = fullCard;
-    if (displayBrand) renderCardNetworkLogo(displayBrand, brand);
-    renderAllCardNetworkLogos();
-    if (displayExp) displayExp.textContent = exp;
-    if (detailAccountNumber) detailAccountNumber.textContent = account;
-    if (detailCardRef) detailCardRef.textContent = maskedCardRef;
-    if (overviewAccountNumber) overviewAccountNumber.textContent = account;
-    if (overviewCardRef) overviewCardRef.textContent = "TDC " + maskedCardRef;
-    if (displayAccountDetail) displayAccountDetail.textContent = account;
+    function applyUserSettings(settings) {
+        userSettings = settings;
+        currentMovs = settings.movements;
 
-    document.querySelectorAll(".dynamic-balance").forEach(el => {
-        el.textContent = formattedBalance;
-    });
+        const userName = settings.name || "Usuario";
+        const userSubtitle = settings.subtitle || "";
+        const balance = settings.balance || "0.00";
+        const formattedBalance = formatAmount(balance);
+        const account = settings.account || "14**0000";
+        const phone = settings.phone || "";
+        const fullCard = settings.full_card || "4152 0000 0000 0000";
+        const brand = settings.brand || "VISA";
+        const exp = settings.exp || "12/28";
+        const maskedCardRef = getMaskedCardReference(fullCard);
 
-    renderMovsApp();
+        if (displayName) displayName.textContent = userName;
+        if (displaySubtitle) displaySubtitle.textContent = userSubtitle;
+        if (displayAccount) displayAccount.textContent = account;
+        if (displayPhone) displayPhone.textContent = phone;
+        if (displayFullCard) displayFullCard.textContent = fullCard;
+        if (displayBrand) renderCardNetworkLogo(displayBrand, brand);
+        renderAllCardNetworkLogos();
+        if (displayExp) displayExp.textContent = exp;
+        if (detailAccountNumber) detailAccountNumber.textContent = account;
+        if (detailCardRef) detailCardRef.textContent = maskedCardRef;
+        if (overviewAccountNumber) overviewAccountNumber.textContent = account;
+        if (overviewCardRef) overviewCardRef.textContent = "TDC " + maskedCardRef;
+        if (displayAccountDetail) displayAccountDetail.textContent = account;
+
+        if (modalFullCardNumber) modalFullCardNumber.textContent = fullCard;
+        if (modalCardExp) modalCardExp.textContent = exp;
+
+        document.querySelectorAll(".dynamic-balance").forEach(el => {
+            el.textContent = formattedBalance;
+        });
+
+        const sidebarName = document.getElementById("sidebar-name");
+        if (sidebarName) sidebarName.textContent = userName;
+
+        renderMovsApp();
+    }
 
     // ==================== NAVEGACIÓN GLOBAL SPA ====================
     let historyStack = ["home-view"];
@@ -424,8 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let modalCvvInterval;
 
-    if (modalFullCardNumber) modalFullCardNumber.textContent = fullCard;
-    if (modalCardExp) modalCardExp.textContent = exp;
+    applyUserSettings(userSettings);
 
     function formatModalCvv(value) {
         return String(value).split("").join(" ");
@@ -531,11 +437,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     on("btn-copy-modal-card", "click", () => {
-        copyText(fullCard);
+        copyText(userSettings.full_card);
     });
 
     on("btn-copy-modal-exp", "click", () => {
-        copyText(exp);
+        copyText(userSettings.exp);
     });
     function navigateTo(viewId, loaderMsg = "Cargando...", delay = 400) {
 
@@ -652,12 +558,17 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => toast.remove(), 2800);
     };
 
-    on("btn-sync", "click", () => {
+    on("btn-sync", "click", async () => {
         window.showLoader("Sincronizando información...");
-        setTimeout(() => {
+        try {
+            const freshSettings = await window.SettingsService.getMySettings();
+            applyUserSettings(freshSettings);
+            window.showToast("Información actualizada correctamente");
+        } catch (error) {
+            window.showToast("Error al sincronizar. Intenta de nuevo.");
+        } finally {
             window.hideLoader();
-            window.showToast("Saldo actualizado correctamente");
-        }, 1200);
+        }
     });
 
     on("btn-close-promo", "click", () => {
