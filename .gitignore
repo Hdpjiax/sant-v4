@@ -7,3 +7,4 @@ js/config.js
 dist/
 .vercel
 node_modules
+.env.local
