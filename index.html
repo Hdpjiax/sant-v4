@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santander</title>
+    <link rel="icon" type="image/svg+xml"
+        href="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <aside class="sidebar-menu" id="sidebar-menu">
+        <div class="sidebar-header">
+            <div class="sidebar-profile">
+                <span class="material-icons-outlined" style="font-size: 40px;">account_circle</span>
+                <div>
+                    <h3 id="sidebar-name">Juan Antonio</h3>
+                    <p>Ver mi perfil</p>
+                </div>
+            </div>
+            <span class="material-icons-outlined close-sidebar" id="btn-close-sidebar">close</span>
+        </div>
+        <div class="sidebar-links">
+            <a href="#"><span class="material-icons-outlined">security</span> Seguridad</a>
+            <a href="#"><span class="material-icons-outlined">help_outline</span> Ayuda y soporte</a>
+            <a href="#"><span class="material-icons-outlined">account_balance</span> Mis cuentas</a>
+            <a href="#"><span class="material-icons-outlined">notifications_none</span> Notificaciones</a>
+            <hr>
+            <a href="#" id="open-config-from-sidebar" class="settings-link"><span
+                    class="material-icons-outlined">settings</span> Ajustes</a>
+            <a href="#" class="logout-link"><span class="material-icons-outlined">logout</span> Cerrar sesión</a>
+        </div>
+    </aside>
+
+    <div class="app-container">
+
+        <div class="status-bar">
+
+        </div>
+
+        <div id="home-view" class="view-active">
+            <header class="app-header">
+                <div class="welcome-section">
+                    <span class="brand">Mi Banco</span>
+                    <h1>¡Hola, <span id="display-name">Juan Antonio</span>!</h1>
+                    <p class="subtitle" id="display-subtitle">García Nievez</p>
+                </div>
+                <div class="header-actions">
+                    <span class="material-icons-outlined icon-red" id="btn-sync">sync</span>
+                    <span class="material-icons-outlined icon-red" id="btn-open-sidebar-home"
+                        style="cursor:pointer;">more_vert</span>
+                </div>
+            </header>
+            <section class="home-products">
+                <div class="products-group">
+                    <div class="products-group-header">
+                        <h2>Cuentas en pesos</h2>
+                        <div class="products-group-total">
+                            <strong><span style="font-size: 15px;" class="dynamic-balance">0.00</span></strong>
+                            <span style="font-size: 15px;">MXN</span>
+                            <span class="material-icons-outlined group-action-icon">remove</span>
+                        </div>
+                    </div>
+
+                    <article class="home-product-card is-clickable" id="open-card-details">
+                        <div class="home-product-icon">
+                            <div class="mini-card mini-card-gray">
+                                <div class="mini-card-logo">Santander</div>
+                                <div class="mini-card-line"></div>
+                                <div class="mini-card-chip"></div>
+                                <div class="mini-card-contactless"></div>
+                                <div class="mini-card-mastercard">
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="home-product-info">
+                            <div class="home-product-balance">$<span class="dynamic-balance">0.00</span> MXN</div>
+                            <div class="home-product-title">CUENTA DIGITAL</div>
+                            <div class="home-product-meta" id="display-account">14**9096</div>
+                            <div class="home-product-meta">Celular · <span id="display-phone">4431318488</span></div>
+                        </div>
+
+                        <span class="material-icons-outlined home-product-arrow">chevron_right</span>
+                    </article>
+                </div>
+
+                <div class="products-group credit-products-group">
+                    <div class="products-group-header">
+                        <h2>Tarjetas de crédito</h2>
+                        <div class="products-group-total">
+                            <strong style="font-size: 15px;">11,795.91</strong>
+                            <span style="font-size: 15px;">MXN</span>
+                            <span class="material-icons-outlined group-action-icon">remove</span>
+                        </div>
+                    </div>
+
+                    <article class="home-product-card visual-only-card">
+                        <div class="home-product-icon">
+                            <div class="mini-card mini-card-likeu">
+                                <div class="mini-card-logo">Santander</div>
+                                <div class="mini-card-flame">♨</div>
+                                <div class="mini-card-chip"></div>
+                                <div class="mini-card-contactless"></div>
+                                <div class="mini-card-mastercard">
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="home-product-info">
+                            <div class="home-product-balance">$55.00 MXN</div>
+                            <div class="home-product-title">SANTANDER LIKEU</div>
+                            <div class="home-product-meta">5578 **** **** 2301</div>
+                        </div>
+
+                        <span class="material-icons-outlined home-product-arrow">chevron_right</span>
+                    </article>
+
+                    <article class="home-product-card visual-only-card">
+                        <div class="home-product-icon">
+                            <div class="mini-card mini-card-free">
+                                <div class="mini-card-free-logo">Santander<br><strong>free</strong></div>
+                                <div class="mini-card-chip"></div>
+                                <div class="mini-card-contactless"></div>
+                                <div class="mini-card-mastercard">
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="home-product-info">
+                            <div class="home-product-balance">$5,467.38 MXN</div>
+                            <div class="home-product-title">FREE</div>
+                            <div class="home-product-meta">5578 **** **** 7814</div>
+                        </div>
+
+                        <span class="material-icons-outlined home-product-arrow">chevron_right</span>
+                    </article>
+
+                    <article class="home-product-card visual-only-card">
+                        <div class="home-product-icon">
+                            <div class="mini-card mini-card-zero">
+                                <div class="mini-card-logo">Santander</div>
+                                <div class="mini-card-zero-text">ZERO</div>
+                                <div class="mini-card-chip"></div>
+                                <div class="mini-card-contactless"></div>
+                                <div class="mini-card-mastercard">
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="home-product-info">
+                            <div class="home-product-balance">$6,273.53 MXN</div>
+                            <div class="home-product-title">SANTANDER ZERO</div>
+                            <div class="home-product-meta">5578 **** **** 5096</div>
+                        </div>
+
+                        <span class="material-icons-outlined home-product-arrow">chevron_right</span>
+                    </article>
+                </div>
+            </section>
+
+            <section class="home-extra-sections menu-list">
+                <div class="menu-accordion">
+                    <div class="menu-header">
+                        <span>Mis Beneficios</span>
+                        <span class="material-icons-outlined icon-red toggle-icon">add</span>
+                    </div>
+                    <div class="menu-content">
+                        <p>Consulta promociones, recompensas y beneficios disponibles para tus cuentas y tarjetas.</p>
+                    </div>
+                </div>
+
+                <div class="menu-accordion">
+                    <div class="menu-header">
+                        <span>Dinero creciente</span>
+                        <span class="material-icons-outlined icon-red toggle-icon">add</span>
+                    </div>
+                    <div class="menu-content">
+                        <p>Activa herramientas para hacer crecer tu dinero de forma automática con tus saldos
+                            disponibles.</p>
+                    </div>
+                </div>
+
+                <div class="menu-accordion">
+                    <div class="menu-header">
+                        <span>Mis Metas</span>
+                        <span class="material-icons-outlined icon-red toggle-icon">add</span>
+                    </div>
+                    <div class="menu-content">
+                        <p>Crea metas de ahorro, define un monto objetivo y revisa tu avance en cualquier momento.</p>
+                    </div>
+                </div>
+
+                <div class="menu-accordion">
+                    <div class="menu-header">
+                        <span>Inversiones plazo</span>
+                        <span class="material-icons-outlined icon-red toggle-icon">add</span>
+                    </div>
+                    <div class="menu-content">
+                        <p>Explora opciones de inversión a plazo fijo según tu saldo, plazo elegido y rendimiento
+                            estimado.</p>
+                    </div>
+                </div>
+
+                <div class="menu-accordion">
+                    <div class="menu-header">
+                        <span>Créditos</span>
+                        <span class="material-icons-outlined icon-red toggle-icon">add</span>
+                    </div>
+                    <div class="menu-content">
+                        <p>Consulta ofertas de crédito disponibles, líneas preaprobadas y opciones personalizadas.</p>
+                    </div>
+                </div>
+                <div class="home-hot-banner" id="home-hot-banner">
+                    <div class="home-hot-badge">
+                        <span>DÍAS</span>
+                        <strong>HOT</strong>
+                    </div>
+
+                    <div class="home-hot-text">
+                        <h3>¡Aprovecha los días Hot!</h3>
+                        <p>Este Hot Sale paga con tus tarjetas de Santander y descubre promociones especiales.</p>
+                    </div>
+
+                    <button type="button" class="home-hot-close" id="btn-close-home-hot-banner">&times;</button>
+                </div>
+            </section>
+
+
+
+            <nav class="bottom-nav">
+                <div class="nav-item" id="btn-nav-transfer"><span
+                        class="material-icons-outlined">arrow_forward</span><span>Transferir</span></div>
+                <div class="nav-item" id="btn-nav-retiro"><span
+                        class="material-icons-outlined">credit_card</span><span>Retiro sin tarjeta</span></div>
+                <div class="nav-item" id="btn-nav-pagar"><span
+                        class="material-icons-outlined">indeterminate_check_box</span><span>Pagar tarjetas
+                        propias</span></div>
+                <div class="nav-item" id="btn-nav-recargar"><span
+                        class="material-icons-outlined">smartphone</span><span>Recargar celular</span></div>
+                <div class="nav-item" id="btn-nav-ofertas"><span
+                        class="material-icons-outlined">sentiment_satisfied_alt</span><span>Mis ofertas</span></div>
+            </nav>
+        </div>
+
+
+        <div id="account-overview-view" class="hidden-view">
+            <header class="account-overview-header santander-top-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back_ios</span>
+
+                <div class="top-santander-logo">
+                    <img src="assets/santander-flame.png" alt="Santander">
+                </div>
+
+                <span class="material-icons-outlined icon-red" id="btn-open-sidebar-account"
+                    style="cursor:pointer;">menu</span>
+            </header>
+
+            <section class="account-overview-screen">
+                <div class="account-card-stage">
+                    <div class="account-card-carousel">
+                        <article class="account-main-card horizontal-card" id="btn-open-card-info-from-overview">
+                            <div class="horizontal-card-inner">
+                                <div class="horizontal-card-watermark"></div>
+
+                                <div class="horizontal-card-content">
+                                    <h3>CUENTA DIGITAL</h3>
+                                    <p class="horizontal-card-subtitle">Dinero disponible en MXN</p>
+
+                                    <div class="horizontal-card-balance">
+                                        <span>$</span>
+                                        <strong class="dynamic-balance">15,670.00</strong>
+                                    </div>
+
+                                    <p class="horizontal-card-ref" id="overview-card-ref">4152••9096</p>
+                                </div>
+
+                                <div class="card-network-logo dynamic-card-network" id="overview-card-network"></div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <p class="account-card-help">Toca la tarjeta para ver su información</p>
+
+                    <div class="account-card-dots" aria-hidden="true">
+                        <span class="is-active"></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="account-options-list">
+                    <button class="account-option-row account-option-row-toggle" id="btn-overview-toggle-card"
+                        type="button">
+                        <span id="overview-card-power-text">Prender o apagar tarjeta</span>
+                        <span class="material-icons-outlined" id="overview-card-power-icon">add</span>
+                    </button>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-card-info">
+                        <span>Actualizar tarjeta digital</span>
+                        <span class="account-option-right">
+                            <em>Nuevo</em>
+                            <span class="material-icons-outlined">chevron_right</span>
+                        </span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-movements">
+                        <span>Movimientos</span>
+                        <span class="material-icons-outlined">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-pay">
+                        <span>Pagar tarjeta</span>
+                        <span class="material-icons-outlined">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-defer" type="button">
+                        <span>Difiere tus compras</span>
+                        <span class="material-icons-outlined">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-nip" type="button">
+                        <span>Generación de NIP</span>
+                        <span class="material-icons-outlined">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-spending-control" type="button">
+                        <span>Control de gasto</span>
+                        <span class="material-icons-outlined">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-wallets" type="button">
+                        <span>Billeteras digitales</span>
+                        <span class="material-icons-outlined">chevron_right</span>
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <div id="detail-view" class="hidden-view">
+            <header class="select-header santander-top-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back_ios</span>
+
+                <div class="top-santander-logo">
+                    <img src="assets/santander-flame.png" alt="Santander">
+                </div>
+
+                <span class="material-icons-outlined icon-red" id="btn-open-sidebar-detail"
+                    style="cursor:pointer;">menu</span>
+            </header>
+
+            <section class="movement-screen">
+                <h2 class="movement-page-title">Movimientos de cuenta</h2>
+
+                <div class="movement-summary-card">
+                    <div class="movement-summary-accent"></div>
+
+                    <div class="movement-summary-top">
+                        <div class="movement-summary-left">
+                            <span class="summary-label">CUENTA DIGITAL</span>
+                            <strong class="summary-account" id="detail-account-number">14**9096</strong>
+
+                            <div class="summary-card-reference">
+                                <span class="summary-card-icon"></span>
+                                <span id="detail-card-ref">4152••9096</span>
+                            </div>
+                        </div>
+
+                        <div class="movement-summary-right">
+                            <strong class="summary-balance">$<span class="dynamic-balance">15670.00</span></strong>
+                            <span class="summary-currency">MXN</span>
+                        </div>
+                    </div>
+
+                    <div class="movement-summary-bottom">
+                        <button class="summary-detail-btn" id="btn-open-card-info">
+                            Detalles
+                            <span class="material-icons-outlined">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="movement-filter-tabs">
+                    <button class="filter-tab active" data-filter="all">Todos</button>
+                    <button class="filter-tab" data-filter="positive">Ingresos</button>
+                    <button class="filter-tab" data-filter="negative">Egresos</button>
+                </div>
+
+                <section class="movements-section santander-movement-list">
+                    <div id="movements-container"></div>
+
+                    <button class="older-movements-btn" id="btn-load-older-movements">Ver más anterior</button>
+                    <span class="material-icons-outlined older-movements-icon">expand_more</span>
+                </section>
+            </section>
+        </div>
+
+        <div id="card-info-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Detalle de tarjeta</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+
+            <section class="card-showcase">
+                <div class="virtual-card">
+                    <div class="virtual-card-top">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg"
+                            alt="Santander" class="santander-logo-img">
+                        <span class="material-icons-outlined contactless-icon">contactless</span>
+                    </div>
+
+                    <div class="virtual-card-chip-row">
+                        <span class="card-subtitle">Tarjeta Digital</span>
+                    </div>
+
+                    <div class="virtual-card-middle">
+                        <span id="display-full-card">4152 3140 8080 9096</span>
+                    </div>
+
+                    <div class="virtual-card-bottom">
+                        <div class="sensitive-data" id="sensitive-data">
+                            <div class="data-group">
+                                <span class="data-label">VENC</span>
+                                <strong id="display-exp" class="data-value">12/28</strong>
+                            </div>
+                        </div>
+                        <div class="card-network-logo dynamic-card-network" id="display-brand"></div>
+                    </div>
+                </div>
+
+                <div class="card-detail-extra">
+                    <div class="card-detail-row">
+                        <span>Cuenta</span>
+                        <strong id="display-account-detail">14**9096</strong>
+                    </div>
+                    <div class="card-detail-row">
+                        <span>Estatus</span>
+                        <strong id="card-status-text">Activa</strong>
+                    </div>
+                </div>
+
+                <button class="btn-toggle-cvv" id="btn-generate-cvv">
+                    <span class="material-icons-outlined" id="cvv-icon">lock_clock</span>
+                    <span id="cvv-text">Generar CVV dinámico</span>
+                </button>
+            </section>
+
+            <section class="card-actions">
+                <div class="action-btn" id="btn-action-transfer">
+                    <div class="action-circle"><span class="material-icons-outlined">arrow_forward</span></div>
+                    <span>Transferir</span>
+                </div>
+                <div class="action-btn" id="btn-action-toggle">
+                    <div class="action-circle"><span class="material-icons-outlined"
+                            id="toggle-card-icon">power_settings_new</span></div>
+                    <span id="toggle-card-text">Apagar tarjeta</span>
+                </div>
+                <div class="action-btn" id="btn-action-statement">
+                    <div class="action-circle"><span class="material-icons-outlined">receipt_long</span></div>
+                    <span>Estado de cuenta</span>
+                </div>
+            </section>
+        </div>
+
+
+        <div id="transfer-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Transferir</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+            <div class="page-content">
+                <div class="mock-form">
+                    <label>Cuenta destino / CLABE / Celular</label>
+                    <input type="text" id="transfer-dest" placeholder="Ej. 012345678901234567">
+
+                    <label>Importe (MXN)</label>
+                    <input type="number" id="transfer-amount" placeholder="$ 0.00">
+
+                    <label>Concepto de pago</label>
+                    <input type="text" id="transfer-concept" placeholder="Ej. Pago de cena">
+
+                    <button class="primary-action-btn mt-20" id="btn-do-transfer">Continuar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="transfer-success-view" class="hidden-view">
+            <div class="success-header-bg">
+                <span class="material-icons-outlined success-icon-large">check_circle</span>
+                <h2>Transferencia exitosa</h2>
+                <h1 id="success-transfer-amount">$ 0.00</h1>
+            </div>
+            <div class="page-content" style="background-color: #F7F9FA;">
+                <div class="receipt-box">
+                    <div class="receipt-row"><span class="receipt-label">Destino</span><span class="receipt-value"
+                            id="success-transfer-dest">---</span></div>
+                    <div class="receipt-row"><span class="receipt-label">Concepto</span><span class="receipt-value"
+                            id="success-transfer-concept">---</span></div>
+                    <div class="receipt-row"><span class="receipt-label">Fecha</span><span class="receipt-value"
+                            id="success-transfer-date">---</span></div>
+                    <div class="receipt-row"><span class="receipt-label">Folio</span><span
+                            class="receipt-value">0928374821</span></div>
+                </div>
+                <button class="primary-action-btn mt-20 btn-home-action">Volver al inicio</button>
+            </div>
+        </div>
+
+        <div id="statement-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Estado de Cuenta</h2>
+                <span class="material-icons-outlined icon-red">get_app</span>
+            </header>
+            <div class="page-content" style="padding: 0; background-color: #FFFFFF;">
+                <div class="statement-header">
+                    <h3>Últimos Movimientos</h3>
+                    <p>Consulta el detalle de tus transacciones</p>
+                </div>
+                <div id="statement-movements-container"></div>
+            </div>
+        </div>
+
+        <div id="cardless-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Retiro sin tarjeta</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+            <div class="page-content">
+                <div class="mock-form">
+                    <div class="empty-state" style="padding: 10px 0 20px 0;">
+                        <span class="material-icons-outlined empty-icon" style="color: var(--santander-red);">atm</span>
+                        <h3 style="font-size: 16px;">Generar Referencia</h3>
+                        <p style="font-size: 13px;">Retira efectivo en cualquier cajero automático sin insertar tu
+                            plástico.</p>
+                    </div>
+                    <label>Importe a retirar (MXN)</label>
+                    <select id="cardless-amount">
+                        <option value="100.00">$ 100.00</option>
+                        <option value="200.00">$ 200.00</option>
+                        <option value="500.00" selected>$ 500.00</option>
+                        <option value="1000.00">$ 1,000.00</option>
+                    </select>
+                    <button class="primary-action-btn mt-20" id="btn-do-cardless">Generar clave de retiro</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cardless-active-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Clave de retiro</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+            <div class="page-content cv-container">
+                <div class="cvv-box" style="border-top: 4px solid var(--santander-red);">
+                    <p>Acude a cualquier cajero e ingresa la siguiente clave:</p>
+                    <h1 id="dynamic-cardless-number"
+                        style="letter-spacing: 4px; font-size: 40px; color: var(--santander-red);">---</h1>
+                    <p style="margin-bottom: 15px; font-weight: bold;">Monto: <span id="cardless-active-amount"></span>
+                    </p>
+                    <div class="timer-box">
+                        <span class="material-icons-outlined">timer</span>
+                        <span id="cardless-timer">10:00</span>
+                    </div>
+                    <p class="cvv-warning">Válido por 10 minutos.</p>
+                </div>
+                <button class="primary-action-btn mt-20 btn-home-action">Terminar</button>
+            </div>
+        </div>
+
+        <div id="pay-cards-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Pagar Tarjetas</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+            <div class="page-content empty-state">
+                <span class="material-icons-outlined empty-icon" style="color: #4CAF50;">verified</span>
+                <h3>Estás al corriente</h3>
+                <p>No tienes pagos pendientes en tus tarjetas de crédito asociadas en este momento.</p>
+                <button class="primary-action-btn mt-20 btn-outline back-btn" style="width: 80%;">Regresar</button>
+            </div>
+        </div>
+
+        <div id="topup-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Recargar Celular</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+            <div class="page-content">
+                <div class="mock-form">
+                    <label>Número de celular (10 dígitos)</label>
+                    <input type="tel" id="topup-phone" value="4431318488" maxlength="10">
+                    <label>Compañía telefónica</label>
+                    <select id="topup-company">
+                        <option>Telcel</option>
+                        <option>AT&T</option>
+                        <option>Movistar</option>
+                    </select>
+                    <label>Monto de la recarga</label>
+                    <select id="topup-amount">
+                        <option value="50.00">$ 50.00</option>
+                        <option value="100.00" selected>$ 100.00</option>
+                        <option value="200.00">$ 200.00</option>
+                    </select>
+                    <button class="primary-action-btn mt-20" id="btn-do-topup">Recargar Ahora</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="topup-success-view" class="hidden-view">
+            <div class="success-header-bg">
+                <span class="material-icons-outlined success-icon-large">check_circle</span>
+                <h2>Recarga exitosa</h2>
+                <h1 id="success-topup-amount">$ 0.00</h1>
+            </div>
+            <div class="page-content" style="background-color: #F7F9FA;">
+                <div class="receipt-box">
+                    <div class="receipt-row"><span class="receipt-label">Número</span><span class="receipt-value"
+                            id="success-topup-phone">---</span></div>
+                    <div class="receipt-row"><span class="receipt-label">Compañía</span><span class="receipt-value"
+                            id="success-topup-company">---</span></div>
+                    <div class="receipt-row"><span class="receipt-label">Fecha</span><span class="receipt-value"
+                            id="success-topup-date">---</span></div>
+                    <div class="receipt-row"><span class="receipt-label">Autorización</span><span
+                            class="receipt-value">018273</span></div>
+                </div>
+                <button class="primary-action-btn mt-20 btn-home-action">Volver al inicio</button>
+            </div>
+        </div>
+
+        <div id="offers-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Mis Ofertas</h2>
+                <span class="material-icons-outlined icon-red">sentiment_satisfied_alt</span>
+            </header>
+            <div class="page-content" style="background-color: #F0F3F5;">
+                <h3 style="margin-bottom: 16px; font-size: 16px; color: var(--text-dark);">Seleccionadas para ti</h3>
+
+                <div class="offer-card">
+                    <div class="offer-img" style="background-color: #1a3c71; color: white;">AEROMÉXICO</div>
+                    <div class="offer-details">
+                        <h4>Destinos Nacionales</h4>
+                        <p>Paga solo el <strong>45%</strong> del total reservando 2 días antes.</p>
+                        <span class="offer-tag">Viajes</span>
+                    </div>
+                </div>
+
+                <div class="offer-card">
+                    <div class="offer-img" style="background-color: #007A33; color: white;">STARBUCKS</div>
+                    <div class="offer-details">
+                        <h4>Bebidas 2x1</h4>
+                        <p>Paga con tu Cuenta Digital y obtén 2x1 en bebidas preparadas.</p>
+                        <span class="offer-tag">Alimentos</span>
+                    </div>
+                </div>
+
+                <div class="offer-card">
+                    <div class="offer-img" style="background-color: #FF5A5F; color: white;">AIRBNB</div>
+                    <div class="offer-details">
+                        <h4>Escapada de fin de semana</h4>
+                        <p>Paga solo el <strong>60%</strong> del alojamiento con tu tarjeta virtual.</p>
+                        <span class="offer-tag">Viajes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="defer-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Difiere tus compras</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+
+            <div class="page-content">
+                <div class="feature-card">
+                    <h3>Compras disponibles para diferir</h3>
+                    <p>Selecciona una compra y elige el plazo para convertirla en pagos mensuales.</p>
+
+                    <div id="defer-purchases-list" class="defer-purchases-list"></div>
+
+                    <label class="feature-label">Plazo</label>
+                    <select id="defer-months" class="feature-input">
+                        <option value="3">3 meses</option>
+                        <option value="6" selected>6 meses</option>
+                        <option value="9">9 meses</option>
+                        <option value="12">12 meses</option>
+                    </select>
+
+                    <button class="primary-action-btn mt-20" id="btn-confirm-defer">Continuar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="nip-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Generación de NIP</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+
+            <div class="page-content cv-container">
+                <div class="cvv-box">
+                    <p>Tu NIP temporal es:</p>
+                    <h1 id="dynamic-nip-number">----</h1>
+
+                    <div class="timer-box">
+                        <span class="material-icons-outlined">timer</span>
+                        <span id="nip-timer">03:00</span>
+                    </div>
+
+                    <p class="cvv-warning">Este NIP es temporal y solo debe usarse para activar o validar tu tarjeta.
+                    </p>
+
+                    <button class="primary-action-btn mt-20" id="btn-regenerate-nip">Generar nuevo NIP</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="spending-control-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Control de gasto</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+
+            <div class="page-content">
+                <div class="feature-card">
+                    <h3>Límite mensual</h3>
+                    <p>Define cuánto puedes gastar con tu tarjeta digital durante el mes.</p>
+
+                    <div class="spending-limit-display">
+                        $<span id="spending-limit-value">5,000.00</span> MXN
+                    </div>
+
+                    <input type="range" id="spending-limit-range" min="500" max="50000" step="500" value="5000">
+
+                    <label class="feature-label">Editar límite manualmente</label>
+                    <input class="feature-input" type="number" id="spending-limit-input" value="5000">
+
+                    <div class="control-toggle-row">
+                        <span>Compras por internet</span>
+                        <button class="mini-switch is-on" data-control-switch="internet"><span></span></button>
+                    </div>
+
+                    <div class="control-toggle-row">
+                        <span>Compras en el extranjero</span>
+                        <button class="mini-switch" data-control-switch="foreign"><span></span></button>
+                    </div>
+
+                    <div class="control-toggle-row">
+                        <span>Retiros en cajero</span>
+                        <button class="mini-switch is-on" data-control-switch="atm"><span></span></button>
+                    </div>
+
+                    <button class="primary-action-btn mt-20" id="btn-save-spending-control">Guardar cambios</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="wallets-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Billeteras digitales</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+
+            <div class="page-content">
+                <div class="feature-card">
+                    <h3>Agrega tu tarjeta digital</h3>
+                    <p>Usa tu tarjeta con billeteras digitales compatibles.</p>
+
+                    <div class="wallet-row">
+                        <div>
+                            <strong>Apple Pay</strong>
+                            <span id="wallet-apple-status">No agregada</span>
+                        </div>
+                        <button class="wallet-action-btn" data-wallet="apple">Agregar</button>
+                    </div>
+
+                    <div class="wallet-row">
+                        <div>
+                            <strong>Google Wallet</strong>
+                            <span id="wallet-google-status">No agregada</span>
+                        </div>
+                        <button class="wallet-action-btn" data-wallet="google">Agregar</button>
+                    </div>
+
+                    <div class="wallet-row">
+                        <div>
+                            <strong>Samsung Wallet</strong>
+                            <span id="wallet-samsung-status">No agregada</span>
+                        </div>
+                        <button class="wallet-action-btn" data-wallet="samsung">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="global-loader" class="global-loader hidden-loader">
+            <div class="custom-spinner"></div>
+            <p id="loader-text" class="loader-text-msg">Cargando...</p>
+        </div>
+        <div class="digital-card-modal hidden-digital-card-modal" id="digital-card-modal" aria-hidden="true">
+            <div class="digital-card-backdrop" id="digital-card-backdrop"></div>
+
+            <section class="digital-card-sheet" role="dialog" aria-modal="true"
+                aria-labelledby="digital-card-modal-title">
+                <header class="digital-card-modal-header">
+                    <span></span>
+                    <h2 id="digital-card-modal-title">Tarjeta digital</h2>
+                    <button type="button" id="btn-close-digital-card-modal"
+                        class="digital-card-close-btn">Cerrar</button>
+                </header>
+
+                <div class="digital-card-cvv-area">
+                    <div class="digital-card-cvv-row">
+                        <div class="digital-card-cvv-spacer"></div>
+
+                        <strong id="modal-dynamic-cvv" class="digital-card-cvv-number">---</strong>
+
+                        <button type="button" class="digital-card-copy-btn" id="btn-copy-modal-cvv">
+                            <span class="material-icons-outlined">content_copy</span>
+                            <small>Copiar</small>
+                        </button>
+                    </div>
+
+                    <div class="digital-card-progress-track">
+                        <div class="digital-card-progress-fill" id="modal-cvv-progress"></div>
+                    </div>
+
+                    <p class="digital-card-time-left">Quedan <strong id="modal-cvv-timer">03:00</strong> min.</p>
+
+                    <p class="digital-card-warning">
+                        Tu código de seguridad (CVV)<br>
+                        tiene una validez de <strong>03:00 min.</strong>
+                    </p>
+                </div>
+
+                <div class="digital-card-info-list">
+                    <div class="digital-card-info-row">
+                        <div>
+                            <span>Número de tarjeta</span>
+                            <strong id="modal-full-card-number">4152 3140 8080 9096</strong>
+                        </div>
+
+                        <button type="button" class="digital-card-copy-btn" id="btn-copy-modal-card">
+                            <span class="material-icons-outlined">content_copy</span>
+                            <small>Copiar</small>
+                        </button>
+                    </div>
+
+                    <div class="digital-card-info-row">
+                        <div>
+                            <span>Fecha de vencimiento</span>
+                            <strong id="modal-card-exp">12/28</strong>
+                        </div>
+
+                        <button type="button" class="digital-card-copy-btn" id="btn-copy-modal-exp">
+                            <span class="material-icons-outlined">content_copy</span>
+                            <small>Copiar</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="digital-card-switch-row">
+                    <strong>Tarjeta digital prendida</strong>
+
+                    <button type="button" class="digital-card-switch is-on" id="modal-card-switch"
+                        aria-label="Tarjeta digital prendida">
+                        <span></span>
+                    </button>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="config-modal" id="config-modal">
+        <div class="modal-content">
+            <h2>Configuración de la Demo</h2>
+
+            <label>Nombre de usuario:</label>
+            <input type="text" id="input-name" value="Juan Antonio">
+
+            <label>Apellido / Subtítulo:</label>
+            <input type="text" id="input-subtitle" value="García Nievez">
+
+            <label>Saldo General:</label>
+            <input type="text" id="input-balance" value="0.00">
+
+            <label>Cuenta Corta (Inicio):</label>
+            <input type="text" id="input-account" value="14**9096">
+
+            <label>Celular (Cuenta principal):</label>
+            <input type="text" id="input-phone" value="4431318488">
+
+            <label>Tarjeta Completa (Detalles):</label>
+            <input type="text" id="input-full-card" value="4152 3140 8080 9096">
+
+            <label>Tipo de red (Franquicia):</label>
+            <select id="input-brand">
+                <option value="VISA">VISA</option>
+                <option value="Mastercard">Mastercard</option>
+            </select>
+
+            <label>Vencimiento:</label>
+            <input type="text" id="input-exp" value="12/28">
+
+            <fieldset style="margin-top: 15px; border: 1px solid #CCC; padding: 10px; border-radius: 8px;">
+                <legend style="padding: 0 5px; font-weight: bold; font-size:12px;">Administrar Movimientos</legend>
+                <div id="config-movements-list"></div>
+                <button type="button"
+                    style="width: 100%; margin-top: 5px; padding: 6px; font-weight: bold; cursor:pointer;"
+                    id="btn-add-mov-row">+ Añadir Movimiento</button>
+            </fieldset>
+
+            <div class="modal-buttons">
+                <button id="save-config" class="btn-save">Guardar Todo</button>
+                <button id="close-config" class="btn-cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
