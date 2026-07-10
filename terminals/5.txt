@@ -3,7 +3,7 @@ pid: 11548
 cwd: "C:\Users\Antonio Garcia\pagina snatnder\sant v4"
 command: "pip install python-barcode Pillow -q; Get-Content \"C:\\Users\\Antonio Garcia\\pagina snatnder\\sant v4\\test-payload.json\" -Raw | python \"C:\\Users\\Antonio Garcia\\pagina snatnder\\sant v4\\scripts\\generate-statement.py\" | Set-Content \"C:\\Users\\Antonio Garcia\\pagina snatnder\\sant v4\\test-output.pdf\" -Encoding Byte; Write-Host \"exit:\" $LASTEXITCODE"
 started_at: 2026-07-01T20:01:08.791Z
-running_for_ms: 3634996  
+running_for_ms: 4644994  
 ---
 WARNING: Ignoring invalid distribution ~elethon (C:\Users\Antonio Garcia\AppData\Local\Programs\Python\Python312\Lib\site-packages)
 WARNING: Ignoring invalid distribution ~elethon (C:\Users\Antonio Garcia\AppData\Local\Programs\Python\Python312\Lib\site-packages)

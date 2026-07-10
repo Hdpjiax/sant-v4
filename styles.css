@@ -5722,3 +5722,236 @@ textarea {
 .horizontal-card-inner .card-network-logo {
     color: #FFFFFF;
 }
+
+/* ==================== PERFIL / AJUSTES ==================== */
+#profile-view .page-content {
+    padding-bottom: 40px;
+}
+
+#profile-view .feature-card {
+    padding: 20px 16px;
+}
+
+#profile-view .feature-label {
+    display: block;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+#profile-view .feature-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 15px;
+    background: #F9F9F9;
+    color: var(--text-dark);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+#profile-view .feature-input:focus {
+    outline: none;
+    border-color: var(--santander-red);
+    background: #FFF;
+    box-shadow: 0 0 0 3px rgba(236, 0, 0, 0.08);
+}
+
+#profile-view select.feature-input {
+    appearance: auto;
+    -webkit-appearance: auto;
+    cursor: pointer;
+    background: #F9F9F9;
+}
+
+#profile-view .profile-movements-section h4 {
+    margin: 24px 0 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+#profile-view .profile-movements-section > p {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.4;
+    margin-bottom: 14px;
+}
+
+/* Movement row — mobile-first */
+#profile-movements-list .config-mov-row {
+    background: #F5F7F8;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #E5E9EC;
+}
+
+#profile-movements-list .config-mov-row > input:first-child {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid #DDE2E6;
+    border-radius: 8px;
+    font-size: 13px;
+    background: #FFF;
+    margin-bottom: 8px;
+}
+
+#profile-movements-list .config-mov-row-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+#profile-movements-list .config-mov-row-inputs:last-child {
+    margin-bottom: 0;
+}
+
+#profile-movements-list .config-mov-row-inputs input,
+#profile-movements-list .config-mov-row-inputs select {
+    box-sizing: border-box;
+    padding: 9px 10px;
+    border: 1px solid #DDE2E6;
+    border-radius: 8px;
+    font-size: 13px;
+    background: #FFF;
+    min-height: 38px;
+}
+
+/* Location + Reference — side by side, fixed */
+#profile-movements-list .config-mov-row-inputs:first-of-type {
+    flex-wrap: nowrap;
+}
+
+#profile-movements-list .config-mov-row-inputs:first-of-type input {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+}
+
+/* Date + Amount + Type + Delete — fixed row */
+#profile-movements-list .config-mov-row-inputs:last-of-type {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+}
+
+#profile-movements-list .config-mov-row-inputs:last-of-type input[type="date"] {
+    flex: 1.2;
+    min-width: 0;
+}
+
+#profile-movements-list .config-mov-row-inputs:last-of-type input[type="text"] {
+    flex: 0.9;
+    min-width: 0;
+}
+
+#profile-movements-list .config-mov-row-inputs:last-of-type select {
+    flex: 0.6;
+    min-width: 44px;
+    padding: 9px 4px;
+}
+
+#profile-movements-list .btn-del-mov {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FFE5E5;
+    color: #DC3545;
+    border: 1px solid #DC3545;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background 0.15s;
+}
+
+#profile-movements-list .btn-del-mov:active {
+    background-color: #FFCCCC;
+}
+
+#profile-view .primary-action-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 25px;
+}
+
+.btn-profile-add-mov {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    background: transparent;
+    color: var(--santander-red);
+    border: 1.5px dashed #CCC;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-profile-add-mov:active {
+    background: #F9F9F9;
+    border-color: #AAA;
+}
+
+.profile-feedback {
+    font-size: 13px;
+    margin-top: 12px;
+    text-align: center;
+    min-height: 20px;
+    font-weight: 500;
+}
+
+.profile-feedback.is-success {
+    color: #2E7D32;
+}
+
+.profile-feedback.is-error {
+    color: var(--santander-red);
+}
+
+/* Responsive — very small screens */
+@media (max-width: 390px) {
+    #profile-view .feature-card {
+        padding: 16px 12px;
+    }
+
+    #profile-movements-list .config-mov-row {
+        padding: 10px;
+    }
+
+    /* Stack date + amount row vertically on smallest screens */
+    #profile-movements-list .config-mov-row-inputs:last-of-type {
+        flex-wrap: wrap;
+    }
+
+    #profile-movements-list .config-mov-row-inputs:last-of-type input[type="date"] {
+        flex: 1 1 100%;
+    }
+
+    #profile-movements-list .config-mov-row-inputs:last-of-type input[type="text"] {
+        flex: 1;
+        min-width: 0;
+    }
+
+    #profile-movements-list .config-mov-row-inputs:last-of-type select {
+        flex: 0 0 60px;
+    }
+
+    #profile-movements-list .config-mov-row-inputs:last-of-type .btn-del-mov {
+        flex: 0 0 38px;
+    }
+}

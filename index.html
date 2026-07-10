@@ -16,7 +16,7 @@
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <aside class="sidebar-menu" id="sidebar-menu">
         <div class="sidebar-header">
-            <div class="sidebar-profile">
+            <div class="sidebar-profile" id="sidebar-profile-link" style="cursor:pointer;">
                 <span class="material-icons-outlined" style="font-size: 40px;">account_circle</span>
                 <div>
                     <h3 id="sidebar-name">Juan Antonio</h3>
@@ -822,6 +822,65 @@
                 </div>
             </div>
         </div>
+
+        <div id="profile-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Mis datos</h2>
+                <span class="material-icons-outlined icon-red" id="btn-profile-sync">sync</span>
+            </header>
+
+            <div class="page-content">
+                <div class="feature-card">
+                    <h3>Información personal</h3>
+
+                    <label class="feature-label">Nombre completo</label>
+                    <input type="text" id="profile-name" class="feature-input" placeholder="Tu nombre" maxlength="60" autocomplete="name">
+
+                    <label class="feature-label">Segundo apellido</label>
+                    <input type="text" id="profile-subtitle" class="feature-input" placeholder="Apellido" maxlength="60">
+
+                    <label class="feature-label">Teléfono</label>
+                    <input type="tel" id="profile-phone" class="feature-input" placeholder="Número de teléfono" maxlength="15" inputmode="numeric" autocomplete="tel">
+                </div>
+
+                <div class="feature-card" style="margin-top:16px;">
+                    <h3>Cuenta y tarjeta</h3>
+
+                    <label class="feature-label">Saldo disponible (MXN)</label>
+                    <input type="text" id="profile-balance" class="feature-input" placeholder="0.00" inputmode="decimal">
+
+                    <label class="feature-label">Número de cuenta</label>
+                    <input type="text" id="profile-account" class="feature-input" placeholder="14**0000" maxlength="20">
+
+                    <label class="feature-label">Número de tarjeta</label>
+                    <input type="text" id="profile-full-card" class="feature-input" placeholder="4152 0000 0000 0000" maxlength="19" inputmode="numeric">
+
+                    <label class="feature-label">Marca</label>
+                    <select id="profile-brand" class="feature-input">
+                        <option value="VISA">VISA</option>
+                        <option value="MASTERCARD">Mastercard</option>
+                    </select>
+
+                    <label class="feature-label">Fecha de caducidad</label>
+                    <input type="text" id="profile-exp" class="feature-input" placeholder="MM/AA" maxlength="5">
+
+                    <label class="feature-label">Producto</label>
+                    <input type="text" id="profile-product" class="feature-input" placeholder="Ej. Cuenta Digital" maxlength="40">
+                </div>
+
+                <div class="feature-card" style="margin-top:16px;">
+                    <h3>Movimientos</h3>
+                    <p>Edita o elimina movimientos existentes. Los cambios se guardan al presionar "Guardar cambios".</p>
+                    <div id="profile-movements-list"></div>
+                    <button type="button" class="btn-profile-add-mov" id="btn-profile-add-mov">+ Agregar movimiento</button>
+                </div>
+
+                <button class="primary-action-btn mt-20" id="btn-save-profile" style="margin-top:16px;">Guardar cambios</button>
+                <p id="profile-save-feedback" class="profile-feedback"></p>
+            </div>
+        </div>
+
         <div id="global-loader" class="global-loader hidden-loader">
             <div class="custom-spinner"></div>
             <p id="loader-text" class="loader-text-msg">Cargando...</p>

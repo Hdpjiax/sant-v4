@@ -84,6 +84,15 @@ window.SantanderAuth = {
         window.location.href = "login.html";
     },
 
+    async updateProfile(displayName) {
+        const sb = this._client();
+        const { data, error } = await sb.auth.updateUser({
+            data: { display_name: displayName }
+        });
+        if (error) throw error;
+        return data;
+    },
+
     async testConnection() {
         this._client();
         const response = await fetch(`${window.SUPABASE_URL}/auth/v1/health`, {

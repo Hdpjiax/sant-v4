@@ -730,15 +730,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     on("btn-open-sidebar-detail", "click", openSidebar);
     on("btn-open-sidebar-account", "click", openSidebar);
     on("btn-close-sidebar", "click", closeSidebar);
+
+    // Los ajustes ahora son accesibles por cada usuario
+    const settingsLink = document.getElementById("open-config-from-sidebar");
+
+    // Sidebar -> Perfil
+    on("sidebar-profile-link", "click", () => {
+        closeSidebar();
+        navigateToProfile();
+    });
+    if (settingsLink) {
+        settingsLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            closeSidebar();
+            navigateToProfile();
+        });
+    }
     on("btn-close-home-hot-banner", "click", () => {
         const banner = document.getElementById("home-hot-banner");
         if (banner) banner.style.display = "none";
     });
     if (sidebarOverlay) sidebarOverlay.addEventListener("click", closeSidebar);
-
-    // Ocultar ajustes locales — el admin los gestiona remotamente
-    const settingsLink = document.getElementById("open-config-from-sidebar");
-    if (settingsLink) settingsLink.style.display = "none";
 
     if (userProfile?.role === "admin") {
         const sidebarLinks = document.querySelector(".sidebar-links");
@@ -1060,6 +1072,168 @@ document.addEventListener("DOMContentLoaded", async () => {
     on("btn-action-statement", "click", downloadStatementPdf);
     on("btn-download-statement-pdf", "click", downloadStatementPdf);
     on("btn-header-download-pdf", "click", downloadStatementPdf);
+
+    // ==================== PERFIL / AJUSTES DEL USUARIO ====================
+    function addProfileMovRow(mov = {}) {
+        const list = document.getElementById("profile-movements-list");
+        if (!list) return;
+
+        const row = document.createElement("div");
+        row.className = "config-mov-row";
+        row.innerHTML = `
+            <input type="text" placeholder="Establecimiento" value="${escapeHtml(mov.title || "")}">
+            <div class="config-mov-row-inputs">
+                <input type="text" placeholder="Lugar" value="${escapeHtml(mov.location || "")}">
+                <input type="text" placeholder="Referencia" value="${escapeHtml(mov.reference || "")}">
+            </div>
+            <div class="config-mov-row-inputs">
+                <input type="date" value="${escapeHtml(mov.date || "")}">
+                <input type="text" placeholder="Monto" value="${escapeHtml(mov.amount || "")}">
+                <select>
+                    <option value="negative" ${mov.type === "negative" ? "selected" : ""}>-</option>
+                    <option value="positive" ${mov.type === "positive" ? "selected" : ""}>+</option>
+                </select>
+                <button type="button" class="btn-del-mov">X</button>
+            </div>
+        `;
+
+        row.querySelector(".btn-del-mov")?.addEventListener("click", () => row.remove());
+        list.appendChild(row);
+    }
+
+    function collectProfileMovements() {
+        return Array.from(document.querySelectorAll("#profile-movements-list .config-mov-row")).map(r => {
+            const inputs = r.querySelectorAll("input");
+            const select = r.querySelector("select");
+            return {
+                title: inputs[0]?.value.trim() || "Establecimiento",
+                location: inputs[1]?.value.trim() || "",
+                reference: inputs[2]?.value.trim() || "",
+                date: inputs[3]?.value || "",
+                amount: inputs[4]?.value.trim() || "0.00",
+                type: select?.value || "negative"
+            };
+        });
+    }
+
+    function loadProfileForm() {
+        const ids = ["profile-name","profile-subtitle","profile-phone","profile-balance","profile-account","profile-full-card","profile-exp","profile-product"];
+        const map = {name:"name",subtitle:"subtitle",phone:"phone",balance:"balance",account:"account","full-card":"full_card",exp:"exp",product:"product"};
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            const key = map[id.replace("profile-","")];
+            if (el && key) el.value = userSettings[key] || "";
+        });
+        const brandEl = document.getElementById("profile-brand");
+        if (brandEl) brandEl.value = userSettings.brand || "VISA";
+
+        const movList = document.getElementById("profile-movements-list");
+        if (movList) {
+            movList.innerHTML = "";
+            (currentMovs || []).forEach(m => addProfileMovRow(m));
+        }
+    }
+
+    function navigateToProfile() {
+        loadProfileForm();
+        navigateTo("profile-view", "Cargando perfil...", LOADER.NAV);
+    }
+
+    on("btn-profile-sync", "click", () => {
+        window.showLoader("Sincronizando...");
+        setTimeout(async () => {
+            try {
+                const fresh = await window.SettingsService.getMySettings();
+                applyUserSettings(fresh);
+                loadProfileForm();
+                window.showToast("Perfil actualizado");
+            } catch {
+                window.showToast("Error al sincronizar");
+            } finally {
+                window.hideLoader();
+            }
+        }, LOADER.SHORT);
+    });
+
+    on("btn-profile-add-mov", "click", () => {
+        const today = new Date().toISOString().split("T")[0];
+        addProfileMovRow({
+            title: "NUEVO ESTABLECIMIENTO",
+            date: today,
+            amount: "100.00",
+            type: "negative",
+            location: "CIUDAD DE MEX",
+            reference: String(Math.floor(1000000 + Math.random() * 9000000))
+        });
+    });
+
+    function getVal(id) {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : "";
+    }
+
+    on("btn-save-profile", "click", async () => {
+        const feedback = document.getElementById("profile-save-feedback");
+        const saveBtn = document.getElementById("btn-save-profile");
+
+        const name = getVal("profile-name");
+        if (!name) {
+            if (feedback) {
+                feedback.textContent = "El nombre es obligatorio.";
+                feedback.className = "profile-feedback is-error";
+            }
+            return;
+        }
+
+        if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.textContent = "Guardando...";
+        }
+
+        if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "profile-feedback";
+        }
+
+        window.showLoader("Guardando cambios...");
+
+        setTimeout(async () => {
+            try {
+                const updated = await window.SettingsService.updateMySettings({
+                    name,
+                    subtitle: getVal("profile-subtitle"),
+                    phone: getVal("profile-phone"),
+                    balance: getVal("profile-balance"),
+                    account: getVal("profile-account"),
+                    full_card: getVal("profile-full-card"),
+                    brand: document.getElementById("profile-brand")?.value || "VISA",
+                    exp: getVal("profile-exp"),
+                    product: getVal("profile-product"),
+                    movements: collectProfileMovements()
+                });
+                applyUserSettings(updated);
+
+                if (feedback) {
+                    feedback.textContent = "Cambios guardados correctamente.";
+                    feedback.className = "profile-feedback is-success";
+                }
+
+                window.showToast("Datos actualizados");
+            } catch (err) {
+                if (feedback) {
+                    feedback.textContent = "Error al guardar: " + (err.message || "intenta de nuevo.");
+                    feedback.className = "profile-feedback is-error";
+                }
+                window.showToast("Error al guardar cambios");
+            } finally {
+                window.hideLoader();
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = "Guardar cambios";
+                }
+            }
+        }, LOADER.SHORT);
+    });
 
     // ==================== ACORDEONES Y TOASTS ====================
     document.querySelectorAll(".menu-accordion").forEach(acc => {
