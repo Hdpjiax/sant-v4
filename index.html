@@ -183,7 +183,7 @@
                         <span class="material-icons-outlined icon-red toggle-icon">add</span>
                     </div>
                     <div class="menu-content">
-                        <p>Consulta promociones, recompensas y beneficios disponibles para tus cuentas y tarjetas.</p>
+                        <div><p>Consulta promociones, recompensas y beneficios disponibles para tus cuentas y tarjetas.</p></div>
                     </div>
                 </div>
 
@@ -193,8 +193,7 @@
                         <span class="material-icons-outlined icon-red toggle-icon">add</span>
                     </div>
                     <div class="menu-content">
-                        <p>Activa herramientas para hacer crecer tu dinero de forma automática con tus saldos
-                            disponibles.</p>
+                        <div><p>Activa herramientas para hacer crecer tu dinero de forma automática con tus saldos disponibles.</p></div>
                     </div>
                 </div>
 
@@ -204,7 +203,7 @@
                         <span class="material-icons-outlined icon-red toggle-icon">add</span>
                     </div>
                     <div class="menu-content">
-                        <p>Crea metas de ahorro, define un monto objetivo y revisa tu avance en cualquier momento.</p>
+                        <div><p>Crea metas de ahorro, define un monto objetivo y revisa tu avance en cualquier momento.</p></div>
                     </div>
                 </div>
 
@@ -214,8 +213,7 @@
                         <span class="material-icons-outlined icon-red toggle-icon">add</span>
                     </div>
                     <div class="menu-content">
-                        <p>Explora opciones de inversión a plazo fijo según tu saldo, plazo elegido y rendimiento
-                            estimado.</p>
+                        <div><p>Explora opciones de inversión a plazo fijo según tu saldo, plazo elegido y rendimiento estimado.</p></div>
                     </div>
                 </div>
 
@@ -225,7 +223,7 @@
                         <span class="material-icons-outlined icon-red toggle-icon">add</span>
                     </div>
                     <div class="menu-content">
-                        <p>Consulta ofertas de crédito disponibles, líneas preaprobadas y opciones personalizadas.</p>
+                        <div><p>Consulta ofertas de crédito disponibles, líneas preaprobadas y opciones personalizadas.</p></div>
                     </div>
                 </div>
                 <div class="home-hot-banner" id="home-hot-banner">
@@ -496,21 +494,17 @@
             </header>
             <div class="page-content">
                 <div class="feature-card" style="margin-bottom:16px;">
-                    <h3>Beneficiarios</h3>
-                    <div class="beneficiary-grid" id="beneficiary-list">
-                        <div class="beneficiary-item" data-ben-clabe="014012345678901234" tabindex="0" role="button">
-                            <div class="ben-icon" aria-hidden="true">👤</div>
-                            <div class="ben-info">
-                                <div class="ben-name">María García</div>
-                                <div class="ben-detail">0140 **** **** 1234 · Santander</div>
-                            </div>
-                        </div>
-                        <div class="beneficiary-item" data-ben-clabe="002987654321098765" tabindex="0" role="button">
-                            <div class="ben-icon" aria-hidden="true">👤</div>
-                            <div class="ben-info">
-                                <div class="ben-name">Carlos López</div>
-                                <div class="ben-detail">0029 **** **** 8765 · Banamex</div>
-                            </div>
+                    <h3 style="display:flex;align-items:center;justify-content:space-between;">
+                        <span>Beneficiarios</span>
+                        <button id="btn-add-beneficiary" class="ben-add-btn" type="button" title="Agregar beneficiario">+</button>
+                    </h3>
+                    <div class="beneficiary-grid" id="beneficiary-list"></div>
+                    <div id="beneficiary-form" class="ben-form hidden-ben-form">
+                        <input type="text" id="ben-new-name" placeholder="Nombre" maxlength="40">
+                        <input type="text" id="ben-new-clabe" placeholder="CLABE (18 dígitos)" maxlength="18" inputmode="numeric">
+                        <div class="ben-form-actions">
+                            <button id="ben-cancel" class="btn-outline" type="button">Cancelar</button>
+                            <button id="ben-save" class="primary-action-btn" type="button" style="flex:1;">Guardar</button>
                         </div>
                     </div>
                 </div>
@@ -544,7 +538,7 @@
                     <div class="receipt-row"><span class="receipt-label">Fecha</span><span class="receipt-value"
                             id="success-transfer-date">---</span></div>
                     <div class="receipt-row"><span class="receipt-label">Folio</span><span
-                            class="receipt-value">0928374821</span></div>
+                            class="receipt-value" id="success-transfer-folio">---</span></div>
                 </div>
                 <button class="primary-action-btn mt-20 btn-home-action">Volver al inicio</button>
             </div>

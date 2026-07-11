@@ -3,6 +3,44 @@ window.SantanderMovUtils = {
     escapeHtml(value) {
         return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
     },
+
+    validateLuhn(card) {
+        const digits = card.replace(/\D/g, "");
+        if (digits.length < 13 || digits.length > 19) return false;
+        let sum = 0, alt = false;
+        for (let i = digits.length - 1; i >= 0; i--) {
+            let d = parseInt(digits[i], 10);
+            if (alt) { d *= 2; if (d > 9) d -= 9; }
+            sum += d;
+            alt = !alt;
+        }
+        return sum % 10 === 0;
+    },
+
+    validateCLABE(clabe) {
+        const d = clabe.replace(/\s/g, "");
+        if (!/^\d{18}$/.test(d)) return false;
+        const weights = [3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7];
+        let sum = 0;
+        for (let i = 0; i < 17; i++) sum += parseInt(d[i], 10) * weights[i];
+        const check = (10 - (sum % 10)) % 10;
+        return check === parseInt(d[17], 10);
+    },
+
+    validateExpDate(exp) {
+        if (!/^\d{2}\/\d{2}$/.test(exp)) return false;
+        const parts = exp.split("/");
+        const month = parseInt(parts[0], 10);
+        const year = parseInt(parts[1], 10) + 2000;
+        if (month < 1 || month > 12) return false;
+        const now = new Date();
+        const expDate = new Date(year, month);
+        return expDate > now;
+    },
+
+    validateAmount(amount) {
+        return /^\d+(\.\d{1,2})?$/.test(amount) && parseFloat(amount) > 0;
+    },
     addMovRow(listEl, mov = {}) {
         if (!listEl) return;
         const e = this.escapeHtml;

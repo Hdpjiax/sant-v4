@@ -35,6 +35,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         editModal?.classList.remove("active");
     });
 
+    function formatCardInput(input) {
+        if (!input) return;
+        input.addEventListener("input", () => {
+            let val = input.value.replace(/\D/g, "").slice(0, 16);
+            input.value = val.replace(/(.{4})/g, "$1 ").trim();
+        });
+    }
+    formatCardInput(document.getElementById("edit-full-card"));
+
     editModal?.addEventListener("click", (e) => {
         if (e.target === editModal) editModal.classList.remove("active");
     });
@@ -68,12 +77,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    let adminMovsPage = 0;
+    const ADMIN_MOVS_PAGE_SIZE = 20;
+    let adminMovsCache = [];
+
     function addMovRow(mov = {}) {
         window.SantanderMovUtils.addMovRow(movsList, mov);
     }
 
     function collectMovements() {
         return window.SantanderMovUtils.collectMovements("edit-movements-list");
+    }
+
+    function loadMoreMovs() {
+        adminMovsPage++;
+        const start = adminMovsPage * ADMIN_MOVS_PAGE_SIZE;
+        const slice = adminMovsCache.slice(start, start + ADMIN_MOVS_PAGE_SIZE);
+        slice.forEach(m => addMovRow(m));
+
+        const moreBtn = document.getElementById("btn-admin-more-movs");
+        const hasMore = adminMovsCache.length > (adminMovsPage + 1) * ADMIN_MOVS_PAGE_SIZE;
+        if (hasMore) {
+            if (!moreBtn) {
+                const btn = document.createElement("button");
+                btn.id = "btn-admin-more-movs";
+                btn.className = "btn-outline";
+                btn.textContent = "Ver más movimientos";
+                btn.style.cssText = "margin:8px auto;display:block;max-width:200px;padding:10px;font-size:13px;";
+                btn.addEventListener("click", loadMoreMovs);
+                movsList?.parentNode?.appendChild(btn);
+            }
+        } else {
+            moreBtn?.remove();
+        }
     }
 
     function openEditModal(userId, email, settings) {
@@ -89,7 +125,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("edit-exp").value = settings.exp || "12/28";
 
         if (movsList) movsList.innerHTML = "";
-        (settings.movements || []).forEach(m => addMovRow(m));
+        adminMovsPage = 0;
+        adminMovsCache = settings.movements || [];
+        const initialSlice = adminMovsCache.slice(0, ADMIN_MOVS_PAGE_SIZE);
+        initialSlice.forEach(m => addMovRow(m));
+
+        document.getElementById("btn-admin-more-movs")?.remove();
+
+        if (adminMovsCache.length > ADMIN_MOVS_PAGE_SIZE) {
+            const btn = document.createElement("button");
+            btn.id = "btn-admin-more-movs";
+            btn.className = "btn-outline";
+            btn.textContent = "Ver más movimientos";
+            btn.style.cssText = "margin:8px auto;display:block;max-width:200px;padding:10px;font-size:13px;";
+            btn.addEventListener("click", loadMoreMovs);
+            movsList?.parentNode?.appendChild(btn);
+        }
 
         editModal?.classList.add("active");
     }
@@ -159,15 +210,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         const userId = document.getElementById("edit-user-id").value;
         const saveBtn = document.getElementById("btn-save-settings");
 
+        const v = window.SantanderMovUtils;
+        const fullCard = document.getElementById("edit-full-card").value.trim();
+        if (fullCard && !v.validateLuhn(fullCard)) {
+            showToast("Número de tarjeta inválido (Luhn).");
+            return;
+        }
+
+        const exp = document.getElementById("edit-exp").value.trim();
+        if (exp && !v.validateExpDate(exp)) {
+            showToast("Fecha de expiración inválida o vencida.");
+            return;
+        }
+
+        const account = document.getElementById("edit-account").value.trim();
+        const balance = document.getElementById("edit-balance").value.trim();
+        if (balance && !v.validateAmount(balance)) {
+            showToast("Monto inválido. Usa hasta 2 decimales.");
+            return;
+        }
+
         const payload = {
             name: document.getElementById("edit-name").value.trim(),
             subtitle: document.getElementById("edit-subtitle").value.trim(),
-            balance: document.getElementById("edit-balance").value.trim(),
-            account: document.getElementById("edit-account").value.trim(),
+            balance: balance,
+            account: account,
             phone: document.getElementById("edit-phone").value.trim(),
-            full_card: document.getElementById("edit-full-card").value.trim(),
+            full_card: fullCard,
             brand: document.getElementById("edit-brand").value,
-            exp: document.getElementById("edit-exp").value.trim(),
+            exp: exp,
             movements: collectMovements()
         };
 

@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         userSettings = await window.SettingsService.getMySettings();
     } catch (error) {
         console.error("Error cargando ajustes:", error);
-        alert(window.formatSupabaseError(error));
+        window.showError(window.formatSupabaseError(error));
         window.location.href = "login.html";
         return;
     }
@@ -781,8 +781,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    document.querySelector(".logout-link")?.addEventListener("click", (e) => {
+    document.querySelector(".logout-link")?.addEventListener("click", async (e) => {
         e.preventDefault();
+        const confirmed = await showConfirm("Cerrar sesión", "¿Estás seguro de que deseas salir?");
+        if (!confirmed) return;
         closeSidebar();
         window.SantanderAuth.signOut();
     });
@@ -1146,7 +1148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 loadProfileForm();
                 window.showToast("Perfil actualizado");
             } catch {
-                window.showToast("Error al sincronizar");
+                window.showError("Error al sincronizar");
             } finally {
                 window.hideLoader();
             }
@@ -1165,6 +1167,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
+    const v = window.SantanderMovUtils;
+
+    function formatCardInput(input) {
+        if (!input) return;
+        input.addEventListener("input", () => {
+            let val = input.value.replace(/\D/g, "").slice(0, 16);
+            input.value = val.replace(/(.{4})/g, "$1 ").trim();
+        });
+    }
+    formatCardInput(document.getElementById("profile-full-card"));
+
     function getVal(id) {
         const el = document.getElementById(id);
         return el ? el.value.trim() : "";
@@ -1180,6 +1193,22 @@ document.addEventListener("DOMContentLoaded", async () => {
                 feedback.textContent = "El nombre es obligatorio.";
                 feedback.className = "profile-feedback is-error";
             }
+            return;
+        }
+
+        const fullCard = getVal("profile-full-card");
+        if (fullCard && !v.validateLuhn(fullCard)) {
+            if (feedback) { feedback.textContent = "Número de tarjeta inválido."; feedback.className = "profile-feedback is-error"; }
+            return;
+        }
+        const exp = getVal("profile-exp");
+        if (exp && !v.validateExpDate(exp)) {
+            if (feedback) { feedback.textContent = "Fecha de expiración inválida o vencida."; feedback.className = "profile-feedback is-error"; }
+            return;
+        }
+        const balance = getVal("profile-balance");
+        if (balance && !v.validateAmount(balance)) {
+            if (feedback) { feedback.textContent = "Monto inválido."; feedback.className = "profile-feedback is-error"; }
             return;
         }
 
@@ -1222,7 +1251,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     feedback.textContent = "Error al guardar: " + (err.message || "intenta de nuevo.");
                     feedback.className = "profile-feedback is-error";
                 }
-                window.showToast("Error al guardar cambios");
+                window.showError("Error al guardar cambios");
             } finally {
                 window.hideLoader();
                 if (saveBtn) {
@@ -1268,7 +1297,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             applyUserSettings(freshSettings);
             window.showToast("Información actualizada correctamente");
         } catch (error) {
-            window.showToast("Error al sincronizar. Intenta de nuevo.");
+            window.showError("Error al sincronizar. Intenta de nuevo.");
         } finally {
             if (btn) btn.classList.remove("syncing");
             syncing = false;
@@ -1598,7 +1627,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    on("btn-save-spending-control", () => {
+    on("btn-save-spending-control", "click", () => {
         const data = {};
         const range = document.getElementById("spending-limit-range");
         data.limit = range?.value || "5000";
@@ -1876,7 +1905,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // ==================== TRANSFERENCIAS CON VALIDACIÓN Y CONFIRMACIÓN ====================
-    on("btn-do-transfer", async () => {
+    on("btn-do-transfer", "click", async () => {
         const dest = document.getElementById("transfer-dest")?.value.trim() || "";
         const amountRaw = document.getElementById("transfer-amount")?.value.trim() || "";
         const concept = document.getElementById("transfer-concept")?.value.trim() || "Sin concepto";
@@ -1900,55 +1929,67 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
         if (!confirmed) return;
 
-        // Add movement to history
+        // SPEI simulation
+        const steps = [
+            { msg: "Conectando con red SPEI...", pct: 15 },
+            { msg: "Validando cuenta destino...", pct: 35 },
+            { msg: "Autorizando transferencia...", pct: 60 },
+            { msg: "Procesando en Banco de México...", pct: 80 },
+            { msg: "Transferencia completada", pct: 100 }
+        ];
+        const overlay = document.createElement("div");
+        overlay.style.cssText = "position:fixed;inset:0;z-index:9999;background:rgba(255,255,255,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;";
+        overlay.innerHTML = `
+            <div style="width:100%;max-width:280px;">
+                <div style="height:6px;background:#E0E0E0;border-radius:3px;overflow:hidden;">
+                    <div id="spei-progress" style="height:100%;width:0%;background:#EC0000;border-radius:3px;transition:width 0.4s ease;"></div>
+                </div>
+            </div>
+            <p id="spei-msg" style="font-size:14px;color:#666;text-align:center;margin:0;">Conectando con red SPEI...</p>
+        `;
+        document.body.appendChild(overlay);
+
+        for (let i = 0; i < steps.length; i++) {
+            await new Promise(r => setTimeout(r, i === steps.length - 1 ? 600 : 400 + Math.random() * 400));
+            document.getElementById("spei-msg").textContent = steps[i].msg;
+            document.getElementById("spei-progress").style.width = steps[i].pct + "%";
+        }
+        overlay.remove();
+
+        // Update balance
+        userSettings.balance = String(parseFloat(userSettings.balance || 0) - numericAmount);
+        const balanceEl = document.getElementById("header-balance");
+        if (balanceEl) balanceEl.textContent = `$ ${formatAmount(userSettings.balance)}`;
+
+        // Add movement
         const today = new Date().toISOString().split("T")[0];
-        const newMov = {
+        const folio = String(secureRandom(10000000, 99999999));
+        currentMovs.unshift({
             title: "Transferencia enviada",
-            location: "SPEI",
-            reference: String(secureRandom(1000000, 9999999)),
+            location: concept !== "Sin concepto" ? concept : "SPEI",
+            reference: folio,
             date: today,
             amount: numericAmount.toFixed(2),
             type: "negative"
-        };
-        currentMovs.unshift(newMov);
+        });
         renderMovsApp();
 
-        navigateTo("transfer-success-view", "Conectando con red SPEI...", LOADER.XL);
-
-        setTimeout(() => {
-            const els = {
-                "success-transfer-amount": `$ ${numericAmount.toFixed(2)} MXN`,
-                "success-transfer-dest": dest,
-                "success-transfer-concept": concept,
-                "success-transfer-date": getTodayString()
-            };
-            Object.entries(els).forEach(([id, val]) => {
-                const el = document.getElementById(id);
-                if (el) el.textContent = val;
-            });
-        }, LOADER.XL);
-    });
-
-    // Beneficiarios click
-    document.querySelectorAll(".beneficiary-item").forEach(item => {
-        item.addEventListener("click", () => {
-            const clabe = item.dataset.benClabe;
-            const destInput = document.getElementById("transfer-dest");
-            if (clabe && destInput) {
-                destInput.value = clabe;
-                window.showToast("Beneficiario seleccionado");
-            }
-        });
-        item.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                item.click();
-            }
+        navigateTo("transfer-success-view", "", 0);
+        const els = {
+            "success-transfer-amount": `$ ${formatAmount(numericAmount)} MXN`,
+            "success-transfer-dest": dest,
+            "success-transfer-concept": concept,
+            "success-transfer-date": getTodayString(),
+            "success-transfer-folio": folio
+        };
+        Object.entries(els).forEach(([id, val]) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
         });
     });
 
     // ==================== RECARGAS CON VALIDACIÓN ====================
-    on("btn-do-topup", async () => {
+    on("btn-do-topup", "click", async () => {
         const phone = document.getElementById("topup-phone")?.value.trim() || "";
         const company = document.getElementById("topup-company")?.value || "Telcel";
         const amount = document.getElementById("topup-amount")?.value || "100.00";
@@ -1970,19 +2011,33 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
         if (!confirmed) return;
 
-        navigateTo("topup-success-view", "Validando número y conectando...", LOADER.XL);
-        setTimeout(() => {
-            const els = {
-                "success-topup-amount": `$ ${numericAmount.toFixed(2)} MXN`,
-                "success-topup-phone": phone,
-                "success-topup-company": company,
-                "success-topup-date": getTodayString()
-            };
-            Object.entries(els).forEach(([id, val]) => {
-                const el = document.getElementById(id);
-                if (el) el.textContent = val;
-            });
-        }, LOADER.XL);
+        userSettings.balance = String(parseFloat(userSettings.balance || 0) - numericAmount);
+        const balanceEl = document.getElementById("header-balance");
+        if (balanceEl) balanceEl.textContent = `$ ${formatAmount(userSettings.balance)}`;
+
+        const today = new Date().toISOString().split("T")[0];
+        const folio = String(secureRandom(10000000, 99999999));
+        currentMovs.unshift({
+            title: `Recarga ${company}`,
+            location: phone,
+            reference: folio,
+            date: today,
+            amount: numericAmount.toFixed(2),
+            type: "negative"
+        });
+        renderMovsApp();
+
+        navigateTo("topup-success-view", "", 0);
+        const els = {
+            "success-topup-amount": `$ ${formatAmount(numericAmount)} MXN`,
+            "success-topup-phone": phone,
+            "success-topup-company": company,
+            "success-topup-date": getTodayString()
+        };
+        Object.entries(els).forEach(([id, val]) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        });
     });
 
     // ==================== RETIRO SIN TARJETA ====================
@@ -2042,6 +2097,105 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (successDate) successDate.textContent = getTodayString();
         }, LOADER.XL);
     });
+
+    // ==================== BENEFICIARIOS DINÁMICOS ====================
+    const BEN_KEY = "sant_beneficiaries";
+
+    function getBeneficiaries() {
+        try {
+            const raw = localStorage.getItem(BEN_KEY);
+            if (raw) return JSON.parse(raw);
+        } catch {}
+        return [
+            { name: "María García", clabe: "014012345678901234", bank: "Santander" },
+            { name: "Carlos López", clabe: "002987654321098765", bank: "Banamex" }
+        ];
+    }
+
+    function saveBeneficiaries(list) {
+        try { localStorage.setItem(BEN_KEY, JSON.stringify(list)); } catch {}
+    }
+
+    function bankFromClabe(clabe) {
+        const map = { "014": "Santander", "002": "Banamex", "012": "BBVA", "021": "HSBC", "001": "Banorte" };
+        return map[clabe.slice(0, 3)] || "Otro";
+    }
+
+    function renderBeneficiaries() {
+        const list = document.getElementById("beneficiary-list");
+        if (!list) return;
+        const beneficiaries = getBeneficiaries();
+        list.innerHTML = beneficiaries.map((b, i) => {
+            const masked = b.clabe.slice(0, 4) + " **** **** " + b.clabe.slice(-4);
+            return `
+                <div class="beneficiary-item" data-index="${i}" data-ben-clabe="${SantanderMovUtils.escapeHtml(b.clabe)}" tabindex="0" role="button">
+                    <div class="ben-icon" aria-hidden="true">👤</div>
+                    <div class="ben-info">
+                        <div class="ben-name">${SantanderMovUtils.escapeHtml(b.name)}</div>
+                        <div class="ben-detail">${SantanderMovUtils.escapeHtml(masked)} · ${SantanderMovUtils.escapeHtml(b.bank || bankFromClabe(b.clabe))}</div>
+                    </div>
+                    <button class="ben-del-btn" data-index="${i}" title="Eliminar beneficiario" type="button">×</button>
+                </div>
+            `;
+        }).join("");
+
+        list.querySelectorAll(".beneficiary-item").forEach(item => {
+            item.addEventListener("click", (e) => {
+                if (e.target.closest(".ben-del-btn")) return;
+                const clabe = item.dataset.benClabe;
+                const destInput = document.getElementById("transfer-dest");
+                if (clabe && destInput) {
+                    destInput.value = clabe;
+                    window.showToast("Beneficiario seleccionado");
+                }
+            });
+            item.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") { e.preventDefault(); item.click(); }
+            });
+        });
+
+        list.querySelectorAll(".ben-del-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const idx = parseInt(btn.dataset.index, 10);
+                const list2 = getBeneficiaries();
+                if (idx >= 0 && idx < list2.length) {
+                    list2.splice(idx, 1);
+                    saveBeneficiaries(list2);
+                    renderBeneficiaries();
+                    window.showToast("Beneficiario eliminado");
+                }
+            });
+        });
+    }
+
+    on("btn-add-beneficiary", "click", () => {
+        document.getElementById("beneficiary-form")?.classList.toggle("hidden-ben-form");
+    });
+
+    on("ben-cancel", "click", () => {
+        document.getElementById("beneficiary-form")?.classList.add("hidden-ben-form");
+        document.getElementById("ben-new-name").value = "";
+        document.getElementById("ben-new-clabe").value = "";
+    });
+
+    on("ben-save", "click", () => {
+        const name = document.getElementById("ben-new-name")?.value.trim();
+        const clabe = document.getElementById("ben-new-clabe")?.value.trim();
+        if (!name) { window.showError("Ingresa un nombre."); return; }
+        if (!/^\d{18}$/.test(clabe)) { window.showError("CLABE debe tener 18 dígitos."); return; }
+        if (!SantanderMovUtils.validateCLABE(clabe)) { window.showError("CLABE inválida."); return; }
+        const list = getBeneficiaries();
+        list.push({ name, clabe, bank: bankFromClabe(clabe) });
+        saveBeneficiaries(list);
+        renderBeneficiaries();
+        document.getElementById("ben-new-name").value = "";
+        document.getElementById("ben-new-clabe").value = "";
+        document.getElementById("beneficiary-form")?.classList.add("hidden-ben-form");
+        window.showToast("Beneficiario guardado");
+    });
+
+    renderBeneficiaries();
 
     // ==================== RELOJ ====================
     const currentTimeEl = document.getElementById("current-time");
