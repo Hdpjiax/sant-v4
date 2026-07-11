@@ -14,20 +14,62 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+input, textarea, select {
+    font-size: 16px;
+}
+
+/* Skip navigation link */
+.skip-nav {
+    position: fixed;
+    top: -100%;
+    left: 8px;
+    z-index: 10000;
+    background: var(--santander-red);
+    color: #FFF;
+    padding: 12px 20px;
+    border-radius: 0 0 8px 8px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.skip-nav:focus {
+    top: 0;
+}
+
+/* Focus-visible for keyboard users */
+:focus-visible {
+    outline: 2px solid var(--santander-red);
+    outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--santander-red);
+    outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+    outline: none;
+}
+
 body {
     background-color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 /* --- CONTENEDOR TIPO MÓVIL --- */
 .app-container {
     width: 100%;
     max-width: 412px;
-    height: 100%;
-    max-height: 760px;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 100dvh;
     background-color: #FFFFFF;
     position: relative;
     overflow-y: auto;
@@ -35,6 +77,11 @@ body {
     display: flex;
     flex-direction: column;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100dvh;
 }
 
 .app-container::-webkit-scrollbar {
@@ -121,7 +168,7 @@ body {
 
 .main-balance {
     font-size: 14px;
-    color: #999999;
+    color: #666666;
 }
 
 .add-icon {
@@ -228,10 +275,14 @@ body {
 }
 
 .menu-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
     background-color: #F7F9FA;
+}
+
+.menu-content > div {
+    overflow: hidden;
 }
 
 .menu-content p {
@@ -241,7 +292,7 @@ body {
 }
 
 .menu-accordion.active .menu-content {
-    max-height: 100px;
+    grid-template-rows: 1fr;
 }
 
 .menu-accordion.active .toggle-icon {
@@ -304,12 +355,24 @@ body {
     justify-content: space-around;
     align-items: flex-start;
     border-top: 1px solid var(--border-color);
-    padding: 12px 4px;
+    padding: 12px 4px calc(12px + env(safe-area-inset-bottom, 0px));
     background-color: #FFF;
     position: fixed;
     bottom: 0;
     z-index: 100;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+}
+
+@media (orientation: landscape) and (max-height: 480px) {
+    .bottom-nav {
+        padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+    }
+    .nav-item .material-icons-outlined {
+        font-size: 20px !important;
+    }
+    .nav-item span:last-child {
+        font-size: 9px !important;
+    }
 }
 
 .nav-item {
@@ -894,7 +957,7 @@ body {
 /* ==================== SISTEMA DE CARGA Y NOTIFICACIONES ==================== */
 .toast-container {
     position: fixed;
-    bottom: 80px;
+    bottom: 90px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 5000;
@@ -902,7 +965,7 @@ body {
     flex-direction: column;
     gap: 10px;
     pointer-events: none;
-    width: 90%;
+    width: calc(100% - 32px);
     max-width: 350px;
 }
 
@@ -2132,8 +2195,9 @@ body {
 
 .filter-tab {
     min-width: 84px;
-    height: 40px;
-    padding: 0 12px;
+    min-height: 44px;
+    height: auto;
+    padding: 10px 12px;
     border: 1px solid transparent;
     border-radius: 4px;
     background: transparent;
@@ -5294,10 +5358,14 @@ body {
 }
 
 #home-view .home-extra-sections .menu-content {
-    max-height: 0;
-    overflow: hidden;
+    display: grid;
+    grid-template-rows: 0fr;
     background: #F7F7F7;
-    transition: max-height 0.25s ease;
+    transition: grid-template-rows 0.3s ease;
+}
+
+#home-view .home-extra-sections .menu-content > div {
+    overflow: hidden;
 }
 
 #home-view .home-extra-sections .menu-content p {
@@ -5308,7 +5376,7 @@ body {
 }
 
 #home-view .home-extra-sections .menu-accordion.active .menu-content {
-    max-height: 90px;
+    grid-template-rows: 1fr;
 }
 
 #home-view .home-extra-sections .menu-accordion.active .toggle-icon {
@@ -5431,13 +5499,21 @@ body {
     transform: translateX(-50%) !important;
     width: 100% !important;
     max-width: 412px !important;
-    height: 74px !important;
+    min-height: 74px !important;
+    height: auto !important;
     z-index: 3000 !important;
     background: #FFFFFF !important;
     border-top: 1px solid #E5E5E5 !important;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08) !important;
-    padding: 10px 4px 8px !important;
+    padding: 10px 4px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
     margin: 0 !important;
+}
+
+@media (orientation: landscape) and (max-height: 480px) {
+    #home-view .bottom-nav {
+        min-height: 56px !important;
+        padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+    }
 }
 
 #home-view .nav-item {
@@ -5954,4 +6030,246 @@ textarea {
     #profile-movements-list .config-mov-row-inputs:last-of-type .btn-del-mov {
         flex: 0 0 38px;
     }
+}
+
+/* ==================== UTILIDADES ==================== */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Sync button spin animation */
+@keyframes spin-sync {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+#btn-sync.syncing,
+#btn-profile-sync.syncing {
+    animation: spin-sync 0.8s linear infinite;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* Confirm dialog overlay */
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.confirm-dialog {
+    background: #FFF;
+    border-radius: 16px;
+    padding: 28px 24px 20px;
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+}
+
+.confirm-dialog h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.confirm-dialog p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+.confirm-dialog-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.confirm-dialog-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.confirm-dialog .btn-cancel {
+    background: #F0F0F0;
+    color: #333;
+}
+
+.confirm-dialog .btn-confirm {
+    background: var(--santander-red);
+    color: #FFF;
+}
+
+/* Inactivity overlay */
+.inactivity-overlay {
+    position: fixed;
+    inset: 0;
+    background: #FFF;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 24px;
+    text-align: center;
+}
+
+.inactivity-overlay h2 {
+    font-size: 20px;
+    color: var(--santander-red);
+}
+
+.inactivity-overlay p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Movement search */
+.movement-search-wrap {
+    padding: 0 16px 12px;
+}
+
+.movement-search-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    font-size: 14px;
+    background: #F5F5F5;
+    transition: background 0.2s;
+}
+
+.movement-search-input:focus {
+    background: #FFF;
+    border-color: var(--santander-red);
+    outline: none;
+}
+
+/* Beneficiarios */
+.beneficiary-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.beneficiary-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.beneficiary-item:active {
+    border-color: var(--santander-red);
+}
+
+.beneficiary-item .ben-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #F0F0F0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.beneficiary-item .ben-info {
+    flex: 1;
+}
+
+.beneficiary-item .ben-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.beneficiary-item .ben-detail {
+    font-size: 12px;
+    color: #888;
+}
+
+/* Spending limit card section */
+.spending-limit-card {
+    background: #F8F9FA;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.spending-limit-card p {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+/* Credit card interactive */
+.credit-card-item {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: #FFF;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.credit-card-item:active {
+    border-color: var(--santander-red);
+}
+
+.credit-card-item .cc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.credit-card-item .cc-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.credit-card-item .cc-balance {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.credit-card-item .cc-details {
+    font-size: 12px;
+    color: #888;
+}
+
+/* Toast redesigned */
+.toast {
+    background-color: #333333;
+    color: #FFFFFF;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }

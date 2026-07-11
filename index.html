@@ -13,31 +13,35 @@
 
 <body>
 
+    <a href="#main-content" class="skip-nav">Saltar al contenido principal</a>
+
+    <div aria-live="polite" aria-atomic="true" class="sr-only" id="a11y-announcer"></div>
+
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <aside class="sidebar-menu" id="sidebar-menu">
-        <div class="sidebar-header">
-            <div class="sidebar-profile" id="sidebar-profile-link" style="cursor:pointer;">
-                <span class="material-icons-outlined" style="font-size: 40px;">account_circle</span>
+            <div class="sidebar-header">
+            <div class="sidebar-profile" id="sidebar-profile-link" style="cursor:pointer;" role="button" tabindex="0" aria-label="Ver mi perfil">
+                <span class="material-icons-outlined" style="font-size: 40px;" aria-hidden="true">account_circle</span>
                 <div>
                     <h3 id="sidebar-name">Juan Antonio</h3>
                     <p>Ver mi perfil</p>
                 </div>
             </div>
-            <span class="material-icons-outlined close-sidebar" id="btn-close-sidebar">close</span>
+            <span class="material-icons-outlined close-sidebar" id="btn-close-sidebar" role="button" tabindex="0" aria-label="Cerrar menú">close</span>
         </div>
         <div class="sidebar-links">
-            <a href="#"><span class="material-icons-outlined">security</span> Seguridad</a>
-            <a href="#"><span class="material-icons-outlined">help_outline</span> Ayuda y soporte</a>
-            <a href="#"><span class="material-icons-outlined">account_balance</span> Mis cuentas</a>
-            <a href="#"><span class="material-icons-outlined">notifications_none</span> Notificaciones</a>
+            <a href="#" aria-label="Seguridad"><span class="material-icons-outlined" aria-hidden="true">security</span> Seguridad</a>
+            <a href="#" aria-label="Ayuda y soporte"><span class="material-icons-outlined" aria-hidden="true">help_outline</span> Ayuda y soporte</a>
+            <a href="#" aria-label="Mis cuentas"><span class="material-icons-outlined" aria-hidden="true">account_balance</span> Mis cuentas</a>
+            <a href="#" aria-label="Notificaciones"><span class="material-icons-outlined" aria-hidden="true">notifications_none</span> Notificaciones</a>
             <hr>
-            <a href="#" id="open-config-from-sidebar" class="settings-link"><span
-                    class="material-icons-outlined">settings</span> Ajustes</a>
-            <a href="#" class="logout-link"><span class="material-icons-outlined">logout</span> Cerrar sesión</a>
+            <a href="#" id="open-config-from-sidebar" class="settings-link" aria-label="Ajustes"><span
+                    class="material-icons-outlined" aria-hidden="true">settings</span> Ajustes</a>
+            <a href="#" class="logout-link" aria-label="Cerrar sesión"><span class="material-icons-outlined" aria-hidden="true">logout</span> Cerrar sesión</a>
         </div>
     </aside>
 
-    <div class="app-container">
+    <div class="app-container" id="main-content">
 
         <div class="status-bar">
 
@@ -51,9 +55,9 @@
                     <p class="subtitle" id="display-subtitle">García Nievez</p>
                 </div>
                 <div class="header-actions">
-                    <span class="material-icons-outlined icon-red" id="btn-sync">sync</span>
+                    <span class="material-icons-outlined icon-red" id="btn-sync" role="button" tabindex="0" aria-label="Sincronizar datos">sync</span>
                     <span class="material-icons-outlined icon-red" id="btn-open-sidebar-home"
-                        style="cursor:pointer;">more_vert</span>
+                        style="cursor:pointer;" role="button" tabindex="0" aria-label="Abrir menú">more_vert</span>
                 </div>
             </header>
             <section class="home-products">
@@ -102,7 +106,7 @@
                         </div>
                     </div>
 
-                    <article class="home-product-card visual-only-card">
+                    <article class="home-product-card credit-card-clickable" data-cc="likeu" tabindex="0" role="button" aria-label="Tarjeta LikeU, saldo $55.00 MXN">
                         <div class="home-product-icon">
                             <div class="mini-card mini-card-likeu">
                                 <div class="mini-card-logo">Santander</div>
@@ -125,7 +129,7 @@
                         <span class="material-icons-outlined home-product-arrow">chevron_right</span>
                     </article>
 
-                    <article class="home-product-card visual-only-card">
+                    <article class="home-product-card credit-card-clickable" data-cc="free" tabindex="0" role="button" aria-label="Tarjeta Free, saldo $5,467.38 MXN">
                         <div class="home-product-icon">
                             <div class="mini-card mini-card-free">
                                 <div class="mini-card-free-logo">Santander<br><strong>free</strong></div>
@@ -147,7 +151,7 @@
                         <span class="material-icons-outlined home-product-arrow">chevron_right</span>
                     </article>
 
-                    <article class="home-product-card visual-only-card">
+                    <article class="home-product-card credit-card-clickable" data-cc="zero" tabindex="0" role="button" aria-label="Tarjeta Zero, saldo $6,273.53 MXN">
                         <div class="home-product-icon">
                             <div class="mini-card mini-card-zero">
                                 <div class="mini-card-logo">Santander</div>
@@ -491,15 +495,34 @@
                 <span class="material-icons-outlined icon-red">more_vert</span>
             </header>
             <div class="page-content">
+                <div class="feature-card" style="margin-bottom:16px;">
+                    <h3>Beneficiarios</h3>
+                    <div class="beneficiary-grid" id="beneficiary-list">
+                        <div class="beneficiary-item" data-ben-clabe="014012345678901234" tabindex="0" role="button">
+                            <div class="ben-icon" aria-hidden="true">👤</div>
+                            <div class="ben-info">
+                                <div class="ben-name">María García</div>
+                                <div class="ben-detail">0140 **** **** 1234 · Santander</div>
+                            </div>
+                        </div>
+                        <div class="beneficiary-item" data-ben-clabe="002987654321098765" tabindex="0" role="button">
+                            <div class="ben-icon" aria-hidden="true">👤</div>
+                            <div class="ben-info">
+                                <div class="ben-name">Carlos López</div>
+                                <div class="ben-detail">0029 **** **** 8765 · Banamex</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="mock-form">
-                    <label>Cuenta destino / CLABE / Celular</label>
-                    <input type="text" id="transfer-dest" placeholder="Ej. 012345678901234567">
+                    <label for="transfer-dest">Cuenta destino / CLABE / Celular</label>
+                    <input type="text" id="transfer-dest" placeholder="Ej. 012345678901234567" autocomplete="off">
 
-                    <label>Importe (MXN)</label>
-                    <input type="number" id="transfer-amount" placeholder="$ 0.00">
+                    <label for="transfer-amount">Importe (MXN)</label>
+                    <input type="number" id="transfer-amount" placeholder="$ 0.00" min="1" step="0.01">
 
-                    <label>Concepto de pago</label>
-                    <input type="text" id="transfer-concept" placeholder="Ej. Pago de cena">
+                    <label for="transfer-concept">Concepto de pago</label>
+                    <input type="text" id="transfer-concept" placeholder="Ej. Pago de cena" maxlength="140">
 
                     <button class="primary-action-btn mt-20" id="btn-do-transfer">Continuar</button>
                 </div>

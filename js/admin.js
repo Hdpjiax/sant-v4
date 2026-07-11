@@ -69,42 +69,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function addMovRow(mov = {}) {
-        const row = document.createElement("div");
-        row.className = "config-mov-row";
-        row.innerHTML = `
-            <input type="text" placeholder="Establecimiento" value="${escapeHtml(mov.title || "")}" style="margin-bottom:4px;">
-            <div class="config-mov-row-inputs">
-                <input type="text" placeholder="Lugar" value="${escapeHtml(mov.location || "")}" style="flex:1;">
-                <input type="text" placeholder="Referencia" value="${escapeHtml(mov.reference || "")}" style="flex:1;">
-            </div>
-            <div class="config-mov-row-inputs">
-                <input type="date" value="${escapeHtml(mov.date || "")}" style="flex:1.5;">
-                <input type="text" placeholder="Monto" value="${escapeHtml(mov.amount || "")}" style="flex:1;">
-                <select style="flex:0.8;">
-                    <option value="negative" ${mov.type === "negative" ? "selected" : ""}>-</option>
-                    <option value="positive" ${mov.type === "positive" ? "selected" : ""}>+</option>
-                </select>
-                <button type="button" class="btn-del-mov">X</button>
-            </div>
-        `;
-
-        row.querySelector(".btn-del-mov")?.addEventListener("click", () => row.remove());
-        movsList?.appendChild(row);
+        window.SantanderMovUtils.addMovRow(movsList, mov);
     }
 
     function collectMovements() {
-        return Array.from(document.querySelectorAll("#edit-movements-list .config-mov-row")).map(r => {
-            const inputs = r.querySelectorAll("input");
-            const select = r.querySelector("select");
-            return {
-                title: inputs[0]?.value.trim() || "Establecimiento",
-                location: inputs[1]?.value.trim() || "",
-                reference: inputs[2]?.value.trim() || "",
-                date: inputs[3]?.value || "",
-                amount: inputs[4]?.value.trim() || "0.00",
-                type: select?.value || "negative"
-            };
-        });
+        return window.SantanderMovUtils.collectMovements("edit-movements-list");
     }
 
     function openEditModal(userId, email, settings) {

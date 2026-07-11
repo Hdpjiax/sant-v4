@@ -69,9 +69,26 @@ document.addEventListener("DOMContentLoaded", async () => {
             .replace(/'/g, "&#039;");
     }
 
+    function secureRandom(min, max) {
+        const range = max - min + 1;
+        const bytes = new Uint32Array(1);
+        crypto.getRandomValues(bytes);
+        return min + (bytes[0] % range);
+    }
+
+    function maskCardNumber(card) {
+        const digits = String(card || "").replace(/\D/g, "");
+        if (digits.length < 8) return card;
+        return digits.slice(0, 4) + " **** **** " + digits.slice(-4);
+    }
+
     function on(id, eventName, handler) {
         const element = document.getElementById(id);
-        if (element) element.addEventListener(eventName, handler);
+        if (element) {
+            element.addEventListener(eventName, handler);
+        } else {
+            console.warn(`[Santander] Element #${id} not found for event "${eventName}"`);
+        }
     }
 
     const LOADER = {
@@ -825,7 +842,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (displaySubtitle) displaySubtitle.textContent = userSubtitle;
         if (displayAccount) displayAccount.textContent = account;
         if (displayPhone) displayPhone.textContent = phone;
-        if (displayFullCard) displayFullCard.textContent = fullCard;
+        if (displayFullCard) {
+            displayFullCard.textContent = maskCardNumber(fullCard);
+            displayFullCard.style.cursor = "pointer";
+            displayFullCard.style.userSelect = "none";
+            displayFullCard.addEventListener("click", function handler() {
+                const revealed = this.textContent.includes("****");
+                this.textContent = revealed ? fullCard : maskCardNumber(fullCard);
+                this.style.color = revealed ? "#222" : "#999";
+                setTimeout(() => {
+                    if (this.textContent !== maskCardNumber(fullCard)) {
+                        this.textContent = maskCardNumber(fullCard);
+                        this.style.color = "#999";
+                    }
+                }, 5000);
+            }, { once: false });
+        }
         if (displayBrand) renderCardNetworkLogo(displayBrand, brand);
         renderAllCardNetworkLogos();
         if (displayExp) displayExp.textContent = exp;
@@ -890,7 +922,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function startModalCvvTimer() {
-        const randomCvv = Math.floor(100 + Math.random() * 900);
+        const randomCvv = secureRandom(100, 999);
         let timeLeft = 180;
         const totalTime = 180;
 
@@ -1075,45 +1107,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // ==================== PERFIL / AJUSTES DEL USUARIO ====================
     function addProfileMovRow(mov = {}) {
-        const list = document.getElementById("profile-movements-list");
-        if (!list) return;
-
-        const row = document.createElement("div");
-        row.className = "config-mov-row";
-        row.innerHTML = `
-            <input type="text" placeholder="Establecimiento" value="${escapeHtml(mov.title || "")}">
-            <div class="config-mov-row-inputs">
-                <input type="text" placeholder="Lugar" value="${escapeHtml(mov.location || "")}">
-                <input type="text" placeholder="Referencia" value="${escapeHtml(mov.reference || "")}">
-            </div>
-            <div class="config-mov-row-inputs">
-                <input type="date" value="${escapeHtml(mov.date || "")}">
-                <input type="text" placeholder="Monto" value="${escapeHtml(mov.amount || "")}">
-                <select>
-                    <option value="negative" ${mov.type === "negative" ? "selected" : ""}>-</option>
-                    <option value="positive" ${mov.type === "positive" ? "selected" : ""}>+</option>
-                </select>
-                <button type="button" class="btn-del-mov">X</button>
-            </div>
-        `;
-
-        row.querySelector(".btn-del-mov")?.addEventListener("click", () => row.remove());
-        list.appendChild(row);
+        window.SantanderMovUtils.addMovRow(document.getElementById("profile-movements-list"), mov);
     }
 
     function collectProfileMovements() {
-        return Array.from(document.querySelectorAll("#profile-movements-list .config-mov-row")).map(r => {
-            const inputs = r.querySelectorAll("input");
-            const select = r.querySelector("select");
-            return {
-                title: inputs[0]?.value.trim() || "Establecimiento",
-                location: inputs[1]?.value.trim() || "",
-                reference: inputs[2]?.value.trim() || "",
-                date: inputs[3]?.value || "",
-                amount: inputs[4]?.value.trim() || "0.00",
-                type: select?.value || "negative"
-            };
-        });
+        return window.SantanderMovUtils.collectMovements("profile-movements-list");
     }
 
     function loadProfileForm() {
@@ -1249,14 +1247,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         const toast = document.createElement("div");
         toast.className = "toast";
         toast.textContent = message;
+        toast.setAttribute("role", "status");
         toastContainer.appendChild(toast);
+
+        const announcer = document.getElementById("a11y-announcer");
+        if (announcer) announcer.textContent = message;
 
         setTimeout(() => toast.remove(), 2800);
     };
 
+    let syncing = false;
     on("btn-sync", "click", async () => {
-        window.showLoader("Sincronizando información...");
-        await new Promise(resolve => setTimeout(resolve, LOADER.MEDIUM));
+        if (syncing) return;
+        syncing = true;
+        const btn = document.getElementById("btn-sync");
+        if (btn) btn.classList.add("syncing");
+
         try {
             const freshSettings = await window.SettingsService.getMySettings();
             applyUserSettings(freshSettings);
@@ -1264,7 +1270,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             window.showToast("Error al sincronizar. Intenta de nuevo.");
         } finally {
-            window.hideLoader();
+            if (btn) btn.classList.remove("syncing");
+            syncing = false;
         }
     });
 
@@ -1283,7 +1290,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     on("btn-load-older-movements", "click", () => {
-        window.showToast("No hay movimientos anteriores por el momento.");
+        movsPage++;
+        renderMovsPaginated();
+        window.showToast("Cargando más movimientos...");
     });
 
     // ==================== APAGAR / ENCENDER TARJETA ====================
@@ -1427,7 +1436,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         let timeLeft = 180;
         clearInterval(nipInterval);
 
-        const nip = Math.floor(1000 + Math.random() * 9000);
+        const nip = secureRandom(1000, 9999);
 
         if (nipNumber) nipNumber.textContent = nip;
 
@@ -1500,39 +1509,188 @@ document.addEventListener("DOMContentLoaded", async () => {
         navigateTo("spending-control-view", "Consultando límites...", LOADER.MEDIUM);
     });
 
-    on("btn-save-spending-control", "click", () => {
-        window.showLoader("Guardando control de gasto...");
+    // ==================== CONFIRM DIALOG ====================
+    function showConfirm(title, message) {
+        return new Promise(resolve => {
+            const overlay = document.createElement("div");
+            overlay.className = "confirm-overlay";
+            overlay.innerHTML = `
+                <div class="confirm-dialog" role="alertdialog" aria-labelledby="confirm-title" aria-describedby="confirm-msg">
+                    <h3 id="confirm-title">${escapeHtml(title)}</h3>
+                    <p id="confirm-msg">${escapeHtml(message)}</p>
+                    <div class="confirm-dialog-actions">
+                        <button class="btn-cancel" id="confirm-cancel">Cancelar</button>
+                        <button class="btn-confirm" id="confirm-ok">Aceptar</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
 
+            const cleanup = () => overlay.remove();
+
+            document.getElementById("confirm-cancel")?.addEventListener("click", () => {
+                cleanup();
+                resolve(false);
+            });
+            document.getElementById("confirm-ok")?.addEventListener("click", () => {
+                cleanup();
+                resolve(true);
+            });
+            overlay.addEventListener("click", (e) => {
+                if (e.target === overlay) { cleanup(); resolve(false); }
+            });
+        });
+    }
+
+    // ==================== INACTIVITY TIMEOUT ====================
+    let inactivityTimer;
+    const INACTIVITY_LIMIT = 5 * 60 * 1000;
+
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(showInactivityOverlay, INACTIVITY_LIMIT);
+    }
+
+    function showInactivityOverlay() {
+        const existing = document.querySelector(".inactivity-overlay");
+        if (existing) return;
+
+        const overlay = document.createElement("div");
+        overlay.className = "inactivity-overlay";
+        overlay.innerHTML = `
+            <h2>Tu sesión ha expirado</h2>
+            <p>Por seguridad, cerramos tu sesión por inactividad. Inicia sesión nuevamente.</p>
+        `;
+        document.body.appendChild(overlay);
+
+        setTimeout(() => window.SantanderAuth.signOut(), 3000);
+    }
+
+    ["click", "touchstart", "keydown", "scroll", "mousemove"].forEach(ev => {
+        document.addEventListener(ev, resetInactivityTimer, { passive: true });
+    });
+    resetInactivityTimer();
+
+    // ==================== SPENDING CONTROL - PERSISTENTE ====================
+    function getSpendingData() {
+        try {
+            return JSON.parse(localStorage.getItem("sant_spending") || "{}");
+        } catch { return {}; }
+    }
+
+    function saveSpendingData(data) {
+        localStorage.setItem("sant_spending", JSON.stringify(data));
+    }
+
+    function loadSpendingState() {
+        const data = getSpendingData();
+        const range = document.getElementById("spending-limit-range");
+        const input = document.getElementById("spending-limit-input");
+        const valEl = document.getElementById("spending-limit-value");
+
+        if (data.limit && range) range.value = data.limit;
+        if (data.limit && input) input.value = data.limit;
+        if (data.limit && valEl) valEl.textContent = formatAmount(data.limit);
+
+        document.querySelectorAll("[data-control-switch]").forEach(btn => {
+            const key = btn.dataset.controlSwitch;
+            if (data[key]) btn.classList.add("is-on");
+        });
+    }
+
+    on("btn-save-spending-control", () => {
+        const data = {};
+        const range = document.getElementById("spending-limit-range");
+        data.limit = range?.value || "5000";
+
+        document.querySelectorAll("[data-control-switch]").forEach(btn => {
+            data[btn.dataset.controlSwitch] = btn.classList.contains("is-on");
+        });
+
+        saveSpendingData(data);
+        window.showLoader("Guardando control de gasto...");
         setTimeout(() => {
             window.hideLoader();
             window.showToast("Control de gasto actualizado.");
         }, LOADER.SHORT);
     });
 
-    // Billeteras digitales
+    loadSpendingState();
+
+    // ==================== CARD STATE PERSISTENTE ====================
+    function loadCardState() {
+        try {
+            const saved = localStorage.getItem("sant_card_active");
+            if (saved !== null) cardIsActive = saved === "true";
+        } catch {}
+        syncDigitalCardStatus();
+    }
+
+    function saveCardState() {
+        try {
+            localStorage.setItem("sant_card_active", String(cardIsActive));
+        } catch {}
+    }
+
+    // Override toggle to persist
+    const origToggle = toggleDigitalCardStatus;
+    toggleDigitalCardStatus = function() {
+        window.showLoader("Actualizando preferencias de seguridad...");
+        setTimeout(() => {
+            cardIsActive = !cardIsActive;
+            syncDigitalCardStatus();
+            saveCardState();
+            window.hideLoader();
+            window.showToast(cardIsActive ? "Tarjeta digital prendida." : "Tarjeta digital apagada.");
+        }, LOADER.SHORT);
+    };
+    loadCardState();
+
+    // ==================== Billeteras digitales ====================
     const walletStatusMap = {
         apple: "wallet-apple-status",
         google: "wallet-google-status",
         samsung: "wallet-samsung-status"
     };
 
+    function loadWalletStates() {
+        try {
+            const saved = JSON.parse(localStorage.getItem("sant_wallets") || "{}");
+            Object.entries(saved).forEach(([name, added]) => {
+                if (!added) return;
+                const statusEl = document.getElementById(walletStatusMap[name]);
+                if (statusEl) statusEl.textContent = "Agregada";
+                const btn = document.querySelector(`[data-wallet="${name}"]`);
+                if (btn) {
+                    btn.textContent = "Agregada";
+                    btn.classList.add("is-added");
+                    btn.disabled = true;
+                }
+            });
+        } catch {}
+    }
+
     function addWallet(walletName, button) {
         window.showLoader("Validando tarjeta digital...");
-
         setTimeout(() => {
             const statusElement = document.getElementById(walletStatusMap[walletName]);
-
             if (statusElement) statusElement.textContent = "Agregada";
             if (button) {
                 button.textContent = "Agregada";
                 button.classList.add("is-added");
                 button.disabled = true;
             }
-
+            try {
+                const saved = JSON.parse(localStorage.getItem("sant_wallets") || "{}");
+                saved[walletName] = true;
+                localStorage.setItem("sant_wallets", JSON.stringify(saved));
+            } catch {}
             window.hideLoader();
             window.showToast("Tarjeta agregada a la billetera digital.");
         }, LOADER.MEDIUM);
     }
+
+    loadWalletStates();
 
     on("btn-overview-wallets", "click", () => {
         navigateTo("wallets-view", "Consultando billeteras digitales...", LOADER.MEDIUM);
@@ -1543,28 +1701,287 @@ document.addEventListener("DOMContentLoaded", async () => {
             addWallet(btn.dataset.wallet, btn);
         });
     });
+
     // ==================== GENERAR CVV DINÁMICO ====================
     on("btn-generate-cvv", "click", openDigitalCardModal);
 
-    // ==================== TRANSFERENCIAS ====================
-    on("btn-do-transfer", "click", () => {
-        const dest = document.getElementById("transfer-dest")?.value || "Cuenta no especificada";
-        const amount = document.getElementById("transfer-amount")?.value || "0.00";
-        const concept = document.getElementById("transfer-concept")?.value || "Sin concepto";
-        const numericAmount = Number(String(amount).replace(/,/g, "")) || 0;
+    // ==================== CREDIT CARDS INTERACTIVAS ====================
+    document.querySelectorAll(".credit-card-clickable").forEach(card => {
+        card.addEventListener("click", () => {
+            navigateTo("pay-cards-view", "Consultando adeudos...", LOADER.MEDIUM);
+        });
+        card.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                navigateTo("pay-cards-view", "Consultando adeudos...", LOADER.MEDIUM);
+            }
+        });
+    });
+
+    // ==================== MOVEMENT SEARCH ====================
+    let movementSearchQuery = "";
+
+    function renderMovsAppFiltered() {
+        const containerDetail = document.getElementById("movements-container");
+        let htmlDetail = "";
+
+        const sortedMovs = [...currentMovs].sort((a, b) => new Date(b.date) - new Date(a.date));
+        const filteredMovs = sortedMovs.filter(m => {
+            if (movementFilter !== "all" && m.type !== movementFilter) return false;
+            if (movementSearchQuery) {
+                const q = movementSearchQuery.toLowerCase();
+                const match = m.title.toLowerCase().includes(q) ||
+                    (m.location || "").toLowerCase().includes(q) ||
+                    (m.reference || "").includes(q) ||
+                    m.amount.includes(q);
+                if (!match) return false;
+            }
+            return true;
+        });
+
+        const groupedMovs = filteredMovs.reduce((acc, mov) => {
+            const headerDate = getMovementHeader(mov.date);
+            if (!acc[headerDate]) acc[headerDate] = [];
+            acc[headerDate].push(mov);
+            return acc;
+        }, {});
+
+        Object.entries(groupedMovs).forEach(([headerDate, movs]) => {
+            htmlDetail += `
+                <div class="movement-group">
+                    <div class="movement-day-header">${escapeHtml(headerDate)}</div>
+                    <div class="movement-group-items">
+            `;
+            movs.forEach((m, index) => {
+                const isPositive = m.type === "positive";
+                const amount = formatAmount(m.amount);
+                htmlDetail += `
+                    <div class="santander-movement-item ${index === 0 ? "first-in-day" : ""}">
+                        <div class="movement-side-icon ${isPositive ? "is-positive" : "is-negative"}">
+                            <span class="material-icons-outlined">${isPositive ? "arrow_upward" : "arrow_downward"}</span>
+                        </div>
+                        <div class="movement-content">
+                            <div class="movement-topline">
+                                <span class="movement-name">${escapeHtml(m.title)}</span>
+                                ${m.location ? `<span class="movement-location">${escapeHtml(m.location)}</span>` : ""}
+                            </div>
+                            ${m.reference ? `<span class="movement-reference">${escapeHtml(m.reference)}</span>` : ""}
+                        </div>
+                        <div class="movement-amount">
+                            ${isPositive ? "" : "-"}${amount}<span>MXN</span>
+                        </div>
+                    </div>
+                `;
+            });
+            htmlDetail += `
+                    </div>
+                </div>
+            `;
+        });
+
+        if (!htmlDetail) {
+            htmlDetail = `<div class="empty-movements">${
+                movementSearchQuery ? "No hay movimientos que coincidan con tu búsqueda." : "No hay movimientos para este filtro."
+            }</div>`;
+        }
+
+        if (containerDetail) containerDetail.innerHTML = htmlDetail;
+        renderAccountStatement();
+    }
+
+    // Override renderMovsApp to use search
+    const origRenderMovsApp = renderMovsApp;
+    renderMovsApp = renderMovsAppFiltered;
+
+    // Add search input
+    const movContainer = document.getElementById("movements-container");
+    if (movContainer) {
+        const searchWrap = document.createElement("div");
+        searchWrap.className = "movement-search-wrap";
+        searchWrap.innerHTML = `<input type="search" class="movement-search-input" id="movement-search-input" placeholder="Buscar en movimientos..." aria-label="Buscar movimientos">`;
+        movContainer.parentNode?.insertBefore(searchWrap, movContainer);
+
+        document.getElementById("movement-search-input")?.addEventListener("input", (e) => {
+            movementSearchQuery = e.target.value.trim();
+            renderMovsAppFiltered();
+        });
+    }
+
+    // ==================== MOVEMENT PAGINATION ====================
+    const MOVS_PAGE_SIZE = 20;
+    let movsPage = 0;
+
+    function renderMovsPaginated() {
+        const containerDetail = document.getElementById("movements-container");
+        if (!containerDetail) return;
+
+        const sortedMovs = [...currentMovs].sort((a, b) => new Date(b.date) - new Date(a.date));
+        const paginated = sortedMovs.slice(0, (movsPage + 1) * MOVS_PAGE_SIZE);
+        const hasMore = sortedMovs.length > paginated.length;
+
+        let htmlDetail = "";
+
+        const groupedMovs = paginated.reduce((acc, mov) => {
+            const headerDate = getMovementHeader(mov.date);
+            if (!acc[headerDate]) acc[headerDate] = [];
+            acc[headerDate].push(mov);
+            return acc;
+        }, {});
+
+        Object.entries(groupedMovs).forEach(([headerDate, movs]) => {
+            htmlDetail += `
+                <div class="movement-group">
+                    <div class="movement-day-header">${escapeHtml(headerDate)}</div>
+                    <div class="movement-group-items">
+            `;
+            movs.forEach((m, index) => {
+                const isPositive = m.type === "positive";
+                const amount = formatAmount(m.amount);
+                htmlDetail += `
+                    <div class="santander-movement-item ${index === 0 ? "first-in-day" : ""}">
+                        <div class="movement-side-icon ${isPositive ? "is-positive" : "is-negative"}">
+                            <span class="material-icons-outlined">${isPositive ? "arrow_upward" : "arrow_downward"}</span>
+                        </div>
+                        <div class="movement-content">
+                            <div class="movement-topline">
+                                <span class="movement-name">${escapeHtml(m.title)}</span>
+                                ${m.location ? `<span class="movement-location">${escapeHtml(m.location)}</span>` : ""}
+                            </div>
+                            ${m.reference ? `<span class="movement-reference">${escapeHtml(m.reference)}</span>` : ""}
+                        </div>
+                        <div class="movement-amount">
+                            ${isPositive ? "" : "-"}${amount}<span>MXN</span>
+                        </div>
+                    </div>
+                `;
+            });
+            htmlDetail += `
+                    </div>
+                </div>
+            `;
+        });
+
+        if (hasMore) {
+            htmlDetail += `<button class="btn-outline primary-action-btn mt-20" id="btn-load-more-movs" style="margin:12px auto;display:block;max-width:200px;padding:12px;">Ver más movimientos</button>`;
+        }
+
+        containerDetail.innerHTML = htmlDetail;
+
+        if (hasMore) {
+            document.getElementById("btn-load-more-movs")?.addEventListener("click", () => {
+                movsPage++;
+                renderMovsPaginated();
+            });
+        }
+    }
+
+    // ==================== TRANSFERENCIAS CON VALIDACIÓN Y CONFIRMACIÓN ====================
+    on("btn-do-transfer", async () => {
+        const dest = document.getElementById("transfer-dest")?.value.trim() || "";
+        const amountRaw = document.getElementById("transfer-amount")?.value.trim() || "";
+        const concept = document.getElementById("transfer-concept")?.value.trim() || "Sin concepto";
+        const numericAmount = Number(amountRaw.replace(/,/g, "")) || 0;
+        const balance = parseAmount(userSettings.balance);
+
+        const errors = [];
+        if (!dest) errors.push("Ingresa una cuenta destino.");
+        if (dest.length < 10) errors.push("La cuenta destino debe tener al menos 10 dígitos.");
+        if (numericAmount <= 0) errors.push("El monto debe ser mayor a cero.");
+        if (numericAmount > balance) errors.push("El monto excede tu saldo disponible.");
+
+        if (errors.length) {
+            window.showToast(errors[0]);
+            return;
+        }
+
+        const confirmed = await showConfirm(
+            "Confirmar transferencia",
+            `Enviar $${formatAmount(numericAmount)} MXN a la cuenta ${dest}${concept !== "Sin concepto" ? ` con concepto: ${concept}` : ""}. ¿Estás seguro?`
+        );
+        if (!confirmed) return;
+
+        // Add movement to history
+        const today = new Date().toISOString().split("T")[0];
+        const newMov = {
+            title: "Transferencia enviada",
+            location: "SPEI",
+            reference: String(secureRandom(1000000, 9999999)),
+            date: today,
+            amount: numericAmount.toFixed(2),
+            type: "negative"
+        };
+        currentMovs.unshift(newMov);
+        renderMovsApp();
 
         navigateTo("transfer-success-view", "Conectando con red SPEI...", LOADER.XL);
 
         setTimeout(() => {
-            const successAmount = document.getElementById("success-transfer-amount");
-            const successDest = document.getElementById("success-transfer-dest");
-            const successConcept = document.getElementById("success-transfer-concept");
-            const successDate = document.getElementById("success-transfer-date");
+            const els = {
+                "success-transfer-amount": `$ ${numericAmount.toFixed(2)} MXN`,
+                "success-transfer-dest": dest,
+                "success-transfer-concept": concept,
+                "success-transfer-date": getTodayString()
+            };
+            Object.entries(els).forEach(([id, val]) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = val;
+            });
+        }, LOADER.XL);
+    });
 
-            if (successAmount) successAmount.textContent = `$ ${numericAmount.toFixed(2)} MXN`;
-            if (successDest) successDest.textContent = dest;
-            if (successConcept) successConcept.textContent = concept;
-            if (successDate) successDate.textContent = getTodayString();
+    // Beneficiarios click
+    document.querySelectorAll(".beneficiary-item").forEach(item => {
+        item.addEventListener("click", () => {
+            const clabe = item.dataset.benClabe;
+            const destInput = document.getElementById("transfer-dest");
+            if (clabe && destInput) {
+                destInput.value = clabe;
+                window.showToast("Beneficiario seleccionado");
+            }
+        });
+        item.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                item.click();
+            }
+        });
+    });
+
+    // ==================== RECARGAS CON VALIDACIÓN ====================
+    on("btn-do-topup", async () => {
+        const phone = document.getElementById("topup-phone")?.value.trim() || "";
+        const company = document.getElementById("topup-company")?.value || "Telcel";
+        const amount = document.getElementById("topup-amount")?.value || "100.00";
+        const numericAmount = Number(String(amount).replace(/,/g, "")) || 0;
+
+        const errors = [];
+        if (!/^\d{10}$/.test(phone)) errors.push("El teléfono debe tener 10 dígitos.");
+        if (numericAmount <= 0) errors.push("El monto debe ser mayor a cero.");
+        if (numericAmount > 2000) errors.push("La recarga máxima es de $2,000 MXN.");
+
+        if (errors.length) {
+            window.showToast(errors[0]);
+            return;
+        }
+
+        const confirmed = await showConfirm(
+            "Confirmar recarga",
+            `Recargar $${formatAmount(numericAmount)} MXN al número ${phone} (${company}). ¿Estás seguro?`
+        );
+        if (!confirmed) return;
+
+        navigateTo("topup-success-view", "Validando número y conectando...", LOADER.XL);
+        setTimeout(() => {
+            const els = {
+                "success-topup-amount": `$ ${numericAmount.toFixed(2)} MXN`,
+                "success-topup-phone": phone,
+                "success-topup-company": company,
+                "success-topup-date": getTodayString()
+            };
+            Object.entries(els).forEach(([id, val]) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = val;
+            });
         }, LOADER.XL);
     });
 
@@ -1581,7 +1998,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (cardlessAmount) cardlessAmount.textContent = `$ ${amount} MXN`;
 
-            const code = `${Math.floor(100 + Math.random() * 900)} ${Math.floor(100 + Math.random() * 900)} ${Math.floor(100 + Math.random() * 900)}`;
+            const code = `${secureRandom(100, 999)} ${secureRandom(100, 999)} ${secureRandom(100, 999)}`;
             if (cardlessNumber) cardlessNumber.textContent = code;
 
             let timeLeft = 600;
@@ -1637,5 +2054,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     updateClock();
-    setInterval(updateClock, 30000);
+    const clockInterval = setInterval(updateClock, 30000);
+
+    // ==================== CLEANUP GLOBAL ====================
+    window.addEventListener("beforeunload", () => {
+        clearInterval(clockInterval);
+        clearInterval(cvvInterval);
+        clearInterval(cardlessInterval);
+        clearInterval(nipInterval);
+        clearInterval(modalCvvInterval);
+    });
+
+    // Timer cleanup on navigation
+    const origGoBack = goBack;
+    goBack = function() {
+        closeSidebar();
+        document.body.style.overflowX = "hidden";
+        if (historyStack.length > 1) {
+            window.showLoader("");
+            setTimeout(() => {
+                const currentView = historyStack.pop();
+                const previousView = historyStack[historyStack.length - 1];
+
+                if (currentView === "cvv-view") clearInterval(cvvInterval);
+                if (currentView === "cardless-active-view") clearInterval(cardlessInterval);
+                if (currentView === "nip-view") clearInterval(nipInterval);
+
+                const currentViewElement = document.getElementById(currentView);
+                const previousViewElement = document.getElementById(previousView);
+
+                if (currentViewElement && previousViewElement) {
+                    currentViewElement.classList.replace("view-active", "hidden-view");
+                    previousViewElement.classList.replace("hidden-view", "view-active");
+                }
+                window.hideLoader();
+            }, LOADER.BACK);
+        }
+    };
+
+    // Remove the old goBack listener and re-attach with new version
+    // (the old one was already bound, but the new goBack replaces the reference)
 });

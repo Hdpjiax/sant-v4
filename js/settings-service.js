@@ -1,3 +1,48 @@
+// Shared movement row utilities (admin + profile)
+window.SantanderMovUtils = {
+    escapeHtml(value) {
+        return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+    },
+    addMovRow(listEl, mov = {}) {
+        if (!listEl) return;
+        const e = this.escapeHtml;
+        const row = document.createElement("div");
+        row.className = "config-mov-row";
+        row.innerHTML = `
+            <input type="text" placeholder="Establecimiento" value="${e(mov.title || "")}">
+            <div class="config-mov-row-inputs">
+                <input type="text" placeholder="Lugar" value="${e(mov.location || "")}">
+                <input type="text" placeholder="Referencia" value="${e(mov.reference || "")}">
+            </div>
+            <div class="config-mov-row-inputs">
+                <input type="date" value="${e(mov.date || "")}">
+                <input type="text" placeholder="Monto" value="${e(mov.amount || "")}">
+                <select>
+                    <option value="negative" ${mov.type === "negative" ? "selected" : ""}>-</option>
+                    <option value="positive" ${mov.type === "positive" ? "selected" : ""}>+</option>
+                </select>
+                <button type="button" class="btn-del-mov">X</button>
+            </div>
+        `;
+        row.querySelector(".btn-del-mov")?.addEventListener("click", () => row.remove());
+        listEl.appendChild(row);
+    },
+    collectMovements(containerId) {
+        return Array.from(document.querySelectorAll(`#${containerId} .config-mov-row`)).map(r => {
+            const inputs = r.querySelectorAll("input");
+            const select = r.querySelector("select");
+            return {
+                title: inputs[0]?.value.trim() || "Establecimiento",
+                location: inputs[1]?.value.trim() || "",
+                reference: inputs[2]?.value.trim() || "",
+                date: inputs[3]?.value || "",
+                amount: inputs[4]?.value.trim() || "0.00",
+                type: select?.value || "negative"
+            };
+        });
+    }
+};
+
 window.SettingsService = {
     DEFAULT_MOVEMENTS: [
         {
@@ -153,9 +198,22 @@ window.SettingsService = {
         return movements;
     },
 
-    async getMySettings() {
+    async getMySettings(forceRefresh = false) {
         const session = await window.SantanderAuth.getSession();
         if (!session) return null;
+
+        const cacheKey = `sant_settings_${session.user.id}`;
+
+        if (!forceRefresh) {
+            try {
+                const cached = sessionStorage.getItem(cacheKey);
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    const age = Date.now() - (parsed._cachedAt || 0);
+                    if (age < 30000) return this.normalize(parsed);
+                }
+            } catch {}
+        }
 
         const { data, error } = await this._client()
             .from("user_settings")
@@ -164,6 +222,12 @@ window.SettingsService = {
             .single();
 
         if (error) throw error;
+        if (data) {
+            try {
+                data._cachedAt = Date.now();
+                sessionStorage.setItem(cacheKey, JSON.stringify(data));
+            } catch {}
+        }
         return this.normalize(data);
     },
 

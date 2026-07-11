@@ -8,3 +8,11 @@ dist/
 .vercel
 node_modules
 .env.local
+
+# Runtime artifacts
+terminals/
+mcps/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
