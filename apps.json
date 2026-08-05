@@ -1,0 +1,21 @@
+{
+  "name": "Santander",
+  "identifier": "com.santander",
+  "apps": [
+    {
+      "name": "Santander",
+      "bundleIdentifier": "com.santander",
+      "developerName": "Antonio Garcia",
+      "version": "1.0.0",
+      "versionDate": "2024-08-05",
+      "versionDescription": "Initial release",
+      "downloadURL": "https://github.com/Hdpjiax/sant-v4/releases/download/v1.0.0/Santander.ipa",
+      "localizedDescription": "App de Santander",
+      "iconURL": "https://raw.githubusercontent.com/Hdpjiax/sant-v4/main/icons/icon.png",
+      "size": 15000000,
+      "permissions": {
+        "entitlements": []
+      }
+    }
+  ]
+}
