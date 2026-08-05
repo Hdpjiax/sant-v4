@@ -644,7 +644,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.showToast("Estado de cuenta descargado");
         } catch (error) {
             console.error(error);
-            window.showToast("Error al generar el PDF. Usa npm run dev.");
+            window.showToast("Error PDF: " + (error.message || error));
         } finally {
             window.hideLoader();
             resetButtons();
