@@ -42,7 +42,7 @@ window.StatementPdf = {
         const baseUrl = window.API_BASE_URL || "";
         const response = await fetch(baseUrl + "/api/statement-pdf", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "text/plain" },
             body: JSON.stringify(this.buildPayload(userData))
         });
 

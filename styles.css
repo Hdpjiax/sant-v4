@@ -6354,3 +6354,10 @@ textarea {
     background-color: #CC0000;
     color: #FFFFFF;
 }
+/* --- FIX IOS SAFE AREA (NOTCH) --- */
+.status-bar { padding-top: env(safe-area-inset-top); }
+.app-header { padding-top: calc(16px + env(safe-area-inset-top, 0px)); }
+.account-overview-header { padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important; }
+.app-container { min-height: 100dvh; height: 100dvh; overflow: hidden; }
+#home-view, #account-overview-view { overflow-y: auto; height: 100%; }
+
