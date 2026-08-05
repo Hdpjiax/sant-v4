@@ -32,16 +32,28 @@ class handler(BaseHTTPRequestHandler):
             payload = json.loads(self.rfile.read(length) or b"{}")
             pdf = generator.generate_pdf(payload)
 
+            is_base64 = "base64=true" in self.path
+
             self.send_response(200)
-            self.send_header("Content-Type", "application/pdf")
-            self.send_header("Content-Disposition", 'attachment; filename="EstadoCuenta.pdf"')
-            self.send_header("Cache-Control", "no-store")
-            self.send_header("Content-Length", str(len(pdf)))
             self.send_header("Access-Control-Allow-Origin", "*")
             self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
             self.send_header("Access-Control-Allow-Headers", "Content-Type")
-            self.end_headers()
-            self.wfile.write(pdf)
+            
+            if is_base64:
+                import base64
+                b64_pdf = base64.b64encode(pdf).decode("utf-8")
+                resp = json.dumps({"pdfBase64": b64_pdf}).encode("utf-8")
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(resp)))
+                self.end_headers()
+                self.wfile.write(resp)
+            else:
+                self.send_header("Content-Type", "application/pdf")
+                self.send_header("Content-Disposition", 'attachment; filename="EstadoCuenta.pdf"')
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("Content-Length", str(len(pdf)))
+                self.end_headers()
+                self.wfile.write(pdf)
         except Exception as exc:
             message = str(exc).encode("utf-8", errors="replace")
             self.send_response(500)

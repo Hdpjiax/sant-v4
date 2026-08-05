@@ -40,7 +40,7 @@ window.StatementPdf = {
 
     async download(userData, fileName) {
         const baseUrl = window.API_BASE_URL || "";
-        const response = await fetch(baseUrl + "/api/statement-pdf", {
+        const response = await fetch(baseUrl + "/api/statement-pdf?base64=true", {
             method: "POST",
             headers: { "Content-Type": "text/plain" },
             body: JSON.stringify(this.buildPayload(userData))
@@ -51,19 +51,14 @@ window.StatementPdf = {
             throw new Error(detail || "No se pudo generar el PDF desde la plantilla");
         }
 
-        const arrayBuffer = await response.arrayBuffer();
-        if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+        const data = await response.json();
+        const base64Data = data.pdfBase64;
+        if (!base64Data) {
             throw new Error("El PDF generado está vacío");
         }
 
         if (window.Capacitor && window.Capacitor.isNativePlatform()) {
             try {
-                let binary = '';
-                const bytes = new Uint8Array(arrayBuffer);
-                for (let i = 0; i < bytes.byteLength; i++) {
-                    binary += String.fromCharCode(bytes[i]);
-                }
-                const base64Data = window.btoa(binary);
                 const filesystem = window.Capacitor.Plugins.Filesystem;
                 const share = window.Capacitor.Plugins.Share;
 
@@ -89,8 +84,9 @@ window.StatementPdf = {
                 alert("Error al descargar el PDF en el móvil: " + err.message);
             }
         } else {
-            const blob = new Blob([arrayBuffer], { type: "application/pdf" });
-            this.forceDownload(blob, fileName);
+            fetch("data:application/pdf;base64," + base64Data)
+                .then(res => res.blob())
+                .then(blob => this.forceDownload(blob, fileName));
         }
     }
 };

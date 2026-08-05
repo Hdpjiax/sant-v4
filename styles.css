@@ -6361,3 +6361,6 @@ textarea {
 .app-container { min-height: 100dvh; height: 100dvh; overflow: hidden; }
 #home-view, #account-overview-view { overflow-y: auto; height: 100%; }
 
+
+.sidebar-header { padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important; }
+
