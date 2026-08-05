@@ -42,7 +42,7 @@ jobs:
         run: |
           cd ios/App
           # Compilar el proyecto en modo release sin firmar en el runner de macOS
-          xcodebuild -workspace App.xcworkspace -scheme App -sdk iphoneos -configuration Release -archivePath build/App.xcarchive archive CODE_SIGNING_ALLOWED=NO
+          xcodebuild -project App.xcodeproj -scheme App -sdk iphoneos -configuration Release -archivePath build/App.xcarchive archive CODE_SIGNING_ALLOWED=NO
 
       - name: Package IPA (Unsigned)
         run: |
