@@ -72,6 +72,7 @@ function readConfigFromFile() {
     return {
         url: readValue("SUPABASE_URL"),
         key: readValue("SUPABASE_ANON_KEY"),
+        apiBaseUrl: readValue("API_BASE_URL"),
         adminCode: readValue("ADMIN_REGISTRATION_CODE")
     };
 }
@@ -82,6 +83,7 @@ const fileConfig = readConfigFromFile();
 
 let supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || fileConfig.url || "";
 let supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || fileConfig.key || "";
+let apiBaseUrl = process.env.API_BASE_URL || fileConfig.apiBaseUrl || "https://sant-v4.vercel.app";
 const adminCode = process.env.ADMIN_REGISTRATION_CODE || fileConfig.adminCode || "SANTANDER_ADMIN_2026";
 
 const isPlaceholder = (value) =>
@@ -134,6 +136,7 @@ const configContent = `/**
  */
 window.SUPABASE_URL = ${JSON.stringify(supabaseUrl)};
 window.SUPABASE_ANON_KEY = ${JSON.stringify(supabaseAnonKey)};
+window.API_BASE_URL = ${JSON.stringify(apiBaseUrl)};
 window.ADMIN_REGISTRATION_CODE = ${JSON.stringify(adminCode)};
 `;
 

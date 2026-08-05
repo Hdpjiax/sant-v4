@@ -1,0 +1,50 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Web App
+        run: npm run build
+
+      - name: Sync Capacitor iOS
+        run: npx cap sync ios
+
+      - name: Build Xcode project (Unsigned)
+        run: |
+          cd ios/App
+          # Compilar el proyecto en modo release sin firmar en el runner de macOS
+          xcodebuild -workspace App.xcworkspace -scheme App -sdk iphoneos -configuration Release -archivePath build/App.xcarchive archive CODE_SIGNING_ALLOWED=NO
+
+      - name: Package IPA (Unsigned)
+        run: |
+          cd ios/App
+          # Empaquetar la aplicación compilada en la carpeta Payload y comprimirla como .ipa
+          mkdir -p build/Payload
+          cp -r build/App.xcarchive/Products/Applications/App.app build/Payload/
+          cd build
+          zip -r App.ipa Payload/
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-app-unsigned
+          path: ios/App/build/App.ipa

@@ -19,6 +19,13 @@ spec.loader.exec_module(generator)
 
 
 class handler(BaseHTTPRequestHandler):
+    def do_OPTIONS(self) -> None:
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
+
     def do_POST(self) -> None:
         try:
             length = int(self.headers.get("Content-Length", "0"))
@@ -30,6 +37,9 @@ class handler(BaseHTTPRequestHandler):
             self.send_header("Content-Disposition", 'attachment; filename="EstadoCuenta.pdf"')
             self.send_header("Cache-Control", "no-store")
             self.send_header("Content-Length", str(len(pdf)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
             self.end_headers()
             self.wfile.write(pdf)
         except Exception as exc:
@@ -37,6 +47,10 @@ class handler(BaseHTTPRequestHandler):
             self.send_response(500)
             self.send_header("Content-Type", "text/plain; charset=utf-8")
             self.send_header("Content-Length", str(len(message)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
             self.end_headers()
             self.wfile.write(message)
+
 

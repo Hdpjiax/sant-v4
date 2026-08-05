@@ -1,0 +1,10 @@
+{
+  "appId": "com.santander.demo",
+  "appName": "Santander",
+  "webDir": "dist",
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

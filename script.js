@@ -1572,6 +1572,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // ==================== INACTIVITY TIMEOUT ====================
+    // Desactivado por solicitud del usuario para mantener la sesión iniciada de manera permanente.
+    /*
     let inactivityTimer;
     const INACTIVITY_LIMIT = 5 * 60 * 1000;
 
@@ -1599,6 +1601,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.addEventListener(ev, resetInactivityTimer, { passive: true });
     });
     resetInactivityTimer();
+    */
 
     // ==================== SPENDING CONTROL - PERSISTENTE ====================
     function getSpendingData() {
