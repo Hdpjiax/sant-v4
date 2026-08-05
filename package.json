@@ -8,7 +8,8 @@
     "dev:local": "node scripts/dev-server.js",
     "dev:dist": "npx serve dist -l 3000",
     "preview": "npm run build && npm run dev:dist",
-    "setup:pdf": "pip install -r requirements.txt"
+    "setup:pdf": "pip install -r requirements.txt",
+    "serve:ios": "node scripts/serve-ipa.js"
   },
   "dependencies": {
     "@capacitor/core": "^8.5.0",
