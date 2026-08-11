@@ -56,17 +56,19 @@ a:focus:not(:focus-visible) {
 }
 
 body {
-    background-color: #333;
+    background-color: #FFFFFF;
+    margin: 0;
+    padding: 0;
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 100dvh;
+    align-items: stretch;
 }
 
 /* --- CONTENEDOR TIPO MÓVIL --- */
 .app-container {
     width: 100%;
-    max-width: 412px;
+    max-width: 480px;
     height: 100dvh;
     max-height: 100dvh;
     min-height: 100dvh;
@@ -76,12 +78,19 @@ body {
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
 }
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100dvh;
+
+@media (min-width: 600px) {
+    body {
+        background-color: #333;
+        align-items: center;
+    }
+    .app-container {
+        height: 92vh;
+        max-height: 900px;
+        border-radius: 28px;
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+    }
 }
 
 .app-container::-webkit-scrollbar {
@@ -90,13 +99,7 @@ body {
 
 /* --- BARRA DE ESTADO Y ENCABEZADO --- */
 .status-bar {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 24px 4px 24px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-dark);
-    background: #FFF;
+    display: none !important;
 }
 
 .status-icons {
@@ -6347,6 +6350,201 @@ textarea {
     font-size: 14px;
     text-align: center;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    background: #F5F5F5;
+    transition: background 0.2s;
+}
+
+.movement-search-input:focus {
+    background: #FFF;
+    border-color: var(--santander-red);
+    outline: none;
+}
+
+/* Beneficiarios */
+.beneficiary-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.beneficiary-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.beneficiary-item:active {
+    border-color: var(--santander-red);
+}
+
+.beneficiary-item .ben-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #F0F0F0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.beneficiary-item .ben-info {
+    flex: 1;
+}
+
+.beneficiary-item .ben-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.beneficiary-item .ben-detail {
+    font-size: 12px;
+    color: #888;
+}
+
+.ben-add-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: var(--santander-red);
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ben-form {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ben-form.hidden-ben-form {
+    display: none;
+}
+
+.ben-form input {
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.ben-form-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.ben-form-actions .btn-outline {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: transparent;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.beneficiary-item .ben-del-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: #CCC;
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s, background 0.15s;
+}
+
+.beneficiary-item:hover .ben-del-btn,
+.beneficiary-item:focus-within .ben-del-btn {
+    opacity: 1;
+}
+
+.beneficiary-item .ben-del-btn:hover {
+    background: #FFE5E5;
+    color: #DC3545;
+}
+
+/* Spending limit card section */
+.spending-limit-card {
+    background: #F8F9FA;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.spending-limit-card p {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+/* Credit card interactive */
+.credit-card-item {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: #FFF;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.credit-card-item:active {
+    border-color: var(--santander-red);
+}
+
+.credit-card-item .cc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.credit-card-item .cc-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.credit-card-item .cc-balance {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.credit-card-item .cc-details {
+    font-size: 12px;
+    color: #888;
+}
+
+/* Toast redesigned */
+.toast {
+    background-color: #333333;
+    color: #FFFFFF;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* Toast error variant */
@@ -6354,13 +6552,58 @@ textarea {
     background-color: #CC0000;
     color: #FFFFFF;
 }
-/* --- FIX IOS SAFE AREA (NOTCH) --- */
-.status-bar { padding-top: env(safe-area-inset-top); }
-.app-header { padding-top: calc(16px + env(safe-area-inset-top, 0px)); }
-.account-overview-header { padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important; }
-.app-container { min-height: 100dvh; height: 100dvh; overflow: hidden; }
-#home-view, #account-overview-view { overflow-y: auto; height: 100%; }
+/* --- FIX IOS SAFE AREA (DYNAMIC ISLAND / NOTCH & HOME BAR) --- */
+.status-bar {
+    display: none !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
 
+.app-header {
+    padding-top: calc(8px + env(safe-area-inset-top, 0px)) !important;
+    padding-bottom: 12px;
+}
 
-.sidebar-header { padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important; }
+.santander-top-header,
+.account-overview-header,
+.select-header,
+.statement-header {
+    padding-top: calc(8px + env(safe-area-inset-top, 0px)) !important;
+}
 
+.sidebar-header {
+    padding-top: calc(14px + env(safe-area-inset-top, 0px)) !important;
+}
+
+.app-container {
+    min-height: 100dvh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+#home-view,
+#account-overview-view,
+#detail-view,
+#card-info-view,
+#statement-view {
+    overflow-y: auto;
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+
+.home-products {
+    padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.bottom-nav {
+    padding: 10px 4px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 480px;
+    margin: 0 auto;
+    background-color: #FFF;
+    z-index: 100;
+}
