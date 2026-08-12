@@ -6560,33 +6560,46 @@ textarea {
     margin: 0 !important;
 }
 
-.app-header {
+.app-header,
+.santander-top-header,
+.account-overview-header,
+.select-header,
+.statement-header,
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding-top: calc(env(safe-area-inset-top, 54px) + 24px) !important;
     padding-bottom: 14px;
     padding-left: 20px;
     padding-right: 20px;
     background-color: #FFFFFF;
-}
-
-.santander-top-header,
-.account-overview-header,
-.select-header,
-.statement-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: calc(env(safe-area-inset-top, 54px) + 24px) !important;
-    padding-bottom: 12px;
-    padding-left: 16px;
-    padding-right: 16px;
-    background-color: #FFFFFF;
     position: relative;
     z-index: 10;
+    box-sizing: border-box;
+}
+
+.success-header-bg {
+    padding-top: calc(env(safe-area-inset-top, 54px) + 24px) !important;
+}
+
+.top-santander-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.top-santander-logo img {
+    height: 28px;
+    max-height: 32px;
+    object-fit: contain;
 }
 
 .sidebar-header {
     padding-top: calc(env(safe-area-inset-top, 54px) + 28px) !important;
     padding-bottom: 16px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 /* Áreas de toque ampliadas para los 3 puntos, flechas de regreso y botón cerrar */
