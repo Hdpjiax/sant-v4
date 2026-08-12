@@ -1,4 +1,4 @@
-name: Build iOS IPA
+name: Build & Deploy iOS (TestFlight)
 
 on:
   push:
@@ -38,16 +38,70 @@ jobs:
             npx cap sync ios
           fi
 
-      - name: Build Xcode project (Unsigned)
+      - name: Setup App Store Connect Private Key
+        if: env.APPSTORE_KEY_ID != ''
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
         run: |
-          cd ios/App
-          # Compilar el proyecto en modo release sin firmar en el runner de macOS
-          xcodebuild -project App.xcodeproj -scheme App -sdk iphoneos -configuration Release -archivePath build/App.xcarchive archive CODE_SIGNING_ALLOWED=NO
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "$APPSTORE_PRIVATE_KEY" > ~/.appstoreconnect/private_keys/AuthKey_${APPSTORE_KEY_ID}.p8
+          mkdir -p ~/.private_keys
+          echo "$APPSTORE_PRIVATE_KEY" > ~/.private_keys/AuthKey_${APPSTORE_KEY_ID}.p8
 
-      - name: Package IPA (Unsigned)
+      - name: Build and Upload to TestFlight
+        if: env.APPSTORE_KEY_ID != ''
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
         run: |
           cd ios/App
-          # Empaquetar la aplicación compilada en la carpeta Payload y comprimirla como .ipa
+          cat << 'EOF' > ExportOptions.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>app-store-connect</string>
+              <key>destination</key>
+              <string>upload</string>
+              <key>signingStyle</key>
+              <string>automatic</string>
+              <key>stripSwiftSymbols</key>
+              <true/>
+              <key>compileBitcode</key>
+              <false/>
+          </dict>
+          </plist>
+          EOF
+
+          xcodebuild -project App.xcodeproj \
+            -scheme App \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath build/App.xcarchive \
+            archive \
+            -allowProvisioningUpdates \
+            -authenticationKeyIssuerID "$APPSTORE_ISSUER_ID" \
+            -authenticationKeyID "$APPSTORE_KEY_ID" \
+            -authenticationKeyPath "$HOME/.private_keys/AuthKey_${APPSTORE_KEY_ID}.p8"
+
+          xcodebuild -exportArchive \
+            -archivePath build/App.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath build/ \
+            -allowProvisioningUpdates \
+            -authenticationKeyIssuerID "$APPSTORE_ISSUER_ID" \
+            -authenticationKeyID "$APPSTORE_KEY_ID" \
+            -authenticationKeyPath "$HOME/.private_keys/AuthKey_${APPSTORE_KEY_ID}.p8"
+
+      - name: Build Unsigned (Fallback)
+        if: env.APPSTORE_KEY_ID == ''
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+        run: |
+          cd ios/App
+          xcodebuild -project App.xcodeproj -scheme App -sdk iphoneos -configuration Release -archivePath build/App.xcarchive archive CODE_SIGNING_ALLOWED=NO
           mkdir -p build/Payload
           cp -r build/App.xcarchive/Products/Applications/App.app build/Payload/
           cd build
@@ -56,5 +110,7 @@ jobs:
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ios-app-unsigned
-          path: ios/App/build/App.ipa
+          name: ios-app
+          path: ios/App/build/*.ipa
+          if-no-files-found: ignore
+
