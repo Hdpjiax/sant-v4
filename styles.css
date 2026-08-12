@@ -6667,3 +6667,55 @@ textarea {
     z-index: 100;
 }
 
+/* --- FIX FINAL IOS: headers debajo de Dynamic Island / notch --- */
+:root {
+    --ios-safe-top: env(safe-area-inset-top, 0px);
+    --ios-header-bar: 56px;
+}
+
+#home-view .app-header,
+#account-overview-view .santander-top-header,
+#detail-view .santander-top-header,
+#card-info-view .detail-header,
+#statement-view .statement-header,
+#transfer-view .detail-header,
+#pay-cards-view .detail-header,
+#topup-view .detail-header,
+#cardless-view .detail-header,
+#offers-view .detail-header,
+#transfer-success-view .detail-header,
+#profile-view .detail-header,
+#nip-view .detail-header,
+#wallets-view .detail-header,
+#spending-control-view .detail-header,
+#defer-view .detail-header {
+    min-height: calc(var(--ios-header-bar) + var(--ios-safe-top)) !important;
+    height: auto !important;
+    margin-top: 0 !important;
+    padding-top: calc(var(--ios-safe-top) + 8px) !important;
+    padding-bottom: 8px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+}
+
+#account-overview-view .santander-top-header,
+#detail-view .santander-top-header {
+    grid-template-columns: 44px 1fr 44px !important;
+}
+
+.detail-header .back-btn,
+.statement-header .back-btn,
+.santander-top-header .back-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    position: relative !important;
+    z-index: 60 !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
