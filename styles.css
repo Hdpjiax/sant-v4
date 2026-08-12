@@ -6719,3 +6719,22 @@ textarea {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
 }
+
+/* --- FIX HOME: separar subtitulo gris y "Cuentas en pesos" --- */
+#home-view .welcome-section {
+    min-width: 0 !important;
+}
+
+#home-view .subtitle {
+    display: block !important;
+    margin-top: 8px !important;
+    line-height: 1.25 !important;
+}
+
+#home-view .home-products {
+    padding-top: 16px !important;
+}
+
+#home-view .products-group-header {
+    margin-bottom: 8px !important;
+}
