@@ -6561,19 +6561,54 @@ textarea {
 }
 
 .app-header {
-    padding-top: calc(env(safe-area-inset-top, 50px) + 8px) !important;
-    padding-bottom: 12px;
+    padding-top: calc(env(safe-area-inset-top, 54px) + 24px) !important;
+    padding-bottom: 14px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #FFFFFF;
 }
 
 .santander-top-header,
 .account-overview-header,
 .select-header,
 .statement-header {
-    padding-top: calc(env(safe-area-inset-top, 50px) + 8px) !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: calc(env(safe-area-inset-top, 54px) + 24px) !important;
+    padding-bottom: 12px;
+    padding-left: 16px;
+    padding-right: 16px;
+    background-color: #FFFFFF;
+    position: relative;
+    z-index: 10;
 }
 
 .sidebar-header {
-    padding-top: calc(env(safe-area-inset-top, 50px) + 14px) !important;
+    padding-top: calc(env(safe-area-inset-top, 54px) + 28px) !important;
+    padding-bottom: 16px;
+}
+
+/* Áreas de toque ampliadas para los 3 puntos, flechas de regreso y botón cerrar */
+.header-actions span,
+.santander-top-header .back-btn,
+.santander-top-header .icon-red,
+.close-sidebar,
+#btn-open-sidebar-home,
+#btn-open-sidebar-account,
+#btn-open-sidebar-detail,
+#btn-sync,
+#btn-close-sidebar {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 50;
 }
 
 .app-container {
@@ -6592,8 +6627,19 @@ textarea {
     -webkit-overflow-scrolling: touch;
 }
 
+/* Eliminar el espacio en blanco intermedio y aplicarlo solo al final de la página */
 .home-products {
-    padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+.home-extra-sections {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.account-overview-screen,
+.movement-screen {
+    padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)) !important;
 }
 
 .bottom-nav {
@@ -6607,3 +6653,4 @@ textarea {
     background-color: #FFF;
     z-index: 100;
 }
+
