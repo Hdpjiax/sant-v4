@@ -6721,18 +6721,36 @@ textarea {
 }
 
 /* --- FIX HOME: separar subtitulo gris y "Cuentas en pesos" --- */
+#home-view .app-header {
+    flex: 0 0 auto !important;
+    align-items: flex-start !important;
+    min-height: calc(var(--ios-safe-top) + 132px) !important;
+    padding-top: calc(var(--ios-safe-top) + 18px) !important;
+    padding-bottom: 18px !important;
+}
+
 #home-view .welcome-section {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
     min-width: 0 !important;
+}
+
+#home-view .app-header h1 {
+    margin: 0 !important;
+    line-height: 1.12 !important;
 }
 
 #home-view .subtitle {
     display: block !important;
-    margin-top: 8px !important;
+    margin-top: 7px !important;
     line-height: 1.25 !important;
+    clear: both !important;
 }
 
 #home-view .home-products {
-    padding-top: 16px !important;
+    flex: 0 0 auto !important;
+    padding-top: 14px !important;
 }
 
 #home-view .products-group-header {
