@@ -273,6 +273,12 @@ window.SettingsService = {
         const session = await window.SantanderAuth.getSession();
         if (!session) throw new Error("No hay sesión activa");
 
+        // Validar que el usuario sea administrador
+        const profile = await window.SantanderAuth.getProfile();
+        if (!profile || profile.role !== "admin") {
+            throw new Error("No tienes permisos para modificar tus ajustes. Solo el administrador puede hacerlo.");
+        }
+
         const buildUpdate = (data) => {
             const u = {};
             if (data.name !== undefined) u.name = data.name;

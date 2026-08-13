@@ -1110,6 +1110,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ==================== PERFIL / AJUSTES DEL USUARIO ====================
     function addProfileMovRow(mov = {}) {
         window.SantanderMovUtils.addMovRow(document.getElementById("profile-movements-list"), mov);
+        
+        // Deshabilitar fila si el usuario no es admin
+        const isAdmin = userProfile?.role === "admin";
+        if (!isAdmin) {
+            const listEl = document.getElementById("profile-movements-list");
+            if (listEl) {
+                const lastRow = listEl.lastElementChild;
+                if (lastRow) {
+                    lastRow.querySelectorAll("input, select").forEach(el => {
+                        el.disabled = true;
+                    });
+                    const delBtn = lastRow.querySelector(".btn-del-mov");
+                    if (delBtn) delBtn.style.display = "none";
+                }
+            }
+        }
     }
 
     function collectProfileMovements() {
@@ -1119,18 +1135,45 @@ document.addEventListener("DOMContentLoaded", async () => {
     function loadProfileForm() {
         const ids = ["profile-name","profile-subtitle","profile-phone","profile-balance","profile-account","profile-full-card","profile-exp","profile-product"];
         const map = {name:"name",subtitle:"subtitle",phone:"phone",balance:"balance",account:"account","full-card":"full_card",exp:"exp",product:"product"};
+        
+        const isAdmin = userProfile?.role === "admin";
+
         ids.forEach(id => {
             const el = document.getElementById(id);
             const key = map[id.replace("profile-","")];
-            if (el && key) el.value = userSettings[key] || "";
+            if (el && key) {
+                el.value = userSettings[key] || "";
+                el.disabled = !isAdmin;
+            }
         });
         const brandEl = document.getElementById("profile-brand");
-        if (brandEl) brandEl.value = userSettings.brand || "VISA";
+        if (brandEl) {
+            brandEl.value = userSettings.brand || "VISA";
+            brandEl.disabled = !isAdmin;
+        }
 
         const movList = document.getElementById("profile-movements-list");
         if (movList) {
             movList.innerHTML = "";
             (currentMovs || []).forEach(m => addProfileMovRow(m));
+        }
+
+        // Configurar botones de acción según el rol
+        const saveBtn = document.getElementById("btn-save-profile");
+        if (saveBtn) saveBtn.style.display = isAdmin ? "block" : "none";
+
+        const addMovBtn = document.getElementById("btn-profile-add-mov");
+        if (addMovBtn) addMovBtn.style.display = isAdmin ? "block" : "none";
+
+        // Cambiar la descripción explicativa de los movimientos
+        const movCard = movList?.closest(".feature-card");
+        if (movCard) {
+            const p = movCard.querySelector("p");
+            if (p) {
+                p.textContent = isAdmin 
+                    ? "Edita o elimina movimientos existentes. Los cambios se guardan al presionar \"Guardar cambios\"."
+                    : "Lista de movimientos registrados en tu cuenta.";
+            }
         }
     }
 
@@ -1186,6 +1229,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     on("btn-save-profile", "click", async () => {
         const feedback = document.getElementById("profile-save-feedback");
         const saveBtn = document.getElementById("btn-save-profile");
+
+        if (userProfile?.role !== "admin") {
+            if (feedback) {
+                feedback.textContent = "Solo el administrador puede modificar estos datos.";
+                feedback.className = "profile-feedback is-error";
+            }
+            return;
+        }
 
         const name = getVal("profile-name");
         if (!name) {
