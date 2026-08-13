@@ -6724,9 +6724,9 @@ textarea {
 #home-view .app-header {
     flex: 0 0 auto !important;
     align-items: flex-start !important;
-    min-height: calc(var(--ios-safe-top) + 132px) !important;
+    min-height: calc(var(--ios-safe-top) + 106px) !important;
     padding-top: calc(var(--ios-safe-top) + 18px) !important;
-    padding-bottom: 18px !important;
+    padding-bottom: 6px !important;
 }
 
 #home-view .welcome-section {
@@ -6750,7 +6750,7 @@ textarea {
 
 #home-view .home-products {
     flex: 0 0 auto !important;
-    padding-top: 14px !important;
+    padding-top: 4px !important;
 }
 
 #home-view .products-group-header {
