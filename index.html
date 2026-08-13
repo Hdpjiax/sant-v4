@@ -33,6 +33,7 @@
             <a href="#" aria-label="Seguridad"><span class="material-icons-outlined" aria-hidden="true">security</span> Seguridad</a>
             <a href="#" aria-label="Ayuda y soporte"><span class="material-icons-outlined" aria-hidden="true">help_outline</span> Ayuda y soporte</a>
             <a href="#" aria-label="Mis cuentas"><span class="material-icons-outlined" aria-hidden="true">account_balance</span> Mis cuentas</a>
+            <a href="#" id="sidebar-token-link" aria-label="SuperToken"><span class="material-icons-outlined" aria-hidden="true">vpn_key</span> SuperToken</a>
             <a href="#" aria-label="Notificaciones"><span class="material-icons-outlined" aria-hidden="true">notifications_none</span> Notificaciones</a>
             <hr>
             <a href="#" id="open-config-from-sidebar" class="settings-link" aria-label="Ajustes"><span
@@ -524,23 +525,60 @@
         </div>
 
         <div id="transfer-success-view" class="hidden-view">
-            <div class="success-header-bg">
-                <span class="material-icons-outlined success-icon-large">check_circle</span>
-                <h2>Transferencia exitosa</h2>
-                <h1 id="success-transfer-amount">$ 0.00</h1>
-            </div>
-            <div class="page-content" style="background-color: #F7F9FA;">
-                <div class="receipt-box">
-                    <div class="receipt-row"><span class="receipt-label">Destino</span><span class="receipt-value"
-                            id="success-transfer-dest">---</span></div>
-                    <div class="receipt-row"><span class="receipt-label">Concepto</span><span class="receipt-value"
-                            id="success-transfer-concept">---</span></div>
-                    <div class="receipt-row"><span class="receipt-label">Fecha</span><span class="receipt-value"
-                            id="success-transfer-date">---</span></div>
-                    <div class="receipt-row"><span class="receipt-label">Folio</span><span
-                            class="receipt-value" id="success-transfer-folio">---</span></div>
+            <div class="page-content" style="background-color: #F8F9FA; padding: 16px;">
+                <div class="receipt-box" style="background: #FFFFFF; border-radius: 16px; padding: 24px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: center; position: relative;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg" alt="Santander" style="height: 24px;">
+                        <span style="font-size: 13px; font-weight: 700; color: #666; letter-spacing: 0.5px; text-transform: uppercase;">Comprobante de Operación</span>
+                    </div>
+
+                    <div style="margin: 20px 0;">
+                        <span class="material-icons-outlined" style="font-size: 54px; color: #118A43; margin-bottom: 8px;">check_circle</span>
+                        <h2 style="font-size: 18px; font-weight: 600; color: #222; margin-bottom: 4px;">Transferencia exitosa</h2>
+                        <h1 id="success-transfer-amount" style="font-size: 28px; font-weight: 700; color: #222;">$ 0.00</h1>
+                    </div>
+
+                    <div class="receipt-details" style="text-align: left; border-top: 1px solid #E2E8F0; padding-top: 16px; margin-top: 16px;">
+                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                            <span style="color: #767676; font-weight: 500;">Origen</span>
+                            <span style="color: #222; font-weight: 600;" id="success-transfer-origin">Santander</span>
+                        </div>
+                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                            <span style="color: #767676; font-weight: 500;">Destino</span>
+                            <span style="color: #222; font-weight: 600;" id="success-transfer-dest">---</span>
+                        </div>
+                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                            <span style="color: #767676; font-weight: 500;">Concepto</span>
+                            <span style="color: #222; font-weight: 600;" id="success-transfer-concept">---</span>
+                        </div>
+                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                            <span style="color: #767676; font-weight: 500;">Fecha y Hora</span>
+                            <span style="color: #222; font-weight: 600;" id="success-transfer-date">---</span>
+                        </div>
+                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                            <span style="color: #767676; font-weight: 500;">Clave de Rastreo (SPEI)</span>
+                            <span style="color: #222; font-weight: 600; font-family: monospace; font-size: 11px;" id="success-transfer-rastreo">---</span>
+                        </div>
+                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                            <span style="color: #767676; font-weight: 500;">Referencia Numérica</span>
+                            <span style="color: #222; font-weight: 600;" id="success-transfer-ref">---</span>
+                        </div>
+                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                            <span style="color: #767676; font-weight: 500;">Comisión</span>
+                            <span style="color: #222; font-weight: 600;">$ 0.00 MXN</span>
+                        </div>
+                        <div class="receipt-row" style="display: flex; justify-content: space-between; font-size: 13px;">
+                            <span style="color: #767676; font-weight: 500;">Estatus</span>
+                            <span style="color: #118A43; font-weight: 700; background: #E6F4EA; padding: 2px 8px; border-radius: 4px; font-size: 11px; text-transform: uppercase;">Procesado</span>
+                        </div>
+                    </div>
                 </div>
-                <button class="primary-action-btn mt-20 btn-home-action">Volver al inicio</button>
+
+                <button class="primary-action-btn mt-20" id="btn-share-receipt" style="margin-top: 20px; background: #FFFFFF; color: var(--santander-red); border: 2px solid var(--santander-red); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span class="material-icons-outlined">share</span> Compartir comprobante
+                </button>
+                
+                <button class="primary-action-btn btn-home-action" style="margin-top: 12px;">Volver al inicio</button>
             </div>
         </div>
 
@@ -589,23 +627,48 @@
         <div id="cardless-active-view" class="hidden-view">
             <header class="detail-header">
                 <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
-                <h2>Clave de retiro</h2>
+                <h2>Retiro sin tarjeta</h2>
                 <span class="material-icons-outlined icon-red">more_vert</span>
             </header>
-            <div class="page-content cv-container">
-                <div class="cvv-box" style="border-top: 4px solid var(--santander-red);">
-                    <p>Acude a cualquier cajero e ingresa la siguiente clave:</p>
-                    <h1 id="dynamic-cardless-number"
-                        style="letter-spacing: 4px; font-size: 40px; color: var(--santander-red);">---</h1>
-                    <p style="margin-bottom: 15px; font-weight: bold;">Monto: <span id="cardless-active-amount"></span>
-                    </p>
-                    <div class="timer-box">
-                        <span class="material-icons-outlined">timer</span>
-                        <span id="cardless-timer">10:00</span>
+            <div class="page-content" style="background-color: #F8F9FA; padding: 16px;">
+                <div class="receipt-box" style="background: #FFFFFF; border-radius: 16px; padding: 24px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: center; position: relative;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg" alt="Santander" style="height: 24px;">
+                        <span style="font-size: 13px; font-weight: 700; color: #666; letter-spacing: 0.5px; text-transform: uppercase;">Retiro Generado</span>
                     </div>
-                    <p class="cvv-warning">Válido por 10 minutos.</p>
+
+                    <div style="margin: 15px 0;">
+                        <div class="qrcode-mock" style="width: 120px; height: 120px; margin: 10px auto; background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg'); background-size: contain; background-position: center; background-repeat: no-repeat;"></div>
+                        <div class="barcode-mock" style="width: 220px; height: 50px; margin: 10px auto; background: repeating-linear-gradient(90deg, #000, #000 2px, #fff 2px, #fff 5px, #000 5px, #000 8px, #fff 8px, #fff 10px); border-radius: 4px;"></div>
+                        <h1 id="cardless-active-amount" style="font-size: 26px; font-weight: 700; color: #222; margin-top: 10px;">$ 0.00</h1>
+                    </div>
+
+                    <div class="receipt-details" style="text-align: left; border-top: 1px solid #E2E8F0; padding-top: 16px; margin-top: 16px;">
+                        <div style="margin-bottom: 16px; text-align: center;">
+                            <span style="font-size: 12px; color: #767676; font-weight: 500; display: block; margin-bottom: 4px;">REFERENCIA DE RETIRO</span>
+                            <strong id="cardless-reference-num" style="font-size: 20px; color: #222; font-family: monospace; letter-spacing: 1.5px;">0000 0000 0000 0000</strong>
+                        </div>
+                        <div style="margin-bottom: 16px; text-align: center; background: #FFF0F0; padding: 12px; border-radius: 8px; border: 1px dashed var(--santander-red);">
+                            <span style="font-size: 12px; color: var(--santander-red); font-weight: 600; display: block; margin-bottom: 4px;">CÓDIGO DE SEGURIDAD (NIP)</span>
+                            <strong id="cardless-security-code" style="font-size: 24px; color: var(--santander-red); font-family: monospace; letter-spacing: 4px;">0000</strong>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                            <span style="color: #767676; font-weight: 500;">Origen</span>
+                            <span style="color: #222; font-weight: 600;">Cuenta en pesos</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                            <span style="color: #767676; font-weight: 500;">Vigencia</span>
+                            <span style="color: #222; font-weight: 600;" id="cardless-timer">10:00</span>
+                        </div>
+                    </div>
                 </div>
-                <button class="primary-action-btn mt-20 btn-home-action">Terminar</button>
+
+                <button class="primary-action-btn mt-20" id="btn-share-withdrawal" style="margin-top: 20px; background: #FFFFFF; color: var(--santander-red); border: 2px solid var(--santander-red); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span class="material-icons-outlined">share</span> Compartir retiro
+                </button>
+                
+                <button class="primary-action-btn btn-home-action" style="margin-top: 12px;">Volver al inicio</button>
             </div>
         </div>
 
@@ -895,6 +958,44 @@
 
                 <button class="primary-action-btn mt-20" id="btn-save-profile" style="margin-top:16px;">Guardar cambios</button>
                 <p id="profile-save-feedback" class="profile-feedback"></p>
+            </div>
+        </div>
+
+        <div id="token-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>SuperToken</h2>
+            </header>
+
+            <div class="page-content">
+                <div class="token-container" style="padding: 16px;">
+                    <!-- Activation state (shown if not active yet) -->
+                    <div id="token-activation-card" class="token-card" style="text-align: center; padding: 32px 16px;">
+                        <span class="material-icons-outlined token-large-icon" style="font-size: 80px; color: var(--santander-red); margin-bottom: 16px;">security</span>
+                        <h3 style="margin-bottom: 8px;">Activar SuperToken</h3>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 24px; line-height: 1.4;">Tu SuperToken te permite autorizar transferencias y pagos de manera segura desde tu banca móvil.</p>
+                        <button class="primary-action-btn" id="btn-activate-token">Activar ahora</button>
+                    </div>
+
+                    <!-- Token code state (shown once active) -->
+                    <div id="token-display-card" class="token-card hidden-view" style="text-align: center; padding: 32px 16px;">
+                        <span class="token-title" style="font-size: 12px; font-weight: 700; color: #888; letter-spacing: 1px; display: block; margin-bottom: 16px;">CÓDIGO DE SEGURIDAD</span>
+                        <div class="token-code-row" style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px;">
+                            <span class="token-digit-group" id="token-code-g1" style="font-size: 32px; font-weight: 700; letter-spacing: 2px; color: #222; font-family: monospace;">0000</span>
+                            <span class="token-digit-group" id="token-code-g2" style="font-size: 32px; font-weight: 700; letter-spacing: 2px; color: #222; font-family: monospace;">0000</span>
+                        </div>
+                        
+                        <!-- Progress circle or bar -->
+                        <div class="token-timer-container" style="margin-bottom: 16px;">
+                            <div class="token-progress-bar" style="height: 6px; background: #E2E8F0; border-radius: 3px; overflow: hidden; margin-bottom: 10px;">
+                                <div id="token-progress-fill" style="height: 100%; width: 100%; background: var(--santander-red); transition: width 1s linear;"></div>
+                            </div>
+                            <span class="token-timer-text" style="font-size: 13px; color: #666;">El código cambia en <strong id="token-timer-sec">30</strong> segundos</span>
+                        </div>
+                        
+                        <p class="token-info" style="font-size: 12px; color: #888; line-height: 1.4;">Este código es dinámico y sirve para autorizar operaciones.</p>
+                    </div>
+                </div>
             </div>
         </div>
 

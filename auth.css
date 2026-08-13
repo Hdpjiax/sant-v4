@@ -501,3 +501,226 @@ body.admin-body {
     .admin-modal-content fieldset { margin-left: 16px; margin-right: 16px; }
     .admin-modal-buttons { padding-left: 16px; padding-right: 16px; }
 }
+
+/* --- LOGIN RECORDADO --- */
+.remembered-user-section {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    animation: fadeIn 0.4s ease-in-out;
+}
+.remembered-user-section.active {
+    display: flex;
+}
+.user-avatar-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #FFF0F0;
+    color: var(--santander-red, #EC0000);
+    border: 2px solid var(--santander-red, #EC0000);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    box-shadow: 0 6px 15px rgba(236, 0, 0, 0.12);
+}
+.remembered-user-section h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #222;
+    margin: 0 0 4px 0;
+}
+.change-user-btn {
+    background: none;
+    border: none;
+    color: var(--santander-red, #EC0000);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 6px 12px;
+    transition: color 0.2s ease;
+}
+.change-user-btn:hover {
+    color: #B30000;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- LOGIN MEJORAS DE ALTA FIDELIDAD --- */
+.auth-body {
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #000000;
+}
+
+/* Fondo fotográfico desenfocado */
+.login-bg-photo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-image: url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80'); /* Modern street background */
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px) brightness(0.65);
+    transform: scale(1.05); /* previene bordes blancos por blur */
+}
+
+/* La tarjeta debe estar sobre el fondo */
+.auth-card {
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    width: calc(100% - 32px);
+    max-width: 400px;
+    margin-bottom: 24px;
+}
+
+/* Accesos rápidos inferiores pre-login */
+.prelogin-shortcuts {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 0;
+    margin-top: 10px;
+}
+
+.shortcut-item {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
+    width: 76px;
+    height: 76px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.shortcut-item:active {
+    transform: scale(0.92);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.shortcut-item span.material-icons-outlined {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.shortcut-item span:not(.material-icons-outlined) {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Prelogin Modals */
+.prelogin-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.prelogin-modal.active {
+    display: flex;
+}
+
+.prelogin-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+}
+
+.prelogin-modal-content {
+    position: relative;
+    z-index: 1;
+    background: #FFFFFF;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 360px;
+    padding: 24px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    animation: zoomIn 0.3s ease;
+    text-align: center;
+}
+
+.prelogin-modal-close {
+    background: #F1F5F9;
+    border: none;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 10px;
+    width: 100%;
+    margin-top: 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.prelogin-modal-close:active {
+    background: #E2E8F0;
+}
+
+.fingerprint-scan-icon {
+    font-size: 80px;
+    color: var(--santander-red, #EC0000);
+    margin-bottom: 16px;
+    display: block;
+}
+
+.anim-pulse {
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}

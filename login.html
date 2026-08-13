@@ -7,10 +7,12 @@
     <title>Iniciar sesión — Santander</title>
     <link rel="icon" type="image/svg+xml"
         href="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="auth.css">
 </head>
 
 <body class="auth-body">
+    <div class="login-bg-photo"></div>
     <div class="auth-card">
         <div class="auth-logo">
             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg" alt="Santander">
@@ -19,6 +21,14 @@
 
         <h1>Iniciar sesión</h1>
         <p class="subtitle">Accede a tu banca digital con tu correo y contraseña.</p>
+
+        <div id="remembered-user-section" class="remembered-user-section">
+            <div class="user-avatar-circle">
+                <span id="user-avatar-initials">U</span>
+            </div>
+            <h2 id="user-greeting">Hola, Usuario</h2>
+            <button type="button" class="change-user-btn" id="btn-change-user">Entrar con otra cuenta</button>
+        </div>
 
         <div id="auth-error" class="auth-error"></div>
 
@@ -33,10 +43,112 @@
                 <input type="password" id="password" placeholder="Tu contraseña" required autocomplete="current-password">
             </div>
 
-            <button type="submit" class="auth-btn" id="btn-login">Entrar</button>
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                <button type="submit" class="auth-btn" id="btn-login" style="flex: 1; margin: 0 !important;">Entrar</button>
+                <button type="button" class="biometric-btn" id="btn-biometric" aria-label="Ingresar con huella" style="width: 48px; height: 48px; border-radius: 12px; background: #FFF0F0; border: 1px solid #EC0000; color: #EC0000; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; padding: 0;">
+                    <span class="material-icons-outlined" style="font-size: 26px;">fingerprint</span>
+                </button>
+            </div>
         </form>
 
         <p class="auth-link">¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></p>
+    </div>
+
+    <!-- PRELOGIN SHORTCUTS -->
+    <div class="prelogin-shortcuts">
+        <button type="button" class="shortcut-item" id="shortcut-token">
+            <span class="material-icons-outlined">vpn_key</span>
+            <span>SuperToken</span>
+        </button>
+        <button type="button" class="shortcut-item" id="shortcut-withdraw">
+            <span class="material-icons-outlined">local_atm</span>
+            <span>Retiro sin tarjeta</span>
+        </button>
+        <button type="button" class="shortcut-item" id="shortcut-support">
+            <span class="material-icons-outlined">help_outline</span>
+            <span>Ayuda</span>
+        </button>
+    </div>
+
+    <!-- BIOMETRIC MODAL -->
+    <div class="prelogin-modal" id="modal-biometric">
+        <div class="prelogin-modal-backdrop"></div>
+        <div class="prelogin-modal-content">
+            <span class="material-icons-outlined fingerprint-scan-icon anim-pulse">fingerprint</span>
+            <h3>Iniciar con Biometría</h3>
+            <p>Coloca tu huella en el lector o espera el reconocimiento facial...</p>
+            <div id="biometric-status" style="color: #EC0000; margin-top: 10px; font-weight: 600; min-height: 20px; font-size: 13px;"></div>
+            <button type="button" class="prelogin-modal-close" id="btn-close-biometric">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- PRELOGIN SUPERTOKEN MODAL -->
+    <div class="prelogin-modal" id="modal-token">
+        <div class="prelogin-modal-backdrop"></div>
+        <div class="prelogin-modal-content">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span class="material-icons-outlined" style="font-size: 40px; color: var(--santander-red, #EC0000);">vpn_key</span>
+                <h3 style="margin-top: 8px;">SuperToken Digital</h3>
+            </div>
+            
+            <div id="prelogin-token-activation" style="text-align: center; padding: 10px 0;">
+                <p style="font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.4;">Para usar SuperToken sin iniciar sesión, actívalo primero en la banca móvil.</p>
+                <button type="button" class="auth-btn" id="btn-prelogin-activate-mock" style="width: auto; padding: 8px 16px; font-size: 13px;">Simular Activación Rápida</button>
+            </div>
+            
+            <div id="prelogin-token-display" class="hidden-view" style="text-align: center;">
+                <span style="font-size: 11px; font-weight: 700; color: #888; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">CÓDIGO DINÁMICO</span>
+                <div style="font-size: 26px; font-weight: 700; color: #222; font-family: monospace; letter-spacing: 1px; margin-bottom: 12px;" id="prelogin-token-code">0000 0000</div>
+                <div style="height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden; margin-bottom: 8px;">
+                    <div id="prelogin-token-progress" style="height: 100%; width: 100%; background: #EC0000; transition: width 1s linear;"></div>
+                </div>
+                <span style="font-size: 12px; color: #666;">Cambia en <strong id="prelogin-token-timer">30</strong>s</span>
+            </div>
+            
+            <button type="button" class="prelogin-modal-close" id="btn-close-token">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- PRELOGIN WITHDRAW MODAL -->
+    <div class="prelogin-modal" id="modal-withdraw">
+        <div class="prelogin-modal-backdrop"></div>
+        <div class="prelogin-modal-content">
+            <span class="material-icons-outlined" style="font-size: 40px; color: var(--santander-red, #EC0000); margin-bottom: 12px; display: block; text-align: center;">local_atm</span>
+            <h3 style="text-align: center; margin-bottom: 12px;">Retiro sin Tarjeta</h3>
+            <p style="font-size: 13px; color: #475569; line-height: 1.5; margin-bottom: 20px; text-align: left;">
+                Para cobrar un retiro sin tarjeta generado desde la banca móvil:
+                <br><br>
+                1. Acude a cualquier cajero automático Santander.
+                <br>
+                2. Selecciona la opción <strong>"Operaciones sin tarjeta"</strong> en la pantalla de inicio del cajero.
+                <br>
+                3. Ingresa la <strong>Referencia de 16 dígitos</strong> y tu <strong>Código de Seguridad (NIP) de 4 dígitos</strong>.
+            </p>
+            <button type="button" class="prelogin-modal-close" id="btn-close-withdraw">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- SUPPORT MODAL -->
+    <div class="prelogin-modal" id="modal-support">
+        <div class="prelogin-modal-backdrop"></div>
+        <div class="prelogin-modal-content">
+            <h3 style="text-align: center; margin-bottom: 16px;">Soporte Santander</h3>
+            <div class="support-contact-row" style="margin-bottom: 12px; padding: 10px; border-bottom: 1px solid #E2E8F0; display: flex; align-items: center; gap: 10px;">
+                <span class="material-icons-outlined" style="color: #EC0000;">phone</span>
+                <div style="text-align: left;">
+                    <strong style="font-size: 14px; display: block;">SuperLínea Santander</strong>
+                    <span style="font-size: 12px; color: #666;">55 5169 4300 (CDMX y resto de la Rep.)</span>
+                </div>
+            </div>
+            <div class="support-contact-row" style="margin-bottom: 20px; padding: 10px; display: flex; align-items: center; gap: 10px;">
+                <span class="material-icons-outlined" style="color: #EC0000;">email</span>
+                <div style="text-align: left;">
+                    <strong style="font-size: 14px; display: block;">Atención a Clientes</strong>
+                    <span style="font-size: 12px; color: #666;">ayuda@santander.com.mx</span>
+                </div>
+            </div>
+            <button type="button" class="prelogin-modal-close" id="btn-close-support">Cerrar</button>
+        </div>
     </div>
 
     <script src="js/dev-check.js"></script>
@@ -45,6 +157,7 @@
     <script src="js/supabase-errors.js"></script>
     <script src="js/supabase-client.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/settings-service.js"></script>
     <script src="js/login.js"></script>
 </body>
 

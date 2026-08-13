@@ -756,6 +756,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         closeSidebar();
         navigateToProfile();
     });
+    on("sidebar-token-link", "click", (e) => {
+        e.preventDefault();
+        closeSidebar();
+        navigateToToken();
+    });
     if (settingsLink) {
         settingsLink.addEventListener("click", (e) => {
             e.preventDefault();
@@ -1008,7 +1013,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     on("btn-copy-modal-exp", "click", () => {
         copyText(userSettings.exp);
     });
+    let tokenInterval = null;
+
     function navigateTo(viewId, loaderMsg = "Cargando...", delay = LOADER.NAV) {
+        if (viewId !== "token-view" && tokenInterval) {
+            clearInterval(tokenInterval);
+            tokenInterval = null;
+        }
 
         const currentView = historyStack[historyStack.length - 1];
         if (currentView === viewId) return;
@@ -1181,6 +1192,83 @@ document.addEventListener("DOMContentLoaded", async () => {
         loadProfileForm();
         navigateTo("profile-view", "Cargando perfil...", LOADER.NAV);
     }
+
+    // ==================== SUPERTOKEN DIGITAL ====================
+    function navigateToToken() {
+        navigateTo("token-view", "Preparando SuperToken...", LOADER.SHORT);
+        setTimeout(() => {
+            const isActivated = localStorage.getItem("santander_token_active") === "true";
+            const activationCard = document.getElementById("token-activation-card");
+            const displayCard = document.getElementById("token-display-card");
+            
+            if (isActivated) {
+                activationCard?.classList.add("hidden-view");
+                displayCard?.classList.remove("hidden-view");
+                startTokenTimer();
+            } else {
+                activationCard?.classList.remove("hidden-view");
+                displayCard?.classList.add("hidden-view");
+            }
+        }, LOADER.SHORT + 50);
+    }
+
+    function generateRandomToken() {
+        const rand = (min, max) => Math.floor(Math.random() * (max - min) + min);
+        const g1 = String(rand(1000, 9999));
+        const g2 = String(rand(1000, 9999));
+        
+        const g1El = document.getElementById("token-code-g1");
+        const g2El = document.getElementById("token-code-g2");
+        if (g1El) g1El.textContent = g1;
+        if (g2El) g2El.textContent = g2;
+    }
+
+    function startTokenTimer() {
+        if (tokenInterval) clearInterval(tokenInterval);
+        
+        generateRandomToken();
+        let secondsLeft = 30;
+        
+        const timerSecEl = document.getElementById("token-timer-sec");
+        const progressFill = document.getElementById("token-progress-fill");
+        
+        if (timerSecEl) timerSecEl.textContent = secondsLeft;
+        if (progressFill) {
+            progressFill.style.transition = "none";
+            progressFill.style.width = "100%";
+        }
+
+        tokenInterval = setInterval(() => {
+            secondsLeft--;
+            if (timerSecEl) timerSecEl.textContent = secondsLeft;
+            
+            if (progressFill) {
+                progressFill.style.transition = "width 1s linear";
+                progressFill.style.width = (secondsLeft / 30) * 100 + "%";
+            }
+            
+            if (secondsLeft <= 0) {
+                secondsLeft = 30;
+                generateRandomToken();
+                if (progressFill) {
+                    progressFill.style.transition = "none";
+                    progressFill.style.width = "100%";
+                }
+            }
+        }, 1000);
+    }
+
+    on("btn-activate-token", "click", () => {
+        window.showLoader("Activando SuperToken...");
+        setTimeout(() => {
+            localStorage.setItem("santander_token_active", "true");
+            document.getElementById("token-activation-card")?.classList.add("hidden-view");
+            document.getElementById("token-display-card")?.classList.remove("hidden-view");
+            window.hideLoader();
+            startTokenTimer();
+            window.showToast("SuperToken activado con éxito");
+        }, 2000);
+    });
 
     on("btn-profile-sync", "click", () => {
         window.showLoader("Sincronizando...");
@@ -1623,10 +1711,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // ==================== INACTIVITY TIMEOUT ====================
-    // Desactivado por solicitud del usuario para mantener la sesión iniciada de manera permanente.
-    /*
     let inactivityTimer;
-    const INACTIVITY_LIMIT = 5 * 60 * 1000;
+    const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 minutos de límite de inactividad
 
     function resetInactivityTimer() {
         clearTimeout(inactivityTimer);
@@ -1652,7 +1738,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.addEventListener(ev, resetInactivityTimer, { passive: true });
     });
     resetInactivityTimer();
-    */
 
     // ==================== SPENDING CONTROL - PERSISTENTE ====================
     function getSpendingData() {
@@ -2029,17 +2114,75 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderMovsApp();
 
         navigateTo("transfer-success-view", "", 0);
+        const now = new Date();
+        const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+        const dateFormatted = `${now.getDate()}/${months[now.getMonth()]}/${now.getFullYear()} a las ${now.toTimeString().split(" ")[0]} h`;
+        
+        const year = String(now.getFullYear()).slice(-2);
+        const monthStr = String(now.getMonth() + 1).padStart(2, "0");
+        const dayStr = String(now.getDate()).padStart(2, "0");
+        const randStr = String(Math.floor(1000000000 + Math.random() * 9000000000));
+        const rastreo = `8026${year}${monthStr}${dayStr}${randStr}`;
+        const refNum = String(Math.floor(100000 + Math.random() * 900000));
+        const originAcc = `Santander (${userSettings.account || "14**0000"})`;
+
         const els = {
             "success-transfer-amount": `$ ${formatAmount(numericAmount)} MXN`,
+            "success-transfer-origin": originAcc,
             "success-transfer-dest": dest,
             "success-transfer-concept": concept,
-            "success-transfer-date": getTodayString(),
-            "success-transfer-folio": folio
+            "success-transfer-date": dateFormatted,
+            "success-transfer-rastreo": rastreo,
+            "success-transfer-ref": refNum
         };
         Object.entries(els).forEach(([id, val]) => {
             const el = document.getElementById(id);
             if (el) el.textContent = val;
         });
+
+        // Configurar botón Compartir con Capacitor API / Web Share / Fallback
+        const shareBtn = document.getElementById("btn-share-receipt");
+        if (shareBtn) {
+            const newShareBtn = shareBtn.cloneNode(true);
+            shareBtn.parentNode.replaceChild(newShareBtn, shareBtn);
+            
+            newShareBtn.addEventListener("click", async () => {
+                const shareText = `Comprobante de Transferencia Santander\nMonto: $${formatAmount(numericAmount)} MXN\nOrigen: ${originAcc}\nDestino: ${dest}\nConcepto: ${concept}\nFecha: ${dateFormatted}\nClave Rastreo: ${rastreo}\nReferencia: ${refNum}`;
+                
+                if (window.Capacitor && window.Capacitor.isPluginAvailable && window.Capacitor.isPluginAvailable("Share")) {
+                    try {
+                        await window.Capacitor.Plugins.Share.share({
+                            title: "Comprobante de Transferencia",
+                            text: shareText,
+                            dialogTitle: "Compartir Comprobante"
+                        });
+                    } catch (error) {
+                        console.error("Capacitor Share failed:", error);
+                        fallbackShare(shareText);
+                    }
+                } else if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: "Comprobante de Transferencia",
+                            text: shareText
+                        });
+                    } catch (error) {
+                        console.error("Web Share failed:", error);
+                        fallbackShare(shareText);
+                    }
+                } else {
+                    fallbackShare(shareText);
+                }
+            });
+        }
+
+        function fallbackShare(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                window.showToast("Copiado al portapapeles");
+            }).catch(() => {
+                alert(text);
+            });
+        }
     });
 
     // ==================== RECARGAS CON VALIDACIÓN ====================
@@ -2097,18 +2240,45 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ==================== RETIRO SIN TARJETA ====================
     on("btn-do-cardless", "click", () => {
         const amount = document.getElementById("cardless-amount")?.value || "500.00";
+        const numericAmount = parseFloat(amount) || 0;
+
+        if (parseFloat(userSettings.balance || 0) < numericAmount) {
+            window.showToast("Saldo insuficiente para realizar el retiro");
+            return;
+        }
 
         navigateTo("cardless-active-view", "Generando clave dinámica...", LOADER.LONG);
 
         setTimeout(() => {
+            // Deduct from balance
+            userSettings.balance = String(parseFloat(userSettings.balance || 0) - numericAmount);
+            const balanceEl = document.getElementById("header-balance");
+            if (balanceEl) balanceEl.textContent = `$ ${formatAmount(userSettings.balance)}`;
+
+            // Generate codes
+            const refCode = String(Math.floor(1000000000000000 + Math.random() * 9000000000000000)); // 16 digits
+            const nipCode = String(Math.floor(1000 + Math.random() * 9000)); // 4 digits
+
+            // Add movement
+            const today = new Date().toISOString().split("T")[0];
+            currentMovs.unshift({
+                title: "Retiro sin tarjeta",
+                location: "CAJERO SANTANDER",
+                reference: refCode.slice(-8),
+                date: today,
+                amount: numericAmount.toFixed(2),
+                type: "negative"
+            });
+            renderMovsApp();
+
             const cardlessAmount = document.getElementById("cardless-active-amount");
-            const cardlessNumber = document.getElementById("dynamic-cardless-number");
+            const cardlessRef = document.getElementById("cardless-reference-num");
+            const cardlessSec = document.getElementById("cardless-security-code");
             const timerDisplay = document.getElementById("cardless-timer");
 
-            if (cardlessAmount) cardlessAmount.textContent = `$ ${amount} MXN`;
-
-            const code = `${secureRandom(100, 999)} ${secureRandom(100, 999)} ${secureRandom(100, 999)}`;
-            if (cardlessNumber) cardlessNumber.textContent = code;
+            if (cardlessAmount) cardlessAmount.textContent = `$ ${formatAmount(numericAmount)} MXN`;
+            if (cardlessRef) cardlessRef.textContent = refCode.replace(/(.{4})/g, "$1 ").trim();
+            if (cardlessSec) cardlessSec.textContent = nipCode;
 
             let timeLeft = 600;
             clearInterval(cardlessInterval);
@@ -2127,6 +2297,48 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             updateTimer();
             cardlessInterval = setInterval(updateTimer, 1000);
+
+            // Configure Share button
+            const shareBtn = document.getElementById("btn-share-withdrawal");
+            if (shareBtn) {
+                const newShareBtn = shareBtn.cloneNode(true);
+                shareBtn.parentNode.replaceChild(newShareBtn, shareBtn);
+                
+                newShareBtn.addEventListener("click", async () => {
+                    const shareText = `Retiro sin Tarjeta Santander\nMonto: $${formatAmount(numericAmount)} MXN\nReferencia: ${refCode.replace(/(.{4})/g, "$1 ").trim()}\nNIP de seguridad: ${nipCode}\nVigencia: 10 minutos.\nCobra en cualquier cajero automático Santander seleccionando 'Operaciones sin tarjeta'.`;
+                    
+                    const fallbackShare = (text) => {
+                        navigator.clipboard.writeText(text).then(() => {
+                            window.showToast("Copiado al portapapeles");
+                        }).catch(() => {
+                            alert(text);
+                        });
+                    };
+
+                    if (window.Capacitor && window.Capacitor.isPluginAvailable && window.Capacitor.isPluginAvailable("Share")) {
+                        try {
+                            await window.Capacitor.Plugins.Share.share({
+                                title: "Retiro sin Tarjeta",
+                                text: shareText,
+                                dialogTitle: "Compartir Retiro"
+                            });
+                        } catch (error) {
+                            fallbackShare(shareText);
+                        }
+                    } else if (navigator.share) {
+                        try {
+                            await navigator.share({
+                                title: "Retiro sin Tarjeta",
+                                text: shareText
+                            });
+                        } catch (error) {
+                            fallbackShare(shareText);
+                        }
+                    } else {
+                        fallbackShare(shareText);
+                    }
+                });
+            }
         }, LOADER.LONG);
     });
 

@@ -15,7 +15,8 @@
     "@capacitor/core": "^8.5.0",
     "@capacitor/filesystem": "^8.1.2",
     "@capacitor/ios": "^8.5.0",
-    "@capacitor/share": "^8.0.1"
+    "@capacitor/share": "^8.0.1",
+    "capacitor-native-biometric": "^4.2.2"
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.0",

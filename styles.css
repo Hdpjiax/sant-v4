@@ -6756,3 +6756,47 @@ textarea {
 #home-view .products-group-header {
     margin-bottom: 8px !important;
 }
+
+/* --- PREMIUM STYLING OVERRIDES --- */
+.page-content {
+    background-color: #F8F9FA !important; /* Warmer premium gray background for content views */
+}
+
+/* Uniform rounded corners for other cards and buttons */
+.feature-card, .detail-card, .receipt-box, .token-card {
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+    background: #FFFFFF !important;
+    padding: 16px !important;
+}
+
+.primary-action-btn, .auth-btn, .admin-save-btn {
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+}
+
+.feature-input, .auth-field input, .admin-modal-content input, .admin-modal-content select {
+    border-radius: 10px !important;
+    border: 1px solid #E2E8F0 !important;
+}
+
+/* --- SUPERTOKEN STYLES --- */
+#token-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.token-card {
+    background: #FFFFFF !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+    margin-bottom: 16px !important;
+    border: none !important;
+}
+.token-timer-container {
+    background: #F8F9FA !important;
+    padding: 12px !important;
+    border-radius: 10px !important;
+    margin: 16px 0 !important;
+}
