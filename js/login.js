@@ -44,6 +44,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         return `${firstNames} ${lastNames}`;
     }
 
+    const mobileFrame = document.querySelector(".mobile-frame");
+
     function checkUserState() {
         const rawUser = localStorage.getItem("santander_last_user");
         if (rawUser) {
@@ -57,15 +59,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 if (rememberedSec) rememberedSec.classList.add("active");
                 if (newUserSec) newUserSec.classList.add("hidden-view");
+                if (mobileFrame) mobileFrame.classList.remove("new-user-mode");
                 return;
             } catch (e) {
                 console.error("Error parsing remembered user:", e);
             }
         }
 
-        // If no user remembered: Show new user login form
+        // If no user remembered: Show new user login form and hide shortcuts
         if (rememberedSec) rememberedSec.classList.remove("active");
         if (newUserSec) newUserSec.classList.remove("hidden-view");
+        if (mobileFrame) mobileFrame.classList.add("new-user-mode");
     }
 
     checkUserState();
