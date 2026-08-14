@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     // ==================== AUTENTICACIÓN Y AJUSTES REMOTOS ====================
-    const session = await window.SantanderAuth.requireSession("login.html");
+    const session = await window.SantanderAuth.requireSession();
     if (!session) return;
 
     // ==================== INACTIVITY AUTO-LOGOUT (APP REAL BANCARIA) ====================

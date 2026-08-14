@@ -10,17 +10,24 @@ window.SantanderAuth = {
         return data.session;
     },
 
-    async requireSession(redirectTo = "login.html") {
+    async requireSession(redirectTo = null) {
         try {
             const session = await this.getSession();
             if (!session) {
-                window.location.href = redirectTo;
+                let target = redirectTo;
+                if (!target) {
+                    const hasRemembered = !!localStorage.getItem("santander_last_user");
+                    target = hasRemembered ? "login.html" : "register.html";
+                }
+                window.location.href = target;
                 return null;
             }
             return session;
         } catch (error) {
             console.error("Error de sesión:", error);
-            throw error;
+            const hasRemembered = !!localStorage.getItem("santander_last_user");
+            window.location.href = redirectTo || (hasRemembered ? "login.html" : "register.html");
+            return null;
         }
     },
 
@@ -79,9 +86,13 @@ window.SantanderAuth = {
 
     async signOut() {
         const sb = this._client();
-        const { error } = await sb.auth.signOut();
-        if (error) throw error;
-        window.location.href = "login.html";
+        try {
+            await sb.auth.signOut();
+        } catch (e) {
+            console.warn("SignOut warning:", e);
+        }
+        const hasRemembered = !!localStorage.getItem("santander_last_user");
+        window.location.href = hasRemembered ? "login.html" : "register.html";
     },
 
     async updateProfile(displayName) {
