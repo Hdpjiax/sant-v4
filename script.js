@@ -734,8 +734,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (sidebarOverlay) sidebarOverlay.classList.add("active");
         if (sidebar) sidebar.classList.add("active");
 
-        const sidebarName = document.getElementById("sidebar-name");
-        if (sidebarName) sidebarName.textContent = userSettings.name;
+        const lastAccessEl = document.getElementById("sidebar-last-access");
+        if (lastAccessEl) {
+            const now = new Date();
+            const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+            const pad = num => String(num).padStart(2, "0");
+            lastAccessEl.textContent = `Último acceso: ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        }
     }
 
     function closeSidebar() {
@@ -871,7 +876,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (detailAccountNumber) detailAccountNumber.textContent = account;
         if (detailCardRef) detailCardRef.textContent = maskedCardRef;
         if (overviewAccountNumber) overviewAccountNumber.textContent = account;
-        if (overviewCardRef) overviewCardRef.textContent = "TDC " + maskedCardRef;
+        if (overviewCardRef) overviewCardRef.textContent = "CTA " + account;
         if (displayAccountDetail) displayAccountDetail.textContent = account;
 
         if (modalFullCardNumber) modalFullCardNumber.textContent = fullCard;
@@ -1013,6 +1018,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     on("btn-copy-modal-exp", "click", () => {
         copyText(userSettings.exp);
     });
+
+    document.addEventListener("click", (e) => {
+        const copyBtn = e.target.closest(".btn-copy-action");
+        if (copyBtn) {
+            const val = copyBtn.getAttribute("data-copy") || copyBtn.previousElementSibling?.querySelector("strong")?.textContent;
+            if (val) copyText(val);
+        }
+    });
     let tokenInterval = null;
 
     function navigateTo(viewId, loaderMsg = "Cargando...", delay = LOADER.NAV) {
@@ -1112,7 +1125,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     on("btn-nav-retiro", "click", () => navigateTo("cardless-view", "Conectando con red de cajeros...", LOADER.LONG));
     on("btn-nav-pagar", "click", () => navigateTo("pay-cards-view", "Consultando adeudos...", LOADER.MEDIUM));
     on("btn-nav-recargar", "click", () => navigateTo("topup-view", "Cargando recargas...", LOADER.NAV));
+    on("btn-banner-recarga", "click", () => navigateTo("topup-view", "Cargando recargas...", LOADER.NAV));
     on("btn-nav-ofertas", "click", () => navigateTo("offers-view", "Buscando beneficios...", LOADER.MEDIUM));
+    on("btn-overview-finanzas", "click", () => navigateTo("offers-view", "Buscando beneficios...", LOADER.MEDIUM));
     on("btn-action-transfer", "click", () => navigateTo("transfer-view", "Preparando pago...", LOADER.MEDIUM));
     on("btn-action-statement", "click", downloadStatementPdf);
     on("btn-download-statement-pdf", "click", downloadStatementPdf);

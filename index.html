@@ -19,26 +19,97 @@
 
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <aside class="sidebar-menu" id="sidebar-menu">
-            <div class="sidebar-header">
-            <div class="sidebar-profile" id="sidebar-profile-link" style="cursor:pointer;" role="button" tabindex="0" aria-label="Ver mi perfil">
-                <span class="material-icons-outlined" style="font-size: 40px;" aria-hidden="true">account_circle</span>
-                <div>
-                    <h3 id="sidebar-name">Juan Antonio</h3>
-                    <p>Ver mi perfil</p>
-                </div>
+        <div class="sidebar-header-new">
+            <div class="sidebar-logo-container">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg"
+                    alt="Santander" class="sidebar-logo-img">
             </div>
-            <span class="material-icons-outlined close-sidebar" id="btn-close-sidebar" role="button" tabindex="0" aria-label="Cerrar menú">close</span>
+            <div class="sidebar-access-info">
+                <span class="sidebar-last-access" id="sidebar-last-access">Último acceso: 13 Ago 2026 20:01</span>
+                <span class="sidebar-version">12.0</span>
+            </div>
         </div>
-        <div class="sidebar-links">
-            <a href="#" aria-label="Seguridad"><span class="material-icons-outlined" aria-hidden="true">security</span> Seguridad</a>
-            <a href="#" aria-label="Ayuda y soporte"><span class="material-icons-outlined" aria-hidden="true">help_outline</span> Ayuda y soporte</a>
-            <a href="#" aria-label="Mis cuentas"><span class="material-icons-outlined" aria-hidden="true">account_balance</span> Mis cuentas</a>
-            <a href="#" id="sidebar-token-link" aria-label="SuperToken"><span class="material-icons-outlined" aria-hidden="true">vpn_key</span> SuperToken</a>
-            <a href="#" aria-label="Notificaciones"><span class="material-icons-outlined" aria-hidden="true">notifications_none</span> Notificaciones</a>
-            <hr>
-            <a href="#" id="open-config-from-sidebar" class="settings-link" aria-label="Ajustes"><span
-                    class="material-icons-outlined" aria-hidden="true">settings</span> Ajustes</a>
-            <a href="#" class="logout-link" aria-label="Cerrar sesión"><span class="material-icons-outlined" aria-hidden="true">logout</span> Cerrar sesión</a>
+
+        <div class="sidebar-links-new">
+            <a href="#" class="sidebar-link-item"><span
+                    class="material-icons-outlined">notifications</span>Notificaciones</a>
+
+            <a href="#" class="sidebar-link-item active-red"><span
+                    class="material-icons-outlined">account_balance_wallet</span>Consulta de saldos</a>
+
+            <a href="#" class="sidebar-link-item">
+                <span class="material-icons-outlined">swap_horiz</span>Transferencias
+                <span class="material-icons-outlined item-plus">add</span>
+            </a>
+
+            <a href="#" class="sidebar-link-item">
+                <span class="material-icons-outlined">payments</span>Pagos
+                <span class="material-icons-outlined item-plus">add</span>
+            </a>
+
+            <a href="#" class="sidebar-link-item">
+                <span class="material-icons-outlined">local_atm</span>Retiro sin tarjeta
+                <span class="material-icons-outlined item-plus">add</span>
+            </a>
+
+            <a href="#" class="sidebar-link-item">
+                <span class="material-icons-outlined">eco</span>Inversiones
+                <span class="material-icons-outlined item-plus">add</span>
+            </a>
+
+            <a href="#" class="sidebar-link-item"><span class="material-icons-outlined">umbrella</span>Seguros</a>
+
+            <a href="#" class="sidebar-link-item">
+                <span class="material-icons-outlined">account_balance</span>Trae tu nómina
+                <span class="material-icons-outlined item-plus">add</span>
+            </a>
+
+            <a href="#" class="sidebar-link-item"><span class="material-icons-outlined">description</span>Estados de
+                Cuenta</a>
+
+            <a href="#" class="sidebar-link-item"><span class="material-icons-outlined">account_circle</span>Mi
+                expediente</a>
+
+            <a href="#" class="sidebar-link-item"><span class="material-icons-outlined">query_stats</span>Mis
+                finanzas</a>
+
+            <a href="#" class="sidebar-link-item"><span class="material-icons-outlined">savings</span>Mis Metas</a>
+
+            <a href="#" class="sidebar-link-item">
+                <span class="material-icons-outlined">find_in_page</span>Consultas
+                <span class="material-icons-outlined item-plus">add</span>
+            </a>
+
+            <a href="#" class="sidebar-link-item"><span class="material-icons-outlined">qr_code_2</span>Cobro Digital
+                (CoDi®)</a>
+
+            <a href="#" class="sidebar-link-item" id="sidebar-token-link"><span
+                    class="material-icons-outlined">vpn_key</span>SuperToken</a>
+
+            <a href="#" class="sidebar-link-item">
+                <span class="material-icons-outlined">settings</span>Administración de mis cuentas
+                <span class="material-icons-outlined item-plus">add</span>
+            </a>
+
+            <a href="#" class="sidebar-link-item">
+                <span class="material-icons-outlined">group</span>Administración de cuentas de terceros
+                <span class="material-icons-outlined item-plus">add</span>
+            </a>
+
+            <a href="#" class="sidebar-link-item" id="open-config-from-sidebar">
+                <span class="material-icons-outlined">settings</span>Configuración
+                <span class="material-icons-outlined item-plus">add</span>
+            </a>
+
+            <a href="#" class="sidebar-link-item"><span class="material-icons-outlined">headset_mic</span>Contacto</a>
+
+            <a href="#" class="sidebar-link-item"><span class="material-icons-outlined">trending_up</span>Indicadores
+                financieros</a>
+
+            <a href="#" class="sidebar-link-item logout-link"><span class="material-icons-outlined">logout</span>Cerrar
+                sesión</a>
+
+            <div class="sidebar-footer-ver">12.0</div>
         </div>
     </aside>
 
@@ -52,62 +123,69 @@
             <header class="app-header">
                 <div class="welcome-section">
                     <span class="brand">Mi Banco</span>
-                    <h1>¡Hola, <span id="display-name">Juan Antonio</span>!</h1>
-                    <p class="subtitle" id="display-subtitle">García Nievez</p>
+                    <h1>¡Hola, <span id="display-name">Natalia</span>!</h1>
+                    <p class="subtitle" id="display-subtitle">Natalia Estefani De La Paz Chavez</p>
                 </div>
                 <div class="header-actions">
-                    <span class="material-icons-outlined icon-red" id="btn-sync" role="button" tabindex="0" aria-label="Sincronizar datos">sync</span>
-                    <span class="material-icons-outlined icon-red" id="btn-open-sidebar-home"
-                        style="cursor:pointer;" role="button" tabindex="0" aria-label="Abrir menú">more_vert</span>
+                    <span class="material-icons-outlined icon-red" id="btn-sync" role="button" tabindex="0"
+                        aria-label="Sincronizar datos">sync</span>
+                    <span class="material-icons-outlined icon-red" id="btn-open-sidebar-home" style="cursor:pointer;"
+                        role="button" tabindex="0" aria-label="Abrir menú">menu</span>
                 </div>
             </header>
+
             <section class="home-products">
-                <div class="products-group">
+                <div class="products-group-accordion">
                     <div class="products-group-header">
                         <h2>Cuentas en pesos</h2>
                         <div class="products-group-total">
-                            <strong><span style="font-size: 15px;" class="dynamic-balance">0.00</span></strong>
-                            <span style="font-size: 15px;">MXN</span>
-                            <span class="material-icons-outlined group-action-icon">remove</span>
+                            <span><span class="dynamic-balance">0.10</span> MXN</span>
+                            <span class="material-icons-outlined icon-red group-toggle-icon">remove</span>
                         </div>
                     </div>
 
-                    <article class="home-product-card is-clickable" id="open-card-details">
-                        <div class="home-product-icon">
-                            <div class="mini-card mini-card-gray">
-                                <div class="mini-card-logo">Santander</div>
-                                <div class="mini-card-line"></div>
-                                <div class="mini-card-chip"></div>
-                                <div class="mini-card-contactless"></div>
-                                <div class="mini-card-mastercard">
-                                    <span></span>
-                                    <span></span>
+                    <div class="products-group-content">
+                        <article class="home-product-card is-clickable" id="open-card-details">
+                            <div class="home-product-icon">
+                                <div class="mini-card mini-card-gray">
+                                    <div class="mini-card-logo">Santander</div>
+                                    <div class="mini-card-line"></div>
+                                    <div class="mini-card-chip"></div>
+                                    <div class="mini-card-contactless"></div>
+                                    <div class="mini-card-mastercard">
+                                        <span></span>
+                                        <span></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="home-product-info">
-                            <div class="home-product-balance">$<span class="dynamic-balance">0.00</span> MXN</div>
-                            <div class="home-product-title">CUENTA DIGITAL</div>
-                            <div class="home-product-meta" id="display-account">14**9096</div>
-                            <div class="home-product-meta">Celular · <span id="display-phone">4431318488</span></div>
-                        </div>
+                            <div class="home-product-info">
+                                <div class="home-product-balance">$<span class="dynamic-balance">37,880.00</span> MXN
+                                </div>
+                                <div class="home-product-title">CUENTA DIGITAL</div>
+                                <div class="home-product-meta" id="display-account">14****4377</div>
+                                <div class="home-product-phone"
+                                    style="font-size: 11px; color: #767676; margin-top: 1px;">Celular · <span
+                                        id="display-phone">5577880882</span></div>
+                            </div>
 
-                        <span class="material-icons-outlined home-product-arrow">chevron_right</span>
-                    </article>
+                            <span class="material-icons-outlined home-product-arrow">chevron_right</span>
+                        </article>
+                    </div>
                 </div>
 
-                <div class="products-group credit-products-group">
-                    <div class="products-group-header">
-                        <h2>Tarjetas de crédito</h2>
-                        <div class="products-group-total">
-                            <strong style="font-size: 15px;">11,795.91</strong>
+                <div class="products-group credit-products-group"
+                    style="padding: 12px 18px 0; background: #FFFFFF; border-top: 1px solid #EAEAEA;">
+                    <div class="products-group-header" style="margin-bottom: 8px;">
+                        <h2 style="font-size: 16px; font-weight: 700; color: #1A1A1A;">Tarjetas de crédito</h2>
+                        <div class="products-group-total" <strong style="font-size: 15px;">11,795.91</strong>
                             <span style="font-size: 15px;">MXN</span>
-                            <span class="material-icons-outlined group-action-icon">remove</span>
                         </div>
                     </div>
 
-                    <article class="home-product-card credit-card-clickable" data-cc="likeu" tabindex="0" role="button" aria-label="Tarjeta LikeU, saldo $55.00 MXN">
+                    <article class="home-product-card credit-card-clickable" data-cc="likeu" tabindex="0" role="button"
+                        aria-label="Tarjeta LikeU, saldo $55.00 MXN"
+                        style="border-bottom: 1px dashed #E2E8F0 !important;">
                         <div class="home-product-icon">
                             <div class="mini-card mini-card-likeu">
                                 <div class="mini-card-logo">Santander</div>
@@ -130,7 +208,9 @@
                         <span class="material-icons-outlined home-product-arrow">chevron_right</span>
                     </article>
 
-                    <article class="home-product-card credit-card-clickable" data-cc="free" tabindex="0" role="button" aria-label="Tarjeta Free, saldo $5,467.38 MXN">
+                    <article class="home-product-card credit-card-clickable" data-cc="free" tabindex="0" role="button"
+                        aria-label="Tarjeta Free, saldo $5,467.38 MXN"
+                        style="border-bottom: 1px dashed #E2E8F0 !important;">
                         <div class="home-product-icon">
                             <div class="mini-card mini-card-free">
                                 <div class="mini-card-free-logo">Santander<br><strong>free</strong></div>
@@ -152,7 +232,8 @@
                         <span class="material-icons-outlined home-product-arrow">chevron_right</span>
                     </article>
 
-                    <article class="home-product-card credit-card-clickable" data-cc="zero" tabindex="0" role="button" aria-label="Tarjeta Zero, saldo $6,273.53 MXN">
+                    <article class="home-product-card credit-card-clickable" data-cc="zero" tabindex="0" role="button"
+                        aria-label="Tarjeta Zero, saldo $6,273.53 MXN" style="border-bottom: none !important;">
                         <div class="home-product-icon">
                             <div class="mini-card mini-card-zero">
                                 <div class="mini-card-logo">Santander</div>
@@ -180,21 +261,14 @@
             <section class="home-extra-sections menu-list">
                 <div class="menu-accordion">
                     <div class="menu-header">
-                        <span>Mis Beneficios</span>
-                        <span class="material-icons-outlined icon-red toggle-icon">add</span>
-                    </div>
-                    <div class="menu-content">
-                        <div><p>Consulta promociones, recompensas y beneficios disponibles para tus cuentas y tarjetas.</p></div>
-                    </div>
-                </div>
-
-                <div class="menu-accordion">
-                    <div class="menu-header">
                         <span>Dinero creciente</span>
                         <span class="material-icons-outlined icon-red toggle-icon">add</span>
                     </div>
                     <div class="menu-content">
-                        <div><p>Activa herramientas para hacer crecer tu dinero de forma automática con tus saldos disponibles.</p></div>
+                        <div>
+                            <p>Activa herramientas para hacer crecer tu dinero de forma automática con tus saldos
+                                disponibles.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -204,7 +278,10 @@
                         <span class="material-icons-outlined icon-red toggle-icon">add</span>
                     </div>
                     <div class="menu-content">
-                        <div><p>Crea metas de ahorro, define un monto objetivo y revisa tu avance en cualquier momento.</p></div>
+                        <div>
+                            <p>Crea metas de ahorro, define un monto objetivo y revisa tu avance en cualquier momento.
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -214,7 +291,10 @@
                         <span class="material-icons-outlined icon-red toggle-icon">add</span>
                     </div>
                     <div class="menu-content">
-                        <div><p>Explora opciones de inversión a plazo fijo según tu saldo, plazo elegido y rendimiento estimado.</p></div>
+                        <div>
+                            <p>Explora opciones de inversión a plazo fijo según tu saldo, plazo elegido y rendimiento
+                                estimado.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -224,48 +304,62 @@
                         <span class="material-icons-outlined icon-red toggle-icon">add</span>
                     </div>
                     <div class="menu-content">
-                        <div><p>Consulta ofertas de crédito disponibles, líneas preaprobadas y opciones personalizadas.</p></div>
+                        <div>
+                            <p>Consulta ofertas de crédito disponibles, líneas preaprobadas y opciones personalizadas.
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div class="home-hot-banner" id="home-hot-banner">
-                    <div class="home-hot-badge">
-                        <span>DÍAS</span>
-                        <strong>HOT</strong>
-                    </div>
 
-                    <div class="home-hot-text">
-                        <h3>¡Aprovecha los días Hot!</h3>
-                        <p>Este Hot Sale paga con tus tarjetas de Santander y descubre promociones especiales.</p>
+                <!-- RECARGAS BANNER -->
+                <div class="home-recarga-banner" id="home-hot-banner">
+                    <button type="button" class="home-recarga-close" id="btn-close-home-hot-banner">&times;</button>
+                    <div class="home-recarga-body">
+                        <div class="home-recarga-img-container">
+                            <img src="assets/banner-woman.jpg" alt="Natalia" class="home-recarga-img">
+                        </div>
+                        <div class="home-recarga-content">
+                            <h3>Siempre al día, siempre conectado</h3>
+                            <p>Elige la frecuencia, el monto y a quién recargar. Actívala una vez y despreocúpate del
+                                resto</p>
+                            <button type="button" class="btn-recarga-action" id="btn-banner-recarga">Programar
+                                recarga</button>
+                        </div>
                     </div>
-
-                    <button type="button" class="home-hot-close" id="btn-close-home-hot-banner">&times;</button>
                 </div>
             </section>
 
-
-
             <nav class="bottom-nav">
-                <div class="nav-item" id="btn-nav-transfer"><span
-                        class="material-icons-outlined">arrow_forward</span><span>Transferir</span></div>
-                <div class="nav-item" id="btn-nav-retiro"><span
-                        class="material-icons-outlined">credit_card</span><span>Retiro sin tarjeta</span></div>
-                <div class="nav-item" id="btn-nav-pagar"><span
-                        class="material-icons-outlined">indeterminate_check_box</span><span>Pagar tarjetas
-                        propias</span></div>
-                <div class="nav-item" id="btn-nav-recargar"><span
-                        class="material-icons-outlined">smartphone</span><span>Recargar celular</span></div>
-                <div class="nav-item" id="btn-nav-ofertas"><span
-                        class="material-icons-outlined">sentiment_satisfied_alt</span><span>Mis ofertas</span></div>
+                <div class="nav-item" id="btn-nav-transfer">
+                    <span class="material-icons-outlined">swap_horiz</span>
+                    <span>Transferir</span>
+                </div>
+                <div class="nav-item" id="btn-nav-retiro">
+                    <span class="material-icons-outlined">local_atm</span>
+                    <span>Retiro sin tarjeta</span>
+                </div>
+                <div class="nav-item" id="btn-nav-pagar">
+                    <span class="material-icons-outlined">credit_card</span>
+                    <span>Pagar tarjetas propias</span>
+                </div>
+                <div class="nav-item" id="btn-nav-recargar">
+                    <span class="material-icons-outlined">smartphone</span>
+                    <span>Recargar celular</span>
+                </div>
+                <div class="nav-item" id="btn-nav-ofertas">
+                    <span class="material-icons-outlined">percent</span>
+                    <span>Mis ofertas</span>
+                </div>
             </nav>
         </div>
 
-
         <div id="account-overview-view" class="hidden-view">
-            <header class="account-overview-header santander-top-header">
-                <span class="material-icons-outlined icon-red back-btn">arrow_back_ios</span>
+            <header class="select-header santander-top-header"
+                style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #FFFFFF;">
+                <span class="material-icons-outlined icon-red back-btn" style="cursor:pointer;">arrow_back_ios</span>
 
                 <div class="top-santander-logo">
-                    <img src="assets/santander-flame.png" alt="Santander">
+                    <img src="assets/santander-flame.png" alt="Santander" style="height: 22px; width: auto;">
                 </div>
 
                 <span class="material-icons-outlined icon-red" id="btn-open-sidebar-account"
@@ -273,8 +367,9 @@
             </header>
 
             <section class="account-overview-screen">
-                <div class="account-card-stage">
-                    <div class="account-card-carousel">
+                <div class="account-card-stage"
+                    style="padding: 16px 0 10px; display: flex; flex-direction: column; align-items: center;">
+                    <div class="account-card-carousel" style="width: 100%; display: flex; justify-content: center;">
                         <article class="account-main-card horizontal-card" id="btn-open-card-info-from-overview">
                             <div class="horizontal-card-inner">
                                 <div class="horizontal-card-watermark"></div>
@@ -285,13 +380,14 @@
 
                                     <div class="horizontal-card-balance">
                                         <span>$</span>
-                                        <strong class="dynamic-balance">15,670.00</strong>
+                                        <strong class="dynamic-balance">37,880.00</strong>
                                     </div>
 
-                                    <p class="horizontal-card-ref" id="overview-card-ref">4152••9096</p>
+                                    <p class="horizontal-card-ref" id="overview-card-ref">TDC 4152••7110</p>
                                 </div>
 
-                                <div class="card-network-logo dynamic-card-network" id="overview-card-network"></div>
+                                <div class="card-network-logo dynamic-card-network is-mastercard"
+                                    id="overview-card-network" aria-label="Mastercard"></div>
                             </div>
                         </article>
                     </div>
@@ -307,57 +403,63 @@
                 <div class="account-options-list">
                     <button class="account-option-row account-option-row-toggle" id="btn-overview-toggle-card"
                         type="button">
-                        <span id="overview-card-power-text">Prender o apagar tarjeta</span>
-                        <span class="material-icons-outlined" id="overview-card-power-icon">add</span>
+                        <span id="overview-card-power-text">Apagar tarjeta digital</span>
+                        <span class="material-icons-outlined" id="overview-card-power-icon"
+                            style="color: var(--santander-red); font-size: 26px;">power_settings_new</span>
                     </button>
 
-                    <button class="account-option-row" id="btn-overview-card-info">
+                    <button class="account-option-row" id="btn-overview-card-info" type="button">
                         <span>Actualizar tarjeta digital</span>
                         <span class="account-option-right">
-                            <em>Nuevo</em>
-                            <span class="material-icons-outlined">chevron_right</span>
+                            <em
+                                style="color: var(--santander-red); font-style: normal; font-size: 13px; font-weight: 500; margin-right: 4px;">Nuevo</em>
+                            <span class="material-icons-outlined"
+                                style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
                         </span>
                     </button>
 
-                    <button class="account-option-row" id="btn-overview-movements">
+                    <button class="account-option-row" id="btn-overview-movements" type="button">
                         <span>Movimientos</span>
-                        <span class="material-icons-outlined">chevron_right</span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
                     </button>
 
-                    <button class="account-option-row" id="btn-overview-statement">
+                    <button class="account-option-row" id="btn-overview-statement" type="button">
                         <span>Estado de cuenta</span>
-                        <span class="account-option-right">
-                            <span class="material-icons-outlined statement-pdf-hint">picture_as_pdf</span>
-                            <span class="material-icons-outlined">chevron_right</span>
-                        </span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
                     </button>
 
-                    <button class="account-option-row" id="btn-overview-pay">
+                    <button class="account-option-row" id="btn-overview-transfer" type="button">
+                        <span>Transferir</span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-pay" type="button">
                         <span>Pagar tarjeta</span>
-                        <span class="material-icons-outlined">chevron_right</span>
-                    </button>
-
-                    <button class="account-option-row" id="btn-overview-defer" type="button">
-                        <span>Difiere tus compras</span>
-                        <span class="material-icons-outlined">chevron_right</span>
-                    </button>
-
-                    <button class="account-option-row" id="btn-overview-nip" type="button">
-                        <span>Generación de NIP</span>
-                        <span class="material-icons-outlined">chevron_right</span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
                     </button>
 
                     <button class="account-option-row" id="btn-overview-spending-control" type="button">
                         <span>Control de gasto</span>
-                        <span class="material-icons-outlined">chevron_right</span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
                     </button>
 
                     <button class="account-option-row" id="btn-overview-wallets" type="button">
                         <span>Billeteras digitales</span>
-                        <span class="material-icons-outlined">chevron_right</span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
                     </button>
                 </div>
             </section>
+
+            <!-- FLOATING ACTION BUTTON (FAB) -->
+            <button type="button" class="account-overview-fab" id="btn-overview-fab" aria-label="Asistente Sandii">
+                <img src="assets/santander-flame.png" alt="" class="fab-flame-img">
+            </button>
         </div>
 
         <div id="detail-view" class="hidden-view">
@@ -419,70 +521,91 @@
         </div>
 
         <div id="card-info-view" class="hidden-view">
-            <header class="detail-header">
-                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
-                <h2>Detalle de tarjeta</h2>
-                <span class="material-icons-outlined icon-red">more_vert</span>
+            <header class="detail-header"
+                style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #F8F9FA; border-bottom: none;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="material-icons-outlined icon-red back-btn"
+                        style="cursor:pointer; color: #EC0000; font-size: 24px;">arrow_back_ios</span>
+                    <h2 style="font-size: 18px; font-weight: 700; color: #1A1A1A; margin: 0;">Detalle de Cuenta</h2>
+                </div>
+                <span class="material-icons-outlined"
+                    style="cursor:pointer; color: #EC0000; font-size: 22px;">ios_share</span>
             </header>
 
-            <section class="card-showcase">
-                <div class="virtual-card">
-                    <div class="virtual-card-top">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg"
-                            alt="Santander" class="santander-logo-img">
-                        <span class="material-icons-outlined contactless-icon">contactless</span>
-                    </div>
+            <section class="account-detail-page-content"
+                style="padding: 16px 20px; background: #F8F9FA; min-height: calc(100% - 60px);">
+                <h3
+                    style="font-size: 16px; font-weight: 800; color: #1A1A1A; margin: 0 0 16px; text-transform: uppercase; letter-spacing: 0.3px;">
+                    CUENTA DIGITAL</h3>
 
-                    <div class="virtual-card-chip-row">
-                        <span class="card-subtitle">Tarjeta Digital</span>
-                    </div>
-
-                    <div class="virtual-card-middle">
-                        <span id="display-full-card">4152 3140 8080 9096</span>
-                    </div>
-
-                    <div class="virtual-card-bottom">
-                        <div class="sensitive-data" id="sensitive-data">
-                            <div class="data-group">
-                                <span class="data-label">VENC</span>
-                                <strong id="display-exp" class="data-value">12/28</strong>
-                            </div>
+                <!-- Card Block 1 -->
+                <div class="detail-white-card"
+                    style="background: #FFFFFF; border-radius: 16px; padding: 16px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 16px;">
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid #F1F1F1;">
+                        <div>
+                            <span style="display: block; font-size: 13px; color: #666666; margin-bottom: 4px;">Número de
+                                cuenta</span>
+                            <strong id="display-full-account"
+                                style="font-size: 16px; font-weight: 700; color: #1A1A1A;">14039601895</strong>
                         </div>
-                        <div class="card-network-logo dynamic-card-network" id="display-brand"></div>
+                        <button type="button" class="btn-copy-action" data-copy="14039601895"
+                            style="background: none; border: none; cursor: pointer; color: #EC0000; padding: 4px;">
+                            <span class="material-icons-outlined" style="font-size: 22px;">content_copy</span>
+                        </button>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px;">
+                        <div>
+                            <span style="display: block; font-size: 13px; color: #666666; margin-bottom: 4px;">Teléfono
+                                asociado</span>
+                            <strong id="display-detail-phone"
+                                style="font-size: 16px; font-weight: 700; color: #1A1A1A;">-</strong>
+                        </div>
+                        <button type="button" class="btn-edit-action"
+                            style="background: none; border: none; cursor: pointer; color: #EC0000; padding: 4px;">
+                            <span class="material-icons-outlined" style="font-size: 22px;">edit</span>
+                        </button>
                     </div>
                 </div>
 
-                <div class="card-detail-extra">
-                    <div class="card-detail-row">
-                        <span>Cuenta</span>
-                        <strong id="display-account-detail">14**9096</strong>
+                <!-- Card Block 2 -->
+                <div class="detail-white-card"
+                    style="background: #FFFFFF; border-radius: 16px; padding: 16px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid #F1F1F1;">
+                        <div>
+                            <span style="display: block; font-size: 13px; color: #666666; margin-bottom: 4px;">Cuenta
+                                CLABE</span>
+                            <strong id="display-clabe"
+                                style="font-size: 16px; font-weight: 700; color: #1A1A1A;">014470140396018952</strong>
+                        </div>
+                        <button type="button" class="btn-copy-action" data-copy="014470140396018952"
+                            style="background: none; border: none; cursor: pointer; color: #EC0000; padding: 4px;">
+                            <span class="material-icons-outlined" style="font-size: 22px;">content_copy</span>
+                        </button>
                     </div>
-                    <div class="card-detail-row">
-                        <span>Estatus</span>
-                        <strong id="card-status-text">Activa</strong>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px;">
+                        <div>
+                            <span style="display: block; font-size: 13px; color: #666666; margin-bottom: 4px;">Número de
+                                cuenta</span>
+                            <strong id="display-full-account-2"
+                                style="font-size: 16px; font-weight: 700; color: #1A1A1A;">14039601895</strong>
+                        </div>
+                        <button type="button" class="btn-copy-action" data-copy="14039601895"
+                            style="background: none; border: none; cursor: pointer; color: #EC0000; padding: 4px;">
+                            <span class="material-icons-outlined" style="font-size: 22px;">content_copy</span>
+                        </button>
                     </div>
                 </div>
 
-                <button class="btn-toggle-cvv" id="btn-generate-cvv">
-                    <span class="material-icons-outlined" id="cvv-icon">lock_clock</span>
-                    <span id="cvv-text">Generar CVV dinámico</span>
-                </button>
-            </section>
-
-            <section class="card-actions">
-                <div class="action-btn" id="btn-action-transfer">
-                    <div class="action-circle"><span class="material-icons-outlined">arrow_forward</span></div>
-                    <span>Transferir</span>
-                </div>
-                <div class="action-btn" id="btn-action-toggle">
-                    <div class="action-circle"><span class="material-icons-outlined"
-                            id="toggle-card-icon">power_settings_new</span></div>
-                    <span id="toggle-card-text">Apagar tarjeta</span>
-                </div>
-                <div class="action-btn" id="btn-action-statement">
-                    <div class="action-circle"><span class="material-icons-outlined">receipt_long</span></div>
-                    <span>Estado de cuenta</span>
-                </div>
+                <!-- Hidden fallback elements -->
+                <span id="display-full-card" style="display:none;">4268 0703 6553 6749</span>
+                <span id="display-exp" style="display:none;">01/29</span>
+                <span id="display-brand" style="display:none;"></span>
+                <span id="card-status-text" style="display:none;">Activa</span>
+                <span id="display-account-detail" style="display:none;">14039601895</span>
             </section>
         </div>
 
@@ -497,15 +620,18 @@
                 <div class="feature-card" style="margin-bottom:16px;">
                     <h3 style="display:flex;align-items:center;justify-content:space-between;">
                         <span>Beneficiarios</span>
-                        <button id="btn-add-beneficiary" class="ben-add-btn" type="button" title="Agregar beneficiario">+</button>
+                        <button id="btn-add-beneficiary" class="ben-add-btn" type="button"
+                            title="Agregar beneficiario">+</button>
                     </h3>
                     <div class="beneficiary-grid" id="beneficiary-list"></div>
                     <div id="beneficiary-form" class="ben-form hidden-ben-form">
                         <input type="text" id="ben-new-name" placeholder="Nombre" maxlength="40">
-                        <input type="text" id="ben-new-clabe" placeholder="CLABE (18 dígitos)" maxlength="18" inputmode="numeric">
+                        <input type="text" id="ben-new-clabe" placeholder="CLABE (18 dígitos)" maxlength="18"
+                            inputmode="numeric">
                         <div class="ben-form-actions">
                             <button id="ben-cancel" class="btn-outline" type="button">Cancelar</button>
-                            <button id="ben-save" class="primary-action-btn" type="button" style="flex:1;">Guardar</button>
+                            <button id="ben-save" class="primary-action-btn" type="button"
+                                style="flex:1;">Guardar</button>
                         </div>
                     </div>
                 </div>
@@ -526,58 +652,78 @@
 
         <div id="transfer-success-view" class="hidden-view">
             <div class="page-content" style="background-color: #F8F9FA; padding: 16px;">
-                <div class="receipt-box" style="background: #FFFFFF; border-radius: 16px; padding: 24px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: center; position: relative;">
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg" alt="Santander" style="height: 24px;">
-                        <span style="font-size: 13px; font-weight: 700; color: #666; letter-spacing: 0.5px; text-transform: uppercase;">Comprobante de Operación</span>
+                <div class="receipt-box"
+                    style="background: #FFFFFF; border-radius: 16px; padding: 24px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: center; position: relative;">
+                    <div
+                        style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg"
+                            alt="Santander" style="height: 24px;">
+                        <span
+                            style="font-size: 13px; font-weight: 700; color: #666; letter-spacing: 0.5px; text-transform: uppercase;">Comprobante
+                            de Operación</span>
                     </div>
 
                     <div style="margin: 20px 0;">
-                        <span class="material-icons-outlined" style="font-size: 54px; color: #118A43; margin-bottom: 8px;">check_circle</span>
-                        <h2 style="font-size: 18px; font-weight: 600; color: #222; margin-bottom: 4px;">Transferencia exitosa</h2>
-                        <h1 id="success-transfer-amount" style="font-size: 28px; font-weight: 700; color: #222;">$ 0.00</h1>
+                        <span class="material-icons-outlined"
+                            style="font-size: 54px; color: #118A43; margin-bottom: 8px;">check_circle</span>
+                        <h2 style="font-size: 18px; font-weight: 600; color: #222; margin-bottom: 4px;">Transferencia
+                            exitosa</h2>
+                        <h1 id="success-transfer-amount" style="font-size: 28px; font-weight: 700; color: #222;">$ 0.00
+                        </h1>
                     </div>
 
-                    <div class="receipt-details" style="text-align: left; border-top: 1px solid #E2E8F0; padding-top: 16px; margin-top: 16px;">
-                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                    <div class="receipt-details"
+                        style="text-align: left; border-top: 1px solid #E2E8F0; padding-top: 16px; margin-top: 16px;">
+                        <div class="receipt-row"
+                            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
                             <span style="color: #767676; font-weight: 500;">Origen</span>
                             <span style="color: #222; font-weight: 600;" id="success-transfer-origin">Santander</span>
                         </div>
-                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                        <div class="receipt-row"
+                            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
                             <span style="color: #767676; font-weight: 500;">Destino</span>
                             <span style="color: #222; font-weight: 600;" id="success-transfer-dest">---</span>
                         </div>
-                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                        <div class="receipt-row"
+                            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
                             <span style="color: #767676; font-weight: 500;">Concepto</span>
                             <span style="color: #222; font-weight: 600;" id="success-transfer-concept">---</span>
                         </div>
-                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                        <div class="receipt-row"
+                            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
                             <span style="color: #767676; font-weight: 500;">Fecha y Hora</span>
                             <span style="color: #222; font-weight: 600;" id="success-transfer-date">---</span>
                         </div>
-                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                        <div class="receipt-row"
+                            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
                             <span style="color: #767676; font-weight: 500;">Clave de Rastreo (SPEI)</span>
-                            <span style="color: #222; font-weight: 600; font-family: monospace; font-size: 11px;" id="success-transfer-rastreo">---</span>
+                            <span style="color: #222; font-weight: 600; font-family: monospace; font-size: 11px;"
+                                id="success-transfer-rastreo">---</span>
                         </div>
-                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                        <div class="receipt-row"
+                            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
                             <span style="color: #767676; font-weight: 500;">Referencia Numérica</span>
                             <span style="color: #222; font-weight: 600;" id="success-transfer-ref">---</span>
                         </div>
-                        <div class="receipt-row" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                        <div class="receipt-row"
+                            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
                             <span style="color: #767676; font-weight: 500;">Comisión</span>
                             <span style="color: #222; font-weight: 600;">$ 0.00 MXN</span>
                         </div>
-                        <div class="receipt-row" style="display: flex; justify-content: space-between; font-size: 13px;">
+                        <div class="receipt-row"
+                            style="display: flex; justify-content: space-between; font-size: 13px;">
                             <span style="color: #767676; font-weight: 500;">Estatus</span>
-                            <span style="color: #118A43; font-weight: 700; background: #E6F4EA; padding: 2px 8px; border-radius: 4px; font-size: 11px; text-transform: uppercase;">Procesado</span>
+                            <span
+                                style="color: #118A43; font-weight: 700; background: #E6F4EA; padding: 2px 8px; border-radius: 4px; font-size: 11px; text-transform: uppercase;">Procesado</span>
                         </div>
                     </div>
                 </div>
 
-                <button class="primary-action-btn mt-20" id="btn-share-receipt" style="margin-top: 20px; background: #FFFFFF; color: var(--santander-red); border: 2px solid var(--santander-red); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <button class="primary-action-btn mt-20" id="btn-share-receipt"
+                    style="margin-top: 20px; background: #FFFFFF; color: var(--santander-red); border: 2px solid var(--santander-red); display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <span class="material-icons-outlined">share</span> Compartir comprobante
                 </button>
-                
+
                 <button class="primary-action-btn btn-home-action" style="margin-top: 12px;">Volver al inicio</button>
             </div>
         </div>
@@ -631,43 +777,65 @@
                 <span class="material-icons-outlined icon-red">more_vert</span>
             </header>
             <div class="page-content" style="background-color: #F8F9FA; padding: 16px;">
-                <div class="receipt-box" style="background: #FFFFFF; border-radius: 16px; padding: 24px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: center; position: relative;">
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg" alt="Santander" style="height: 24px;">
-                        <span style="font-size: 13px; font-weight: 700; color: #666; letter-spacing: 0.5px; text-transform: uppercase;">Retiro Generado</span>
+                <div class="receipt-box"
+                    style="background: #FFFFFF; border-radius: 16px; padding: 24px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: center; position: relative;">
+                    <div
+                        style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Banco_Santander_Logotipo.svg"
+                            alt="Santander" style="height: 24px;">
+                        <span
+                            style="font-size: 13px; font-weight: 700; color: #666; letter-spacing: 0.5px; text-transform: uppercase;">Retiro
+                            Generado</span>
                     </div>
 
                     <div style="margin: 15px 0;">
-                        <div class="qrcode-mock" style="width: 120px; height: 120px; margin: 10px auto; background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg'); background-size: contain; background-position: center; background-repeat: no-repeat;"></div>
-                        <div class="barcode-mock" style="width: 220px; height: 50px; margin: 10px auto; background: repeating-linear-gradient(90deg, #000, #000 2px, #fff 2px, #fff 5px, #000 5px, #000 8px, #fff 8px, #fff 10px); border-radius: 4px;"></div>
-                        <h1 id="cardless-active-amount" style="font-size: 26px; font-weight: 700; color: #222; margin-top: 10px;">$ 0.00</h1>
+                        <div class="qrcode-mock"
+                            style="width: 120px; height: 120px; margin: 10px auto; background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg'); background-size: contain; background-position: center; background-repeat: no-repeat;">
+                        </div>
+                        <div class="barcode-mock"
+                            style="width: 220px; height: 50px; margin: 10px auto; background: repeating-linear-gradient(90deg, #000, #000 2px, #fff 2px, #fff 5px, #000 5px, #000 8px, #fff 8px, #fff 10px); border-radius: 4px;">
+                        </div>
+                        <h1 id="cardless-active-amount"
+                            style="font-size: 26px; font-weight: 700; color: #222; margin-top: 10px;">$ 0.00</h1>
                     </div>
 
-                    <div class="receipt-details" style="text-align: left; border-top: 1px solid #E2E8F0; padding-top: 16px; margin-top: 16px;">
+                    <div class="receipt-details"
+                        style="text-align: left; border-top: 1px solid #E2E8F0; padding-top: 16px; margin-top: 16px;">
                         <div style="margin-bottom: 16px; text-align: center;">
-                            <span style="font-size: 12px; color: #767676; font-weight: 500; display: block; margin-bottom: 4px;">REFERENCIA DE RETIRO</span>
-                            <strong id="cardless-reference-num" style="font-size: 20px; color: #222; font-family: monospace; letter-spacing: 1.5px;">0000 0000 0000 0000</strong>
+                            <span
+                                style="font-size: 12px; color: #767676; font-weight: 500; display: block; margin-bottom: 4px;">REFERENCIA
+                                DE RETIRO</span>
+                            <strong id="cardless-reference-num"
+                                style="font-size: 20px; color: #222; font-family: monospace; letter-spacing: 1.5px;">0000
+                                0000 0000 0000</strong>
                         </div>
-                        <div style="margin-bottom: 16px; text-align: center; background: #FFF0F0; padding: 12px; border-radius: 8px; border: 1px dashed var(--santander-red);">
-                            <span style="font-size: 12px; color: var(--santander-red); font-weight: 600; display: block; margin-bottom: 4px;">CÓDIGO DE SEGURIDAD (NIP)</span>
-                            <strong id="cardless-security-code" style="font-size: 24px; color: var(--santander-red); font-family: monospace; letter-spacing: 4px;">0000</strong>
+                        <div
+                            style="margin-bottom: 16px; text-align: center; background: #FFF0F0; padding: 12px; border-radius: 8px; border: 1px dashed var(--santander-red);">
+                            <span
+                                style="font-size: 12px; color: var(--santander-red); font-weight: 600; display: block; margin-bottom: 4px;">CÓDIGO
+                                DE SEGURIDAD (NIP)</span>
+                            <strong id="cardless-security-code"
+                                style="font-size: 24px; color: var(--santander-red); font-family: monospace; letter-spacing: 4px;">0000</strong>
                         </div>
-                        
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
                             <span style="color: #767676; font-weight: 500;">Origen</span>
                             <span style="color: #222; font-weight: 600;">Cuenta en pesos</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
                             <span style="color: #767676; font-weight: 500;">Vigencia</span>
                             <span style="color: #222; font-weight: 600;" id="cardless-timer">10:00</span>
                         </div>
                     </div>
                 </div>
 
-                <button class="primary-action-btn mt-20" id="btn-share-withdrawal" style="margin-top: 20px; background: #FFFFFF; color: var(--santander-red); border: 2px solid var(--santander-red); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <button class="primary-action-btn mt-20" id="btn-share-withdrawal"
+                    style="margin-top: 20px; background: #FFFFFF; color: var(--santander-red); border: 2px solid var(--santander-red); display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <span class="material-icons-outlined">share</span> Compartir retiro
                 </button>
-                
+
                 <button class="primary-action-btn btn-home-action" style="margin-top: 12px;">Volver al inicio</button>
             </div>
         </div>
@@ -915,26 +1083,31 @@
                     <h3>Información personal</h3>
 
                     <label class="feature-label">Nombre completo</label>
-                    <input type="text" id="profile-name" class="feature-input" placeholder="Tu nombre" maxlength="60" autocomplete="name">
+                    <input type="text" id="profile-name" class="feature-input" placeholder="Tu nombre" maxlength="60"
+                        autocomplete="name">
 
                     <label class="feature-label">Segundo apellido</label>
-                    <input type="text" id="profile-subtitle" class="feature-input" placeholder="Apellido" maxlength="60">
+                    <input type="text" id="profile-subtitle" class="feature-input" placeholder="Apellido"
+                        maxlength="60">
 
                     <label class="feature-label">Teléfono</label>
-                    <input type="tel" id="profile-phone" class="feature-input" placeholder="Número de teléfono" maxlength="15" inputmode="numeric" autocomplete="tel">
+                    <input type="tel" id="profile-phone" class="feature-input" placeholder="Número de teléfono"
+                        maxlength="15" inputmode="numeric" autocomplete="tel">
                 </div>
 
                 <div class="feature-card" style="margin-top:16px;">
                     <h3>Cuenta y tarjeta</h3>
 
                     <label class="feature-label">Saldo disponible (MXN)</label>
-                    <input type="text" id="profile-balance" class="feature-input" placeholder="0.00" inputmode="decimal">
+                    <input type="text" id="profile-balance" class="feature-input" placeholder="0.00"
+                        inputmode="decimal">
 
                     <label class="feature-label">Número de cuenta</label>
                     <input type="text" id="profile-account" class="feature-input" placeholder="14**0000" maxlength="20">
 
                     <label class="feature-label">Número de tarjeta</label>
-                    <input type="text" id="profile-full-card" class="feature-input" placeholder="4152 0000 0000 0000" maxlength="19" inputmode="numeric">
+                    <input type="text" id="profile-full-card" class="feature-input" placeholder="4152 0000 0000 0000"
+                        maxlength="19" inputmode="numeric">
 
                     <label class="feature-label">Marca</label>
                     <select id="profile-brand" class="feature-input">
@@ -946,17 +1119,21 @@
                     <input type="text" id="profile-exp" class="feature-input" placeholder="MM/AA" maxlength="5">
 
                     <label class="feature-label">Producto</label>
-                    <input type="text" id="profile-product" class="feature-input" placeholder="Ej. Cuenta Digital" maxlength="40">
+                    <input type="text" id="profile-product" class="feature-input" placeholder="Ej. Cuenta Digital"
+                        maxlength="40">
                 </div>
 
                 <div class="feature-card" style="margin-top:16px;">
                     <h3>Movimientos</h3>
-                    <p>Edita o elimina movimientos existentes. Los cambios se guardan al presionar "Guardar cambios".</p>
+                    <p>Edita o elimina movimientos existentes. Los cambios se guardan al presionar "Guardar cambios".
+                    </p>
                     <div id="profile-movements-list"></div>
-                    <button type="button" class="btn-profile-add-mov" id="btn-profile-add-mov">+ Agregar movimiento</button>
+                    <button type="button" class="btn-profile-add-mov" id="btn-profile-add-mov">+ Agregar
+                        movimiento</button>
                 </div>
 
-                <button class="primary-action-btn mt-20" id="btn-save-profile" style="margin-top:16px;">Guardar cambios</button>
+                <button class="primary-action-btn mt-20" id="btn-save-profile" style="margin-top:16px;">Guardar
+                    cambios</button>
                 <p id="profile-save-feedback" class="profile-feedback"></p>
             </div>
         </div>
@@ -971,29 +1148,42 @@
                 <div class="token-container" style="padding: 16px;">
                     <!-- Activation state (shown if not active yet) -->
                     <div id="token-activation-card" class="token-card" style="text-align: center; padding: 32px 16px;">
-                        <span class="material-icons-outlined token-large-icon" style="font-size: 80px; color: var(--santander-red); margin-bottom: 16px;">security</span>
+                        <span class="material-icons-outlined token-large-icon"
+                            style="font-size: 80px; color: var(--santander-red); margin-bottom: 16px;">security</span>
                         <h3 style="margin-bottom: 8px;">Activar SuperToken</h3>
-                        <p style="color: #666; font-size: 14px; margin-bottom: 24px; line-height: 1.4;">Tu SuperToken te permite autorizar transferencias y pagos de manera segura desde tu banca móvil.</p>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 24px; line-height: 1.4;">Tu SuperToken te
+                            permite autorizar transferencias y pagos de manera segura desde tu banca móvil.</p>
                         <button class="primary-action-btn" id="btn-activate-token">Activar ahora</button>
                     </div>
 
                     <!-- Token code state (shown once active) -->
-                    <div id="token-display-card" class="token-card hidden-view" style="text-align: center; padding: 32px 16px;">
-                        <span class="token-title" style="font-size: 12px; font-weight: 700; color: #888; letter-spacing: 1px; display: block; margin-bottom: 16px;">CÓDIGO DE SEGURIDAD</span>
-                        <div class="token-code-row" style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px;">
-                            <span class="token-digit-group" id="token-code-g1" style="font-size: 32px; font-weight: 700; letter-spacing: 2px; color: #222; font-family: monospace;">0000</span>
-                            <span class="token-digit-group" id="token-code-g2" style="font-size: 32px; font-weight: 700; letter-spacing: 2px; color: #222; font-family: monospace;">0000</span>
+                    <div id="token-display-card" class="token-card hidden-view"
+                        style="text-align: center; padding: 32px 16px;">
+                        <span class="token-title"
+                            style="font-size: 12px; font-weight: 700; color: #888; letter-spacing: 1px; display: block; margin-bottom: 16px;">CÓDIGO
+                            DE SEGURIDAD</span>
+                        <div class="token-code-row"
+                            style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px;">
+                            <span class="token-digit-group" id="token-code-g1"
+                                style="font-size: 32px; font-weight: 700; letter-spacing: 2px; color: #222; font-family: monospace;">0000</span>
+                            <span class="token-digit-group" id="token-code-g2"
+                                style="font-size: 32px; font-weight: 700; letter-spacing: 2px; color: #222; font-family: monospace;">0000</span>
                         </div>
-                        
+
                         <!-- Progress circle or bar -->
                         <div class="token-timer-container" style="margin-bottom: 16px;">
-                            <div class="token-progress-bar" style="height: 6px; background: #E2E8F0; border-radius: 3px; overflow: hidden; margin-bottom: 10px;">
-                                <div id="token-progress-fill" style="height: 100%; width: 100%; background: var(--santander-red); transition: width 1s linear;"></div>
+                            <div class="token-progress-bar"
+                                style="height: 6px; background: #E2E8F0; border-radius: 3px; overflow: hidden; margin-bottom: 10px;">
+                                <div id="token-progress-fill"
+                                    style="height: 100%; width: 100%; background: var(--santander-red); transition: width 1s linear;">
+                                </div>
                             </div>
-                            <span class="token-timer-text" style="font-size: 13px; color: #666;">El código cambia en <strong id="token-timer-sec">30</strong> segundos</span>
+                            <span class="token-timer-text" style="font-size: 13px; color: #666;">El código cambia en
+                                <strong id="token-timer-sec">30</strong> segundos</span>
                         </div>
-                        
-                        <p class="token-info" style="font-size: 12px; color: #888; line-height: 1.4;">Este código es dinámico y sirve para autorizar operaciones.</p>
+
+                        <p class="token-info" style="font-size: 12px; color: #888; line-height: 1.4;">Este código es
+                            dinámico y sirve para autorizar operaciones.</p>
                     </div>
                 </div>
             </div>

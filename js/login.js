@@ -1,201 +1,385 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    const form = document.getElementById("login-form");
     const errorEl = document.getElementById("auth-error");
-    const submitBtn = document.getElementById("btn-login");
 
     function showError(err) {
-        errorEl.textContent = window.formatSupabaseError(err);
+        if (!errorEl) return;
+        errorEl.textContent = window.formatSupabaseError ? window.formatSupabaseError(err) : (err.message || String(err));
         errorEl.classList.add("visible");
+        setTimeout(() => {
+            errorEl.classList.remove("visible");
+        }, 5000);
     }
 
     try {
-        window.ensureSupabaseReady();
-        const session = await window.SantanderAuth.getSession();
-        if (session) {
-            const profile = await window.SantanderAuth.getProfile();
-            window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
-            return;
+        if (window.ensureSupabaseReady) window.ensureSupabaseReady();
+        if (window.SantanderAuth) {
+            const session = await window.SantanderAuth.getSession();
+            if (session) {
+                const profile = await window.SantanderAuth.getProfile();
+                window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
+                return;
+            }
         }
     } catch (err) {
-        showError(err);
-        if (submitBtn) submitBtn.disabled = true;
-        return;
+        console.warn("Supabase init check:", err);
     }
 
-    // Lógica para usuario recordado
-    const rememberedUser = localStorage.getItem("santander_last_user");
-    const emailField = document.getElementById("email")?.closest(".auth-field");
+    // ==================== USER LOGIN STATE ====================
     const rememberedSec = document.getElementById("remembered-user-section");
+    const newUserSec = document.getElementById("new-user-section");
     const changeUserBtn = document.getElementById("btn-change-user");
-    const titleEl = document.querySelector(".auth-card h1");
-    const subtitleEl = document.querySelector(".auth-card .subtitle");
+    const changeUserSheetBtn = document.getElementById("btn-change-user-sheet");
+    const userGreetingEl = document.getElementById("user-greeting");
+    const sheetNameEl = document.getElementById("password-sheet-name");
 
-    if (rememberedUser) {
-        try {
-            const user = JSON.parse(rememberedUser);
-            const emailInput = document.getElementById("email");
-            if (emailInput) emailInput.value = user.email;
+    function maskName(fullName) {
+        if (!fullName) return "Usuario Santander";
+        const parts = fullName.trim().split(/\s+/);
+        if (parts.length === 1) return parts[0];
+        if (parts.length === 2) return `${parts[0]} ${parts[1][0]}*****`;
+        
+        // E.g. "Natalia Estefani De La Paz Chavez" -> "Natalia Estefani D******** C*****"
+        let firstNames = parts.slice(0, 2).join(" ");
+        let lastNames = parts.slice(2).map(p => p[0] + "*".repeat(Math.max(4, p.length - 1))).join(" ");
+        return `${firstNames} ${lastNames}`;
+    }
 
-            // Obtener iniciales
-            const names = (user.name || "Usuario").split(" ");
-            const initials = names.map(n => n[0]).slice(0, 2).join("").toUpperCase();
-            const initialsEl = document.getElementById("user-avatar-initials");
-            if (initialsEl) initialsEl.textContent = initials || "U";
+    function checkUserState() {
+        const rawUser = localStorage.getItem("santander_last_user");
+        if (rawUser) {
+            try {
+                const user = JSON.parse(rawUser);
+                const fullName = user.name || user.email.split("@")[0];
+                const firstName = fullName.trim().split(/\s+/)[0];
 
-            // Mensaje de saludo
-            const greetingEl = document.getElementById("user-greeting");
-            if (greetingEl) greetingEl.textContent = `Hola, ${user.name}`;
+                if (userGreetingEl) userGreetingEl.textContent = firstName;
+                if (sheetNameEl) sheetNameEl.textContent = maskName(fullName);
 
-            if (rememberedSec) rememberedSec.classList.add("active");
-            if (emailField) emailField.style.display = "none";
-            if (titleEl) titleEl.style.display = "none";
-            if (subtitleEl) subtitleEl.style.display = "none";
-        } catch (e) {
-            console.error("Error al cargar usuario recordado:", e);
+                if (rememberedSec) rememberedSec.classList.add("active");
+                if (newUserSec) newUserSec.classList.add("hidden-view");
+                return;
+            } catch (e) {
+                console.error("Error parsing remembered user:", e);
+            }
+        }
+
+        // If no user remembered: Show new user login form
+        if (rememberedSec) rememberedSec.classList.remove("active");
+        if (newUserSec) newUserSec.classList.remove("hidden-view");
+    }
+
+    checkUserState();
+
+    // Change user handlers
+    function clearRememberedUser() {
+        localStorage.removeItem("santander_last_user");
+        closePasswordSheet();
+        checkUserState();
+        const emailInput = document.getElementById("email");
+        if (emailInput) {
+            emailInput.value = "";
+            emailInput.focus();
         }
     }
 
-    if (changeUserBtn) {
-        changeUserBtn.addEventListener("click", () => {
-            localStorage.removeItem("santander_last_user");
-            const emailInput = document.getElementById("email");
-            if (emailInput) emailInput.value = "";
-            if (rememberedSec) rememberedSec.classList.remove("active");
-            if (emailField) emailField.style.display = "block";
-            if (titleEl) titleEl.style.display = "block";
-            if (subtitleEl) subtitleEl.style.display = "block";
+    if (changeUserBtn) changeUserBtn.addEventListener("click", clearRememberedUser);
+    if (changeUserSheetBtn) changeUserSheetBtn.addEventListener("click", clearRememberedUser);
+
+    // ==================== PASSWORD BOTTOM SHEET ====================
+    const bottomSheet = document.getElementById("password-bottom-sheet");
+    const btnOpenSheet = document.getElementById("btn-open-login-sheet");
+    const btnCloseSheet = document.getElementById("btn-close-password-sheet");
+    const btnCloseSheetBg = document.getElementById("btn-close-password-sheet-bg");
+    const rememberedPassword = document.getElementById("remembered-password");
+    const btnSubmitRemembered = document.getElementById("btn-submit-remembered-password");
+    const toggleVisibility = document.getElementById("toggle-password-visibility");
+
+    function openPasswordSheet() {
+        if (bottomSheet) {
+            bottomSheet.classList.add("active");
+            if (rememberedPassword) {
+                rememberedPassword.value = "";
+                if (btnSubmitRemembered) {
+                    btnSubmitRemembered.disabled = true;
+                    btnSubmitRemembered.classList.remove("active");
+                }
+                setTimeout(() => rememberedPassword.focus(), 250);
+            }
+        }
+    }
+
+    function closePasswordSheet() {
+        if (bottomSheet) bottomSheet.classList.remove("active");
+    }
+
+    if (btnOpenSheet) btnOpenSheet.addEventListener("click", openPasswordSheet);
+    if (btnCloseSheet) btnCloseSheet.addEventListener("click", closePasswordSheet);
+    if (btnCloseSheetBg) btnCloseSheetBg.addEventListener("click", closePasswordSheet);
+
+    if (rememberedPassword && btnSubmitRemembered) {
+        rememberedPassword.addEventListener("input", (e) => {
+            if (e.target.value.trim().length > 0) {
+                btnSubmitRemembered.classList.add("active");
+                btnSubmitRemembered.disabled = false;
+            } else {
+                btnSubmitRemembered.classList.remove("active");
+                btnSubmitRemembered.disabled = true;
+            }
+        });
+
+        rememberedPassword.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !btnSubmitRemembered.disabled) {
+                btnSubmitRemembered.click();
+            }
         });
     }
 
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-
-        errorEl.classList.remove("visible");
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Entrando...";
-
-        try {
-            await window.SantanderAuth.signIn(email, password);
-            const profile = await window.SantanderAuth.getProfile();
-
-            // Guardar usuario en localStorage
-            try {
-                const settings = await window.SettingsService.getSettingsByUserId(profile.id);
-                localStorage.setItem("santander_last_user", JSON.stringify({
-                    email: profile.email,
-                    name: settings?.name || profile.email.split("@")[0]
-                }));
-            } catch (err) {
-                localStorage.setItem("santander_last_user", JSON.stringify({
-                    email: profile.email,
-                    name: profile.email.split("@")[0]
-                }));
-            }
-
-            if (profile?.role === "admin") {
-                window.location.href = "admin.html";
+    if (toggleVisibility && rememberedPassword) {
+        toggleVisibility.addEventListener("click", () => {
+            if (rememberedPassword.type === "password") {
+                rememberedPassword.type = "text";
+                toggleVisibility.textContent = "visibility";
             } else {
-                window.location.href = "index.html";
+                rememberedPassword.type = "password";
+                toggleVisibility.textContent = "visibility_off";
             }
-        } catch (err) {
-            showError(err);
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Entrar";
-        }
-    });
+        });
+    }
 
-    // BIOMETRICS LOGIC
-    const btnBiometric = document.getElementById("btn-biometric");
-    const modalBiometric = document.getElementById("modal-biometric");
-    const btnCloseBiometric = document.getElementById("btn-close-biometric");
-    const biometricStatus = document.getElementById("biometric-status");
-
-    const checkBiometric = async () => {
-        if (window.Capacitor && window.Capacitor.isPluginAvailable && window.Capacitor.isPluginAvailable("NativeBiometric")) {
-            const NativeBiometric = window.Capacitor.Plugins.NativeBiometric;
-            try {
-                const result = await NativeBiometric.isAvailable();
-                if (result.isAvailable) {
-                    return true;
-                }
-            } catch (e) {
-                console.error("Biometrics check failed:", e);
+    if (btnSubmitRemembered) {
+        btnSubmitRemembered.addEventListener("click", async () => {
+            const rawUser = localStorage.getItem("santander_last_user");
+            if (!rawUser) {
+                showError("No se encontró usuario recordado.");
+                return;
             }
-        }
-        return false;
-    };
-
-    if (btnBiometric) {
-        btnBiometric.addEventListener("click", async () => {
-            if (!rememberedUser) {
-                alert("Debes iniciar sesión con contraseña al menos una vez para activar la biometría.");
+            const passwordVal = rememberedPassword ? rememberedPassword.value : "";
+            if (!passwordVal) {
+                showError("Ingresa tu contraseña.");
                 return;
             }
 
-            const hasBiometrics = await checkBiometric();
-            if (hasBiometrics) {
-                const NativeBiometric = window.Capacitor.Plugins.NativeBiometric;
-                try {
-                    await NativeBiometric.verifyIdentity({
-                        reason: "Accede de forma rápida y segura a tu cuenta Santander",
-                        title: "Iniciar sesión",
-                        subtitle: "Usa tu huella o rostro",
-                        description: "Coloca tu dedo en el sensor o escanea tu rostro"
-                    });
-                    
-                    const user = JSON.parse(rememberedUser);
-                    window.location.href = user.email.includes("admin") ? "admin.html" : "index.html";
-                } catch (err) {
-                    console.error("Biometric verification failed:", err);
-                    alert("Autenticación biométrica fallida o cancelada.");
-                }
-            } else {
-                // FALLBACK: Simular lectura si no estamos en dispositivo con biometría real
-                if (modalBiometric) modalBiometric.classList.add("active");
-                if (biometricStatus) biometricStatus.textContent = "Escaneando...";
+            try {
+                btnSubmitRemembered.disabled = true;
+                btnSubmitRemembered.textContent = "Ingresando...";
 
-                setTimeout(async () => {
-                    if (biometricStatus) biometricStatus.textContent = "¡Acceso concedido!";
-                    setTimeout(async () => {
-                        if (modalBiometric) modalBiometric.classList.remove("active");
-                        
-                        try {
-                            const user = JSON.parse(rememberedUser);
-                            window.location.href = user.email.includes("admin") ? "admin.html" : "index.html";
-                        } catch (e) {
-                            if (modalBiometric) modalBiometric.classList.remove("active");
-                            alert("Error al validar biometría.");
-                        }
-                    }, 1000);
-                }, 2000);
+                const user = JSON.parse(rawUser);
+                await window.SantanderAuth.signIn(user.email, passwordVal);
+                const profile = await window.SantanderAuth.getProfile();
+
+                window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
+            } catch (err) {
+                showError(err);
+                btnSubmitRemembered.disabled = false;
+                btnSubmitRemembered.textContent = "Continuar";
             }
         });
     }
 
-    if (btnCloseBiometric) {
-        btnCloseBiometric.addEventListener("click", () => {
-            if (modalBiometric) modalBiometric.classList.remove("active");
+    // ==================== NEW USER FORM LOGIN ====================
+    const loginForm = document.getElementById("login-form");
+    const btnLogin = document.getElementById("btn-login");
+    const newUserPwd = document.getElementById("password");
+    const toggleNewUserPwd = document.getElementById("toggle-new-user-pwd");
+
+    if (toggleNewUserPwd && newUserPwd) {
+        toggleNewUserPwd.addEventListener("click", () => {
+            if (newUserPwd.type === "password") {
+                newUserPwd.type = "text";
+                toggleNewUserPwd.textContent = "visibility";
+            } else {
+                newUserPwd.type = "password";
+                toggleNewUserPwd.textContent = "visibility_off";
+            }
         });
     }
 
-    // PRELOGIN MODALS TOGGLES
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const emailInput = document.getElementById("email");
+            const passwordInput = document.getElementById("password");
+
+            const email = emailInput ? emailInput.value.trim() : "";
+            const password = passwordInput ? passwordInput.value : "";
+
+            if (!email || !password) return;
+
+            if (btnLogin) {
+                btnLogin.disabled = true;
+                btnLogin.textContent = "Entrando...";
+            }
+
+            try {
+                await window.SantanderAuth.signIn(email, password);
+                const profile = await window.SantanderAuth.getProfile();
+
+                // Save user to localStorage
+                let userName = profile.email.split("@")[0];
+                try {
+                    const settings = await window.SettingsService.getSettingsByUserId(profile.id);
+                    if (settings?.name) userName = settings.name;
+                } catch (err) {
+                    console.warn("Could not fetch settings name:", err);
+                }
+
+                localStorage.setItem("santander_last_user", JSON.stringify({
+                    email: profile.email,
+                    name: userName
+                }));
+
+                window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
+            } catch (err) {
+                showError(err);
+                if (btnLogin) {
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = "Entrar";
+                }
+            }
+        });
+    }
+
+    // ==================== STORIES CAROUSEL LOGIC ====================
+    const slidesData = [
+        {
+            tag: "EVITA UNAS VACACIONES DE TERROR",
+            title: "Reserva y compra paquetes solo en sitios oficiales.",
+            link: "Conoce más"
+        },
+        {
+            tag: "CÁMBIATE A SANTANDER",
+            title: "Trae tu nómina y llévatela mejor con tu quincena.",
+            link: "Conoce más"
+        },
+        {
+            tag: "REGRESAN LOS DÍAS SANTANDER",
+            title: "Aprovecha 3 MSI en supermercados participantes, en toda la tienda.",
+            link: "Conoce más"
+        },
+        {
+            tag: "ABRE TU DÉBITO LIKEU",
+            title: "Recibe hasta $500 de Cashback y controla todo desde la app.",
+            link: "Conoce más"
+        },
+        {
+            tag: "SANTANDER MÓVIL",
+            title: "Tus finanzas siempre seguras, siempre a tu alcance.",
+            link: "Conoce más"
+        }
+    ];
+
+    let currentSlideIndex = 0;
+    const slideDuration = 5000;
+    let slideTimer = null;
+
+    const bgSlides = document.querySelectorAll(".carousel-slide-bg");
+    const progressTracks = document.querySelectorAll(".progress-bar-track");
+    const tagEl = document.getElementById("onboarding-tag");
+    const titleEl = document.getElementById("onboarding-title");
+    const descEl = document.getElementById("onboarding-desc");
+
+    function renderSlide(index) {
+        currentSlideIndex = (index + slidesData.length) % slidesData.length;
+
+        bgSlides.forEach((slide, i) => {
+            slide.classList.toggle("active", i === currentSlideIndex);
+        });
+
+        progressTracks.forEach((track, i) => {
+            track.classList.remove("active", "filled");
+            const fill = track.querySelector(".progress-bar-fill");
+            if (fill) fill.style.transition = "";
+
+            if (i < currentSlideIndex) {
+                track.classList.add("filled");
+            } else if (i === currentSlideIndex) {
+                // Trigger animation reset
+                void track.offsetWidth;
+                track.classList.add("active");
+            }
+        });
+
+        const data = slidesData[currentSlideIndex];
+        if (tagEl) tagEl.textContent = data.tag;
+        if (titleEl) titleEl.textContent = data.title;
+        if (descEl) {
+            descEl.innerHTML = `${data.link} <span class="material-icons-outlined" style="font-size: 15px; vertical-align: middle; margin-left: 2px;">arrow_forward</span>`;
+        }
+
+        resetTimer();
+    }
+
+    function nextSlide() {
+        renderSlide(currentSlideIndex + 1);
+    }
+
+    function prevSlide() {
+        renderSlide(currentSlideIndex - 1);
+    }
+
+    function resetTimer() {
+        if (slideTimer) clearInterval(slideTimer);
+        slideTimer = setInterval(nextSlide, slideDuration);
+    }
+
+    // Tap zones for stories
+    const tapPrev = document.getElementById("stories-tap-prev");
+    const tapNext = document.getElementById("stories-tap-next");
+
+    if (tapPrev) tapPrev.addEventListener("click", prevSlide);
+    if (tapNext) tapNext.addEventListener("click", nextSlide);
+
+    renderSlide(0);
+
+    // ==================== PRELOGIN SHORTCUT MODALS ====================
+    function setupModal(triggerId, modalId, closeIds = []) {
+        const trigger = document.getElementById(triggerId);
+        const modal = document.getElementById(modalId);
+        if (!trigger || !modal) return;
+
+        trigger.addEventListener("click", () => {
+            modal.classList.add("active");
+        });
+
+        closeIds.forEach(id => {
+            const closeBtn = document.getElementById(id);
+            if (closeBtn) {
+                closeBtn.addEventListener("click", () => {
+                    modal.classList.remove("active");
+                });
+            }
+        });
+    }
+
+    setupModal("shortcut-transfer", "modal-transfer", ["btn-close-transfer", "btn-close-transfer-bg"]);
+    setupModal("shortcut-withdraw", "modal-withdraw", ["btn-close-withdraw", "btn-close-withdraw-bg"]);
+    setupModal("shortcut-update", "modal-update", ["btn-close-update", "btn-close-update-bg"]);
+    setupModal("shortcut-support", "modal-support", ["btn-close-support", "btn-close-support-bg"]);
+
+    const btnTransferPrompt = document.getElementById("btn-transfer-login-prompt");
+    if (btnTransferPrompt) {
+        btnTransferPrompt.addEventListener("click", () => {
+            const modalTransfer = document.getElementById("modal-transfer");
+            if (modalTransfer) modalTransfer.classList.remove("active");
+            
+            const rawUser = localStorage.getItem("santander_last_user");
+            if (rawUser) {
+                openPasswordSheet();
+            } else {
+                const emailInput = document.getElementById("email");
+                if (emailInput) emailInput.focus();
+            }
+        });
+    }
+
+    // ==================== SUPERTOKEN LIVE GENERATOR ====================
     const shortcutToken = document.getElementById("shortcut-token");
     const modalToken = document.getElementById("modal-token");
     const btnCloseToken = document.getElementById("btn-close-token");
+    const btnCloseTokenBg = document.getElementById("btn-close-token-bg");
+    let tokenInterval = null;
 
-    const shortcutWithdraw = document.getElementById("shortcut-withdraw");
-    const shortcutSupport = document.getElementById("shortcut-support");
-    const modalSupport = document.getElementById("modal-support");
-    const btnCloseSupport = document.getElementById("btn-close-support");
-
-    // SuperToken pre-login generation
-    let preloginTokenInterval = null;
-
-    function generatePreloginToken() {
+    function generateTokenCode() {
         const rand = (min, max) => Math.floor(Math.random() * (max - min) + min);
         const codeEl = document.getElementById("prelogin-token-code");
         if (codeEl) {
@@ -203,11 +387,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    function startPreloginTokenTimer() {
-        if (preloginTokenInterval) clearInterval(preloginTokenInterval);
-        generatePreloginToken();
-        
+    function startTokenTimer() {
+        if (tokenInterval) clearInterval(tokenInterval);
+        generateTokenCode();
         let timeLeft = 30;
+
         const timerEl = document.getElementById("prelogin-token-timer");
         const progressEl = document.getElementById("prelogin-token-progress");
 
@@ -217,7 +401,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             progressEl.style.width = "100%";
         }
 
-        preloginTokenInterval = setInterval(() => {
+        tokenInterval = setInterval(() => {
             timeLeft--;
             if (timerEl) timerEl.textContent = timeLeft;
             if (progressEl) {
@@ -227,7 +411,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (timeLeft <= 0) {
                 timeLeft = 30;
-                generatePreloginToken();
+                generateTokenCode();
                 if (progressEl) {
                     progressEl.style.transition = "none";
                     progressEl.style.width = "100%";
@@ -238,71 +422,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (shortcutToken) {
         shortcutToken.addEventListener("click", () => {
-            if (modalToken) modalToken.classList.add("active");
-            
-            // Check if active
-            const isActivated = localStorage.getItem("santander_token_active") === "true";
-            const activationSec = document.getElementById("prelogin-token-activation");
-            const displaySec = document.getElementById("prelogin-token-display");
-
-            if (isActivated) {
-                if (activationSec) activationSec.classList.add("hidden-view");
-                if (displaySec) displaySec.classList.remove("hidden-view");
-                startPreloginTokenTimer();
-            } else {
-                if (activationSec) activationSec.classList.remove("hidden-view");
-                if (displaySec) displaySec.classList.add("hidden-view");
+            if (modalToken) {
+                modalToken.classList.add("active");
+                startTokenTimer();
             }
         });
     }
 
-    // Mock activate inside pre-login
-    const btnPreloginActivateMock = document.getElementById("btn-prelogin-activate-mock");
-    if (btnPreloginActivateMock) {
-        btnPreloginActivateMock.addEventListener("click", () => {
-            localStorage.setItem("santander_token_active", "true");
-            const activationSec = document.getElementById("prelogin-token-activation");
-            const displaySec = document.getElementById("prelogin-token-display");
-            if (activationSec) activationSec.classList.add("hidden-view");
-            if (displaySec) displaySec.classList.remove("hidden-view");
-            startPreloginTokenTimer();
-        });
-    }
+    const closeTokenModal = () => {
+        if (modalToken) modalToken.classList.remove("active");
+        if (tokenInterval) {
+            clearInterval(tokenInterval);
+            tokenInterval = null;
+        }
+    };
 
-    if (btnCloseToken) {
-        btnCloseToken.addEventListener("click", () => {
-            if (modalToken) modalToken.classList.remove("active");
-            if (preloginTokenInterval) {
-                clearInterval(preloginTokenInterval);
-                preloginTokenInterval = null;
-            }
-        });
-    }
-
-    const modalWithdraw = document.getElementById("modal-withdraw");
-    const btnCloseWithdraw = document.getElementById("btn-close-withdraw");
-
-    if (shortcutWithdraw) {
-        shortcutWithdraw.addEventListener("click", () => {
-            if (modalWithdraw) modalWithdraw.classList.add("active");
-        });
-    }
-
-    if (btnCloseWithdraw) {
-        btnCloseWithdraw.addEventListener("click", () => {
-            if (modalWithdraw) modalWithdraw.classList.remove("active");
-        });
-    }
-
-    if (shortcutSupport) {
-        shortcutSupport.addEventListener("click", () => {
-            if (modalSupport) modalSupport.classList.add("active");
-        });
-    }
-
-    if (btnCloseSupport) {
-        btnCloseSupport.addEventListener("click", () => {
-            if (modalSupport) modalSupport.classList.remove("active");
-        });
-    }
+    if (btnCloseToken) btnCloseToken.addEventListener("click", closeTokenModal);
+    if (btnCloseTokenBg) btnCloseTokenBg.addEventListener("click", closeTokenModal);
 });
