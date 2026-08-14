@@ -124,12 +124,34 @@ if (fs.existsSync(path.join(ROOT, "assets"))) {
     copyRecursive(path.join(ROOT, "assets"), path.join(DIST, "assets"));
 }
 
-ensureDir(path.join(DIST, "js"));
+if (fs.existsSync(path.join(ROOT, "js"))) {
+    copyRecursive(path.join(ROOT, "js"), path.join(DIST, "js"));
+}
 
-const jsFiles = ["supabase-errors.js", "supabase-client.js", "auth.js", "settings-service.js", "statement-pdf.js", "register.js", "login.js", "admin.js"];
-jsFiles.forEach((file) => {
-    copyRecursive(path.join(ROOT, "js", file), path.join(DIST, "js", file));
-});
+if (fs.existsSync(path.join(ROOT, "css"))) {
+    copyRecursive(path.join(ROOT, "css"), path.join(DIST, "css"));
+}
+
+function assembleHtml(templateFile, outputFile) {
+    if (!fs.existsSync(templateFile)) return;
+    let content = fs.readFileSync(templateFile, "utf8");
+    const includeRegex = /<!--\s*@include\s+([^\s]+)\s*-->/g;
+    content = content.replace(includeRegex, (match, partialRelPath) => {
+        const partialPath = path.join(ROOT, partialRelPath);
+        if (fs.existsSync(partialPath)) {
+            return fs.readFileSync(partialPath, "utf8");
+        }
+        console.warn(`⚠️ Parcial no encontrado: ${partialRelPath}`);
+        return match;
+    });
+    fs.writeFileSync(outputFile, content, "utf8");
+}
+
+const templatePath = path.join(ROOT, "template.html");
+if (fs.existsSync(templatePath)) {
+    assembleHtml(templatePath, path.join(ROOT, "index.html"));
+    assembleHtml(templatePath, path.join(DIST, "index.html"));
+}
 
 const configContent = `/**
  * Generado automáticamente en build — no editar manualmente en producción.
@@ -141,6 +163,8 @@ window.ADMIN_REGISTRATION_CODE = ${JSON.stringify(adminCode)};
 `;
 
 fs.writeFileSync(path.join(DIST, "js", "config.js"), configContent, "utf8");
+ensureDir(path.join(DIST, "js", "core"));
+fs.writeFileSync(path.join(DIST, "js", "core", "config.js"), configContent, "utf8");
 
 console.log("✅ Build completado en /dist");
 console.log(`   SUPABASE_URL: ${supabaseUrl}`);

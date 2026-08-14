@@ -1,0 +1,26 @@
+        <div id="defer-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Difiere tus compras</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+
+            <div class="page-content">
+                <div class="feature-card">
+                    <h3>Compras disponibles para diferir</h3>
+                    <p>Selecciona una compra y elige el plazo para convertirla en pagos mensuales.</p>
+
+                    <div id="defer-purchases-list" class="defer-purchases-list"></div>
+
+                    <label class="feature-label">Plazo</label>
+                    <select id="defer-months" class="feature-input">
+                        <option value="3">3 meses</option>
+                        <option value="6" selected>6 meses</option>
+                        <option value="9">9 meses</option>
+                        <option value="12">12 meses</option>
+                    </select>
+
+                    <button class="primary-action-btn mt-20" id="btn-confirm-defer">Continuar</button>
+                </div>
+            </div>
+        </div>

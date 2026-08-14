@@ -546,6 +546,71 @@ body {
     }
 }
 
+/* Animaciones Nativas de Transición entre Pantallas (iOS / Android) */
+.page-slide-in-right {
+    animation: pageSlideInRight 0.28s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    will-change: transform, opacity;
+}
+
+.page-slide-out-left {
+    animation: pageSlideOutLeft 0.28s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    will-change: transform, opacity;
+}
+
+.page-slide-in-left {
+    animation: pageSlideInLeft 0.28s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    will-change: transform, opacity;
+}
+
+.page-slide-out-right {
+    animation: pageSlideOutRight 0.28s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    will-change: transform, opacity;
+}
+
+@keyframes pageSlideInRight {
+    0% {
+        transform: translate3d(100%, 0, 0);
+        opacity: 0.95;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes pageSlideOutLeft {
+    0% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(-20%, 0, 0);
+        opacity: 0.8;
+    }
+}
+
+@keyframes pageSlideInLeft {
+    0% {
+        transform: translate3d(-20%, 0, 0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes pageSlideOutRight {
+    0% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(100%, 0, 0);
+        opacity: 0.95;
+    }
+}
+
 .detail-header {
     display: flex;
     justify-content: space-between;
@@ -868,21 +933,26 @@ body {
 
 .sidebar-menu {
     position: absolute;
-    top: 0;
-    right: -100%;
-    width: 80%;
-    max-width: 320px;
-    height: 100%;
-    background-color: #FFFFFF;
-    z-index: 1001;
-    transition: right 0.3s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: min(85vw, 340px) !important;
+    max-width: 340px !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    background-color: #FFFFFF !important;
+    z-index: 9999 !important;
+    transform: translate3d(105%, 0, 0) !important;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
 }
 
 .sidebar-menu.active {
-    right: 0;
+    transform: translate3d(0, 0, 0) !important;
 }
 
 .sidebar-header {
@@ -5825,23 +5895,42 @@ body {
     inset: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    z-index: 9998 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.3s ease !important;
+}
+
+.sidebar-overlay.active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
 }
 
 .sidebar-menu {
     position: fixed !important;
     top: 0 !important;
     right: 0 !important;
-    width: min(80vw, 320px) !important;
-    max-width: 320px !important;
+    width: min(85vw, 340px) !important;
+    max-width: 340px !important;
     height: 100vh !important;
-    transform: translateX(105%) !important;
-    transition: transform 0.3s ease-in-out !important;
+    height: 100dvh !important;
+    background-color: #FFFFFF !important;
+    z-index: 9999 !important;
+    transform: translate3d(105%, 0, 0) !important;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3) !important;
+    overflow-y: auto !important;
     overflow-x: hidden !important;
 }
 
 .sidebar-menu.active {
     right: 0 !important;
-    transform: translateX(0) !important;
+    transform: translate3d(0, 0, 0) !important;
 }
 
 /* Anula el sistema viejo de right:-100% para evitar scroll lateral */

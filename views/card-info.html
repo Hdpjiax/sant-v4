@@ -1,0 +1,88 @@
+        <div id="card-info-view" class="hidden-view">
+            <header class="detail-header"
+                style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #F8F9FA; border-bottom: none;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="material-icons-outlined icon-red back-btn"
+                        style="cursor:pointer; color: #EC0000; font-size: 24px;">arrow_back_ios</span>
+                    <h2 style="font-size: 18px; font-weight: 700; color: #1A1A1A; margin: 0;">Detalle de Cuenta</h2>
+                </div>
+                <span class="material-icons-outlined"
+                    style="cursor:pointer; color: #EC0000; font-size: 22px;">ios_share</span>
+            </header>
+
+            <section class="account-detail-page-content"
+                style="padding: 16px 20px; background: #F8F9FA; min-height: calc(100% - 60px);">
+                <h3
+                    style="font-size: 16px; font-weight: 800; color: #1A1A1A; margin: 0 0 16px; text-transform: uppercase; letter-spacing: 0.3px;">
+                    CUENTA DIGITAL</h3>
+
+                <!-- Card Block 1 -->
+                <div class="detail-white-card"
+                    style="background: #FFFFFF; border-radius: 16px; padding: 16px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 16px;">
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid #F1F1F1;">
+                        <div>
+                            <span style="display: block; font-size: 13px; color: #666666; margin-bottom: 4px;">Número de
+                                cuenta</span>
+                            <strong id="display-full-account"
+                                style="font-size: 16px; font-weight: 700; color: #1A1A1A;">14039601895</strong>
+                        </div>
+                        <button type="button" class="btn-copy-action" data-copy="14039601895"
+                            style="background: none; border: none; cursor: pointer; color: #EC0000; padding: 4px;">
+                            <span class="material-icons-outlined" style="font-size: 22px;">content_copy</span>
+                        </button>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px;">
+                        <div>
+                            <span style="display: block; font-size: 13px; color: #666666; margin-bottom: 4px;">Teléfono
+                                asociado</span>
+                            <strong id="display-detail-phone"
+                                style="font-size: 16px; font-weight: 700; color: #1A1A1A;">-</strong>
+                        </div>
+                        <button type="button" class="btn-edit-action"
+                            style="background: none; border: none; cursor: pointer; color: #EC0000; padding: 4px;">
+                            <span class="material-icons-outlined" style="font-size: 22px;">edit</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card Block 2 -->
+                <div class="detail-white-card"
+                    style="background: #FFFFFF; border-radius: 16px; padding: 16px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid #F1F1F1;">
+                        <div>
+                            <span style="display: block; font-size: 13px; color: #666666; margin-bottom: 4px;">Cuenta
+                                CLABE</span>
+                            <strong id="display-clabe"
+                                style="font-size: 16px; font-weight: 700; color: #1A1A1A;">014470140396018952</strong>
+                        </div>
+                        <button type="button" class="btn-copy-action" data-copy="014470140396018952"
+                            style="background: none; border: none; cursor: pointer; color: #EC0000; padding: 4px;">
+                            <span class="material-icons-outlined" style="font-size: 22px;">content_copy</span>
+                        </button>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px;">
+                        <div>
+                            <span style="display: block; font-size: 13px; color: #666666; margin-bottom: 4px;">Número de
+                                cuenta</span>
+                            <strong id="display-full-account-2"
+                                style="font-size: 16px; font-weight: 700; color: #1A1A1A;">14039601895</strong>
+                        </div>
+                        <button type="button" class="btn-copy-action" data-copy="14039601895"
+                            style="background: none; border: none; cursor: pointer; color: #EC0000; padding: 4px;">
+                            <span class="material-icons-outlined" style="font-size: 22px;">content_copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hidden fallback elements -->
+                <span id="display-full-card" style="display:none;">4268 0703 6553 6749</span>
+                <span id="display-exp" style="display:none;">01/29</span>
+                <span id="display-brand" style="display:none;"></span>
+                <span id="card-status-text" style="display:none;">Activa</span>
+                <span id="display-account-detail" style="display:none;">14039601895</span>
+            </section>
+        </div>

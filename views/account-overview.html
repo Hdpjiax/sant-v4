@@ -1,0 +1,108 @@
+        <div id="account-overview-view" class="hidden-view">
+            <header class="select-header santander-top-header"
+                style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #FFFFFF;">
+                <span class="material-icons-outlined icon-red back-btn" style="cursor:pointer;">arrow_back_ios</span>
+
+                <div class="top-santander-logo">
+                    <img src="assets/santander-flame.png" alt="Santander" style="height: 22px; width: auto;">
+                </div>
+
+                <span class="material-icons-outlined icon-red" id="btn-open-sidebar-account"
+                    style="cursor:pointer;" onclick="if(window.SantanderNav&&window.SantanderNav.openSidebar){window.SantanderNav.openSidebar();}else if(window.openSidebar){window.openSidebar();}">menu</span>
+            </header>
+
+            <section class="account-overview-screen">
+                <div class="account-card-stage"
+                    style="padding: 16px 0 10px; display: flex; flex-direction: column; align-items: center;">
+                    <div class="account-card-carousel" style="width: 100%; display: flex; justify-content: center;">
+                        <article class="account-main-card horizontal-card" id="btn-open-card-info-from-overview">
+                            <div class="horizontal-card-inner">
+                                <div class="horizontal-card-watermark"></div>
+
+                                <div class="horizontal-card-content">
+                                    <h3>CUENTA DIGITAL</h3>
+                                    <p class="horizontal-card-subtitle">Dinero disponible en MXN</p>
+
+                                    <div class="horizontal-card-balance">
+                                        <span>$</span>
+                                        <strong class="dynamic-balance">37,880.00</strong>
+                                    </div>
+
+                                    <p class="horizontal-card-ref" id="overview-card-ref">TDC 4152••7110</p>
+                                </div>
+
+                                <div class="card-network-logo dynamic-card-network is-mastercard"
+                                    id="overview-card-network" aria-label="Mastercard"></div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <p class="account-card-help">Toca la tarjeta para ver su información</p>
+
+                    <div class="account-card-dots" aria-hidden="true">
+                        <span class="is-active"></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="account-options-list">
+                    <button class="account-option-row account-option-row-toggle" id="btn-overview-toggle-card"
+                        type="button">
+                        <span id="overview-card-power-text">Apagar tarjeta digital</span>
+                        <span class="material-icons-outlined" id="overview-card-power-icon"
+                            style="color: var(--santander-red); font-size: 26px;">power_settings_new</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-card-info" type="button">
+                        <span>Actualizar tarjeta digital</span>
+                        <span class="account-option-right">
+                            <em
+                                style="color: var(--santander-red); font-style: normal; font-size: 13px; font-weight: 500; margin-right: 4px;">Nuevo</em>
+                            <span class="material-icons-outlined"
+                                style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
+                        </span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-movements" type="button">
+                        <span>Movimientos</span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-statement" type="button">
+                        <span>Estado de cuenta</span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-transfer" type="button">
+                        <span>Transferir</span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-pay" type="button">
+                        <span>Pagar tarjeta</span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-spending-control" type="button">
+                        <span>Control de gasto</span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
+                    </button>
+
+                    <button class="account-option-row" id="btn-overview-wallets" type="button">
+                        <span>Billeteras digitales</span>
+                        <span class="material-icons-outlined"
+                            style="color: var(--santander-red); font-size: 22px;">chevron_right</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- FLOATING ACTION BUTTON (FAB) -->
+            <button type="button" class="account-overview-fab" id="btn-overview-fab" aria-label="Asistente Sandii">
+                <img src="assets/santander-flame.png" alt="" class="fab-flame-img">
+            </button>
+        </div>

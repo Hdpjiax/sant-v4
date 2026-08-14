@@ -1,0 +1,90 @@
+/* --- PERFIL DE USUARIO, AJUSTES Y SUPERTOKEN --- */
+#profile-view .page-content {
+    padding-bottom: 40px;
+}
+
+#profile-view .feature-card {
+    padding: 20px 16px;
+}
+
+#profile-view .feature-label {
+    display: block;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+#profile-view .feature-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 15px;
+    background: #F9F9F9;
+    color: var(--text-dark);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+#profile-view .feature-input:focus {
+    outline: none;
+    border-color: var(--santander-red);
+    background: #FFF;
+    box-shadow: 0 0 0 3px rgba(236, 0, 0, 0.08);
+}
+
+#profile-view select.feature-input {
+    appearance: auto;
+    -webkit-appearance: auto;
+    cursor: pointer;
+    background: #F9F9F9;
+}
+
+#profile-view .profile-movements-section h4 {
+    margin: 24px 0 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+#profile-view .profile-movements-section > p {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.4;
+    margin-bottom: 14px;
+}
+
+#profile-movements-list .config-mov-row {
+    background: #F5F7F8;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #E5E9EC;
+}
+
+/* SuperToken */
+.token-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 24px 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    text-align: center;
+}
+
+.token-code-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0 16px;
+}
+
+.token-code-display span {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--santander-red);
+    letter-spacing: 2px;
+    font-family: var(--font-headline);
+}

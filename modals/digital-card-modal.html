@@ -1,0 +1,72 @@
+        <div class="digital-card-modal hidden-digital-card-modal" id="digital-card-modal" aria-hidden="true">
+            <div class="digital-card-backdrop" id="digital-card-backdrop"></div>
+
+            <section class="digital-card-sheet" role="dialog" aria-modal="true"
+                aria-labelledby="digital-card-modal-title">
+                <header class="digital-card-modal-header">
+                    <span></span>
+                    <h2 id="digital-card-modal-title">Tarjeta digital</h2>
+                    <button type="button" id="btn-close-digital-card-modal"
+                        class="digital-card-close-btn">Cerrar</button>
+                </header>
+
+                <div class="digital-card-cvv-area">
+                    <div class="digital-card-cvv-row">
+                        <div class="digital-card-cvv-spacer"></div>
+
+                        <strong id="modal-dynamic-cvv" class="digital-card-cvv-number">---</strong>
+
+                        <button type="button" class="digital-card-copy-btn" id="btn-copy-modal-cvv">
+                            <span class="material-icons-outlined">content_copy</span>
+                            <small>Copiar</small>
+                        </button>
+                    </div>
+
+                    <div class="digital-card-progress-track">
+                        <div class="digital-card-progress-fill" id="modal-cvv-progress"></div>
+                    </div>
+
+                    <p class="digital-card-time-left">Quedan <strong id="modal-cvv-timer">03:00</strong> min.</p>
+
+                    <p class="digital-card-warning">
+                        Tu código de seguridad (CVV)<br>
+                        tiene una validez de <strong>03:00 min.</strong>
+                    </p>
+                </div>
+
+                <div class="digital-card-info-list">
+                    <div class="digital-card-info-row">
+                        <div>
+                            <span>Número de tarjeta</span>
+                            <strong id="modal-full-card-number">4152 3140 8080 9096</strong>
+                        </div>
+
+                        <button type="button" class="digital-card-copy-btn" id="btn-copy-modal-card">
+                            <span class="material-icons-outlined">content_copy</span>
+                            <small>Copiar</small>
+                        </button>
+                    </div>
+
+                    <div class="digital-card-info-row">
+                        <div>
+                            <span>Fecha de vencimiento</span>
+                            <strong id="modal-card-exp">12/28</strong>
+                        </div>
+
+                        <button type="button" class="digital-card-copy-btn" id="btn-copy-modal-exp">
+                            <span class="material-icons-outlined">content_copy</span>
+                            <small>Copiar</small>
+                        </button>
+                    </div>
+
+                    <div class="digital-card-switch-row">
+                        <strong>Tarjeta digital prendida</strong>
+
+                        <button type="button" class="digital-card-switch is-on" id="modal-card-switch"
+                            aria-label="Tarjeta digital prendida">
+                            <span></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>

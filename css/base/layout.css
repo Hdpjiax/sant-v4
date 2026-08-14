@@ -1,0 +1,121 @@
+/* --- LAYOUT GENERAL Y CONTENEDOR MÓVIL --- */
+body {
+    background-color: #FFFFFF;
+    margin: 0;
+    padding: 0;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 480px;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 100dvh;
+    background-color: #FFFFFF;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 600px) {
+    body {
+        background-color: #333;
+        align-items: center;
+    }
+    .app-container {
+        height: 92vh;
+        max-height: 900px;
+        border-radius: 28px;
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+    }
+}
+
+.app-container::-webkit-scrollbar {
+    width: 0px;
+}
+
+/* Vistas SPA */
+.hidden-view {
+    display: none !important;
+}
+
+.view-active {
+    display: block !important;
+}
+
+[id$="-view"] {
+    width: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+/* Animaciones Nativas de Transición entre Pantallas (iOS / Android) */
+.page-slide-in-right {
+    animation: pageSlideInRight 0.28s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    will-change: transform, opacity;
+}
+
+.page-slide-out-left {
+    animation: pageSlideOutLeft 0.28s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    will-change: transform, opacity;
+}
+
+.page-slide-in-left {
+    animation: pageSlideInLeft 0.28s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    will-change: transform, opacity;
+}
+
+.page-slide-out-right {
+    animation: pageSlideOutRight 0.28s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    will-change: transform, opacity;
+}
+
+@keyframes pageSlideInRight {
+    0% {
+        transform: translate3d(100%, 0, 0);
+        opacity: 0.95;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes pageSlideOutLeft {
+    0% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(-20%, 0, 0);
+        opacity: 0.8;
+    }
+}
+
+@keyframes pageSlideInLeft {
+    0% {
+        transform: translate3d(-20%, 0, 0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes pageSlideOutRight {
+    0% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(100%, 0, 0);
+        opacity: 0.95;
+    }
+}

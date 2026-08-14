@@ -1,0 +1,148 @@
+/* --- MENÚ LATERAL Y OVERLAY SANTANDER OFICIAL --- */
+.sidebar-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    z-index: 9998 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.3s ease !important;
+}
+
+.sidebar-overlay.active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+.sidebar-menu {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: min(85vw, 340px) !important;
+    max-width: 340px !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    background-color: #FFFFFF !important;
+    z-index: 9999 !important;
+    transform: translate3d(105%, 0, 0) !important;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+.sidebar-menu.active {
+    transform: translate3d(0, 0, 0) !important;
+}
+
+.sidebar-header-new {
+    background-color: #FFFFFF;
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid #ECEFF1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.sidebar-logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-logo-img {
+    height: 22px;
+    width: auto;
+    object-fit: contain;
+}
+
+.sidebar-access-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.sidebar-last-access {
+    font-size: 11px;
+    color: #767676;
+    font-weight: 400;
+}
+
+.sidebar-version {
+    font-size: 11px;
+    color: #999999;
+    font-weight: 500;
+}
+
+.sidebar-links-new {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.sidebar-link-item {
+    display: flex;
+    align-items: center;
+    padding: 13px 20px;
+    font-size: 14px;
+    color: #333333;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    gap: 14px;
+    position: relative;
+}
+
+.sidebar-link-item:hover,
+.sidebar-link-item:active {
+    background-color: #F8F9FA;
+}
+
+.sidebar-link-item .material-icons-outlined {
+    font-size: 22px;
+    color: #666666;
+    flex-shrink: 0;
+}
+
+.sidebar-link-item.active-red {
+    color: var(--santander-red);
+    font-weight: 600;
+    background-color: #FFF5F5;
+}
+
+.sidebar-link-item.active-red .material-icons-outlined {
+    color: var(--santander-red);
+}
+
+.sidebar-link-item .item-plus {
+    margin-left: auto;
+    font-size: 18px;
+    color: #999999;
+}
+
+.sidebar-link-item.logout-link {
+    margin-top: 16px;
+    border-top: 1px solid #EEEEEE;
+    padding-top: 16px;
+    color: var(--santander-red);
+}
+
+.sidebar-link-item.logout-link .material-icons-outlined {
+    color: var(--santander-red);
+}
+
+.sidebar-footer-ver {
+    font-size: 12px;
+    color: #B0BEC5;
+    text-align: center;
+    padding: 16px;
+    margin-top: auto;
+}

@@ -1,0 +1,50 @@
+        <div id="token-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>SuperToken</h2>
+            </header>
+
+            <div class="page-content">
+                <div class="token-container" style="padding: 16px;">
+                    <!-- Activation state (shown if not active yet) -->
+                    <div id="token-activation-card" class="token-card" style="text-align: center; padding: 32px 16px;">
+                        <span class="material-icons-outlined token-large-icon"
+                            style="font-size: 80px; color: var(--santander-red); margin-bottom: 16px;">security</span>
+                        <h3 style="margin-bottom: 8px;">Activar SuperToken</h3>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 24px; line-height: 1.4;">Tu SuperToken te
+                            permite autorizar transferencias y pagos de manera segura desde tu banca móvil.</p>
+                        <button class="primary-action-btn" id="btn-activate-token">Activar ahora</button>
+                    </div>
+
+                    <!-- Token code state (shown once active) -->
+                    <div id="token-display-card" class="token-card hidden-view"
+                        style="text-align: center; padding: 32px 16px;">
+                        <span class="token-title"
+                            style="font-size: 12px; font-weight: 700; color: #888; letter-spacing: 1px; display: block; margin-bottom: 16px;">CÓDIGO
+                            DE SEGURIDAD</span>
+                        <div class="token-code-row"
+                            style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px;">
+                            <span class="token-digit-group" id="token-code-g1"
+                                style="font-size: 32px; font-weight: 700; letter-spacing: 2px; color: #222; font-family: monospace;">0000</span>
+                            <span class="token-digit-group" id="token-code-g2"
+                                style="font-size: 32px; font-weight: 700; letter-spacing: 2px; color: #222; font-family: monospace;">0000</span>
+                        </div>
+
+                        <!-- Progress circle or bar -->
+                        <div class="token-timer-container" style="margin-bottom: 16px;">
+                            <div class="token-progress-bar"
+                                style="height: 6px; background: #E2E8F0; border-radius: 3px; overflow: hidden; margin-bottom: 10px;">
+                                <div id="token-progress-fill"
+                                    style="height: 100%; width: 100%; background: var(--santander-red); transition: width 1s linear;">
+                                </div>
+                            </div>
+                            <span class="token-timer-text" style="font-size: 13px; color: #666;">El código cambia en
+                                <strong id="token-timer-sec">30</strong> segundos</span>
+                        </div>
+
+                        <p class="token-info" style="font-size: 12px; color: #888; line-height: 1.4;">Este código es
+                            dinámico y sirve para autorizar operaciones.</p>
+                    </div>
+                </div>
+            </div>
+        </div>

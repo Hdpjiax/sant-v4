@@ -1,0 +1,80 @@
+        <!-- ==================== MOVEMENTS RECEIPT (CEP / SPEI) BOTTOM SHEET ==================== -->
+        <div class="movement-receipt-modal hidden-receipt-modal" id="movement-receipt-modal" aria-hidden="true">
+            <div class="movement-receipt-backdrop" id="btn-close-receipt-backdrop"></div>
+            <section class="movement-receipt-sheet" role="dialog" aria-modal="true" aria-labelledby="receipt-modal-title">
+                <div class="receipt-drag-handle"></div>
+                <header class="receipt-modal-header">
+                    <button type="button" id="btn-close-receipt-modal" class="receipt-close-btn">&times;</button>
+                    <div class="receipt-bank-badge" id="receipt-bank-badge">
+                        <img src="assets/santander-flame.png" alt="Banco" id="receipt-bank-logo" class="receipt-bank-img">
+                        <span id="receipt-bank-name">Santander</span>
+                    </div>
+                    <h2 id="receipt-modal-title" class="receipt-title">Comprobante de operación</h2>
+                    <div class="receipt-amount-display" id="receipt-amount-display">-$0.00 MXN</div>
+                    <span class="receipt-status-badge">Operación exitosa</span>
+                </header>
+
+                <div class="receipt-body">
+                    <div class="receipt-info-group">
+                        <div class="receipt-row">
+                            <span class="receipt-label">Concepto</span>
+                            <strong class="receipt-val" id="receipt-concept">—</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Fecha y hora</span>
+                            <strong class="receipt-val" id="receipt-datetime">—</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Folio de operación</span>
+                            <strong class="receipt-val" id="receipt-folio">—</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Clave de rastreo SPEI</span>
+                            <strong class="receipt-val code-font" id="receipt-tracking">—</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Cuenta / Tarjeta</span>
+                            <strong class="receipt-val" id="receipt-account">—</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Tipo de operación</span>
+                            <strong class="receipt-val" id="receipt-type">Transferencia electrónica</strong>
+                        </div>
+                    </div>
+
+                    <div class="receipt-qr-section">
+                        <div class="receipt-qr-box">
+                            <!-- QR Code SVG decorativo oficial -->
+                            <svg viewBox="0 0 100 100" width="70" height="70" fill="#222">
+                                <rect x="5" y="5" width="25" height="25" fill="#222"/>
+                                <rect x="9" y="9" width="17" height="17" fill="#FFF"/>
+                                <rect x="13" y="13" width="9" height="9" fill="#222"/>
+                                <rect x="70" y="5" width="25" height="25" fill="#222"/>
+                                <rect x="74" y="9" width="17" height="17" fill="#FFF"/>
+                                <rect x="78" y="13" width="9" height="9" fill="#222"/>
+                                <rect x="5" y="70" width="25" height="25" fill="#222"/>
+                                <rect x="9" y="74" width="17" height="17" fill="#FFF"/>
+                                <rect x="13" y="78" width="9" height="9" fill="#222"/>
+                                <rect x="35" y="10" width="10" height="10" fill="#222"/>
+                                <rect x="50" y="20" width="15" height="10" fill="#222"/>
+                                <rect x="40" y="35" width="20" height="20" fill="#222"/>
+                                <rect x="70" y="40" width="10" height="15" fill="#222"/>
+                                <rect x="10" y="40" width="15" height="10" fill="#222"/>
+                                <rect x="35" y="65" width="15" height="10" fill="#222"/>
+                                <rect x="55" y="70" width="20" height="10" fill="#222"/>
+                                <rect x="80" y="65" width="15" height="20" fill="#222"/>
+                            </svg>
+                        </div>
+                        <div class="receipt-qr-info">
+                            <span class="receipt-qr-title">Sello Digital de Validación</span>
+                            <span class="receipt-qr-sub" id="receipt-seal">Banco Santander México S.A. Institución de Banca Múltiple</span>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-share-receipt" id="btn-share-receipt">
+                        <span class="material-icons-outlined">share</span>
+                        <span>Compartir comprobante</span>
+                    </button>
+                </div>
+            </section>
+        </div>

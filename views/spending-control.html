@@ -1,0 +1,40 @@
+        <div id="spending-control-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Control de gasto</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+
+            <div class="page-content">
+                <div class="feature-card">
+                    <h3>Límite mensual</h3>
+                    <p>Define cuánto puedes gastar con tu tarjeta digital durante el mes.</p>
+
+                    <div class="spending-limit-display">
+                        $<span id="spending-limit-value">5,000.00</span> MXN
+                    </div>
+
+                    <input type="range" id="spending-limit-range" min="500" max="50000" step="500" value="5000">
+
+                    <label class="feature-label">Editar límite manualmente</label>
+                    <input class="feature-input" type="number" id="spending-limit-input" value="5000">
+
+                    <div class="control-toggle-row">
+                        <span>Compras por internet</span>
+                        <button class="mini-switch is-on" data-control-switch="internet"><span></span></button>
+                    </div>
+
+                    <div class="control-toggle-row">
+                        <span>Compras en el extranjero</span>
+                        <button class="mini-switch" data-control-switch="foreign"><span></span></button>
+                    </div>
+
+                    <div class="control-toggle-row">
+                        <span>Retiros en cajero</span>
+                        <button class="mini-switch is-on" data-control-switch="atm"><span></span></button>
+                    </div>
+
+                    <button class="primary-action-btn mt-20" id="btn-save-spending-control">Guardar cambios</button>
+                </div>
+            </div>
+        </div>

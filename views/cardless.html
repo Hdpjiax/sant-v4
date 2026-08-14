@@ -1,0 +1,25 @@
+        <div id="cardless-view" class="hidden-view">
+            <header class="detail-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back</span>
+                <h2>Retiro sin tarjeta</h2>
+                <span class="material-icons-outlined icon-red">more_vert</span>
+            </header>
+            <div class="page-content">
+                <div class="mock-form">
+                    <div class="empty-state" style="padding: 10px 0 20px 0;">
+                        <span class="material-icons-outlined empty-icon" style="color: var(--santander-red);">atm</span>
+                        <h3 style="font-size: 16px;">Generar Referencia</h3>
+                        <p style="font-size: 13px;">Retira efectivo en cualquier cajero automático sin insertar tu
+                            plástico.</p>
+                    </div>
+                    <label>Importe a retirar (MXN)</label>
+                    <select id="cardless-amount">
+                        <option value="100.00">$ 100.00</option>
+                        <option value="200.00">$ 200.00</option>
+                        <option value="500.00" selected>$ 500.00</option>
+                        <option value="1000.00">$ 1,000.00</option>
+                    </select>
+                    <button class="primary-action-btn mt-20" id="btn-do-cardless">Generar clave de retiro</button>
+                </div>
+            </div>
+        </div>

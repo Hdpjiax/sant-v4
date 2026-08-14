@@ -1,0 +1,123 @@
+/* --- VISTA DE TRANSFERENCIAS, RECARGAS, RETIRO Y PAGOS --- */
+.page-content {
+    padding: 24px 20px;
+    flex-grow: 1;
+    background-color: #F7F9FA;
+}
+
+.mock-form {
+    background: #FFF;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-color);
+}
+
+.mock-form label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    margin-top: 16px;
+}
+
+.mock-form label:first-child {
+    margin-top: 0;
+}
+
+.mock-form input,
+.mock-form select {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 15px;
+    color: var(--text-dark);
+    background-color: #F9F9F9;
+}
+
+.mock-form input:focus {
+    outline: none;
+    border-color: var(--santander-red);
+    background-color: #FFF;
+}
+
+.primary-action-btn {
+    width: 100%;
+    background-color: var(--santander-red);
+    color: #FFF;
+    border: none;
+    padding: 16px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(236, 0, 0, 0.2);
+}
+
+.primary-action-btn:active {
+    transform: scale(0.98);
+}
+
+.btn-outline {
+    background-color: #FFF;
+    color: var(--santander-red);
+    border: 2px solid var(--santander-red);
+    box-shadow: none;
+}
+
+.mt-20 {
+    margin-top: 24px;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    padding: 40px 20px;
+}
+
+.empty-icon {
+    font-size: 64px !important;
+    color: #CCCCCC;
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    font-size: 20px;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.empty-state p {
+    font-size: 15px;
+    color: var(--text-gray);
+    line-height: 1.5;
+}
+
+/* Pantalla de éxito en transferencias */
+.success-screen {
+    background: #FFFFFF;
+    padding: 32px 24px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.success-icon-badge {
+    width: 64px;
+    height: 64px;
+    background: #E8F5E9;
+    color: #2E7D32;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 36px;
+}

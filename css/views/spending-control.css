@@ -1,0 +1,178 @@
+/* --- CONTROL DE GASTOS, LÍMITES Y DIFERIMIENTO DE COMPRAS --- */
+.feature-card {
+    background: #FFFFFF;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.feature-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.feature-card p {
+    font-size: 13px;
+    color: var(--text-gray);
+    line-height: 1.45;
+    margin-bottom: 18px;
+}
+
+.feature-label {
+    display: block;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.feature-input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 15px;
+    background: #F9F9F9;
+    color: var(--text-dark);
+}
+
+.defer-purchases-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.deferrable-purchase {
+    width: 100%;
+    border: 1px solid #E4E4E4;
+    background: #FFFFFF;
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.deferrable-purchase.active {
+    border-color: var(--santander-red);
+    box-shadow: 0 0 0 1px var(--santander-red);
+}
+
+.deferrable-purchase strong {
+    display: block;
+    font-size: 13px;
+    color: var(--text-dark);
+    text-transform: uppercase;
+}
+
+.deferrable-purchase span {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-gray);
+}
+
+.deferrable-purchase em {
+    font-style: normal;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    white-space: nowrap;
+}
+
+.spending-limit-display {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--santander-red);
+    margin: 22px 0 14px;
+}
+
+#spending-limit-range {
+    width: 100%;
+    accent-color: var(--santander-red);
+}
+
+.control-toggle-row,
+.wallet-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 0;
+}
+
+.control-toggle-row span {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.mini-switch {
+    position: relative;
+    width: 48px;
+    height: 28px;
+    border: none;
+    border-radius: 999px;
+    background: #DADADA;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.mini-switch span {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease;
+}
+
+.mini-switch.is-on {
+    background: #52C267;
+}
+
+.mini-switch.is-on span {
+    transform: translateX(20px);
+}
+
+.wallet-row strong {
+    display: block;
+    font-size: 15px;
+    color: var(--text-dark);
+}
+
+.wallet-row span {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-gray);
+}
+
+.wallet-action-btn {
+    border: 1px solid var(--santander-red);
+    background: #FFFFFF;
+    color: var(--santander-red);
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.wallet-action-btn.is-added {
+    background: #E9F7EF;
+    border-color: #52C267;
+    color: #118A43;
+}

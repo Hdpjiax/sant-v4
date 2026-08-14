@@ -1,0 +1,234 @@
+/* --- TARJETAS, CUENTAS Y PRODUCTOS --- */
+.account-section {
+    padding: 12px 20px;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+}
+
+.balance-title-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.main-balance {
+    font-size: 14px;
+    color: #666666;
+}
+
+.add-icon {
+    font-size: 22px !important;
+}
+
+.account-card {
+    display: flex;
+    align-items: center;
+    background-color: #FFFFFF;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    cursor: pointer;
+}
+
+.card-icon {
+    margin-right: 16px;
+}
+
+.red-icon-box {
+    width: 48px;
+    height: 34px;
+    background-color: var(--santander-red);
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.santander-flame-only {
+    height: 20px;
+    width: 20px;
+    object-fit: cover;
+    object-position: left center;
+    filter: brightness(0) invert(1);
+}
+
+.card-details {
+    flex-grow: 1;
+}
+
+.card-balance-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.arrow-icon {
+    color: #CCC;
+    font-size: 24px !important;
+}
+
+.card-type {
+    display: block;
+    font-size: 11px;
+    color: var(--text-gray);
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.card-number {
+    display: block;
+    font-size: 13px;
+    color: var(--text-gray);
+}
+
+/* Tarjeta virtual roja */
+.virtual-card {
+    width: 100%;
+    max-width: 340px;
+    height: 215px;
+    background: linear-gradient(135deg, #E60000 0%, #AA0000 100%);
+    border-radius: 16px;
+    padding: 20px 24px;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 12px 28px rgba(230, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+
+.virtual-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 40%, rgba(0, 0, 0, 0) 100%);
+    transform: rotate(25deg);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.virtual-card > * {
+    z-index: 1;
+    position: relative;
+}
+
+.virtual-card.card-off-state {
+    filter: grayscale(1) opacity(0.85);
+}
+
+/* Tarjeta horizontal (Cuenta Digital) */
+.horizontal-card {
+    background: linear-gradient(135deg, #EC0000 0%, #B80000 100%);
+    border-radius: 18px;
+    color: #FFFFFF !important;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(236, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.horizontal-card:active {
+    transform: scale(0.98);
+}
+
+.horizontal-card-inner {
+    padding: 20px 22px;
+    position: relative;
+    z-index: 2;
+}
+
+.horizontal-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2px;
+}
+
+.horizontal-card-subtitle {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 12px;
+}
+
+.horizontal-card-balance {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.horizontal-card-balance span {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.horizontal-card-balance strong {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.horizontal-card-ref {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.horizontal-card p,
+.horizontal-card span,
+.horizontal-card strong,
+.horizontal-card .dynamic-balance,
+.horizontal-card-balance,
+.horizontal-card-balance span,
+.horizontal-card-balance strong,
+.horizontal-card-balance .dynamic-balance,
+#account-overview-view .horizontal-card-balance,
+#account-overview-view .horizontal-card-balance span,
+#account-overview-view .horizontal-card-balance strong,
+#account-overview-view .horizontal-card-balance .dynamic-balance {
+    color: #FFFFFF !important;
+}
+
+/* Logos de Red (Mastercard, Visa, Amex) */
+.card-network-logo.is-mastercard {
+    width: 36px;
+    height: 24px;
+    background: url("https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg") no-repeat center;
+    background-size: contain;
+    position: absolute;
+    bottom: 16px;
+    right: 20px;
+}
+
+.card-network-logo.is-visa {
+    width: 44px;
+    height: 20px;
+    background: url("https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg") no-repeat center;
+    background-size: contain;
+    position: absolute;
+    bottom: 16px;
+    right: 20px;
+    filter: brightness(0) invert(1);
+}

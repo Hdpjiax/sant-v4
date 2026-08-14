@@ -1,0 +1,179 @@
+/* --- VISTA DE ESTADO DE CUENTA BANCARIO OFICIAL SANTANDER --- */
+.statement-header {
+    background-color: var(--santander-red);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.statement-header h3 {
+    font-size: 18px;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.statement-header p {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.statement-pdf-hint {
+    font-size: 18px !important;
+    color: var(--santander-red);
+    margin-right: 2px;
+}
+
+.statement-page {
+    background: #D8D8D8;
+    padding: 10px 8px 24px;
+    flex: 1;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.santander-statement-doc {
+    font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
+    color: #000;
+    line-height: 1.2;
+    -webkit-font-smoothing: antialiased;
+}
+
+.stmt-sheet {
+    background: #FFF;
+    min-width: 680px;
+    min-height: 978px;
+    padding: 18px 22px 14px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.stmt-sheet-break {
+    page-break-before: always;
+    break-before: page;
+}
+
+.stmt-top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.stmt-brand-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.stmt-santander-logo {
+    width: 118px;
+    height: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.stmt-legal-lines p {
+    font-size: 8px;
+    font-weight: 400;
+    line-height: 1.35;
+    margin: 0;
+}
+
+.stmt-doc-title {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: right;
+    line-height: 1;
+    letter-spacing: 0;
+    margin: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.stmt-client-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin: 8px 0 14px;
+    border: none;
+}
+
+.stmt-client-left {
+    flex: 1;
+    min-width: 0;
+    max-width: 52%;
+}
+
+.stmt-client-right {
+    flex: 0 0 240px;
+    text-align: left;
+}
+
+.stmt-addr-main {
+    font-size: 11px;
+    font-weight: 700;
+    margin: 0 0 3px;
+    text-transform: uppercase;
+}
+
+.stmt-addr-line {
+    font-size: 10px;
+    font-weight: 700;
+    margin: 0 0 2px;
+    text-transform: uppercase;
+    line-height: 1.25;
+}
+
+.stmt-addr-cp {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.stmt-postal-ref {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: none;
+}
+
+.stmt-barcode-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.stmt-barcode-prefix {
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1;
+    padding-bottom: 14px;
+    flex-shrink: 0;
+}
+
+.stmt-barcode-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.stmt-barcode-svg {
+    width: 100%;
+    max-width: 360px;
+    height: 34px;
+    display: block;
+}
+
+.stmt-barcode-human {
+    display: block;
+    font-size: 7px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+}

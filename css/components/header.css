@@ -1,0 +1,90 @@
+/* --- ENCABEZADO Y HEADER ACTIONS --- */
+.status-bar {
+    display: none !important;
+}
+
+.status-icons {
+    display: flex;
+    gap: 6px;
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 16px 20px;
+    background-color: #FFFFFF;
+}
+
+.brand {
+    font-size: 14px;
+    color: var(--text-gray);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.app-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-dark);
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    font-size: 15px;
+    color: var(--text-gray);
+    text-transform: capitalize;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 6px;
+}
+
+.icon-red {
+    color: var(--santander-red);
+    font-size: 28px !important;
+    cursor: pointer;
+}
+
+.santander-top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: #FFFFFF;
+}
+
+.top-santander-logo img {
+    height: 22px;
+    width: auto;
+}
+
+/* Header reload/sync button */
+.sync-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sync-icon {
+    display: block;
+    transition: transform 0.6s ease;
+}
+
+.sync-icon.is-spinning {
+    animation: syncRotate 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes syncRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

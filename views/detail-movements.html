@@ -1,0 +1,57 @@
+        <div id="detail-view" class="hidden-view">
+            <header class="select-header santander-top-header">
+                <span class="material-icons-outlined icon-red back-btn">arrow_back_ios</span>
+
+                <div class="top-santander-logo">
+                    <img src="assets/santander-flame.png" alt="Santander">
+                </div>
+
+                <span class="material-icons-outlined icon-red" id="btn-open-sidebar-detail"
+                    style="cursor:pointer;" onclick="if(window.SantanderNav&&window.SantanderNav.openSidebar){window.SantanderNav.openSidebar();}else if(window.openSidebar){window.openSidebar();}">menu</span>
+            </header>
+
+            <section class="movement-screen">
+                <h2 class="movement-page-title">Movimientos de cuenta</h2>
+
+                <div class="movement-summary-card">
+                    <div class="movement-summary-accent"></div>
+
+                    <div class="movement-summary-top">
+                        <div class="movement-summary-left">
+                            <span class="summary-label">CUENTA DIGITAL</span>
+                            <strong class="summary-account" id="detail-account-number">14**9096</strong>
+
+                            <div class="summary-card-reference">
+                                <span class="summary-card-icon"></span>
+                                <span id="detail-card-ref">4152••9096</span>
+                            </div>
+                        </div>
+
+                        <div class="movement-summary-right">
+                            <strong class="summary-balance">$<span class="dynamic-balance">15670.00</span></strong>
+                            <span class="summary-currency">MXN</span>
+                        </div>
+                    </div>
+
+                    <div class="movement-summary-bottom">
+                        <button class="summary-detail-btn" id="btn-open-card-info">
+                            Detalles
+                            <span class="material-icons-outlined">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="movement-filter-tabs">
+                    <button class="filter-tab active" data-filter="all">Todos</button>
+                    <button class="filter-tab" data-filter="positive">Ingresos</button>
+                    <button class="filter-tab" data-filter="negative">Egresos</button>
+                </div>
+
+                <section class="movements-section santander-movement-list">
+                    <div id="movements-container"></div>
+
+                    <button class="older-movements-btn" id="btn-load-older-movements">Ver más anterior</button>
+                    <span class="material-icons-outlined older-movements-icon">expand_more</span>
+                </section>
+            </section>
+        </div>
