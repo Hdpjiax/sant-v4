@@ -100,6 +100,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Check if existing session is already valid
             const existingSession = await window.SantanderAuth.getSession();
             if (existingSession && existingSession.user?.email === user.email) {
+                if (navigator.vibrate) navigator.vibrate([15, 40, 25]);
                 const profile = await window.SantanderAuth.getProfile();
                 window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
                 return;
@@ -109,6 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (user.saved_pwd) {
                 const clearPwd = decodeURIComponent(atob(user.saved_pwd));
                 await window.SantanderAuth.signIn(user.email, clearPwd);
+                if (navigator.vibrate) navigator.vibrate([15, 40, 25]);
                 const profile = await window.SantanderAuth.getProfile();
                 window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
                 return;

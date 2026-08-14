@@ -51,6 +51,115 @@ input, textarea, select {
     top: 0;
 }
 
+/* ==================== SANTANDER OFFICIAL NATIVE MODAL / DIALOGS ==================== */
+.confirm-overlay,
+.santander-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 12000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    animation: dialogFadeIn 0.22s ease forwards;
+}
+
+@keyframes dialogFadeIn {
+    to { opacity: 1; }
+}
+
+.confirm-dialog,
+.santander-dialog-card {
+    background: #FFFFFF;
+    border-radius: 22px;
+    padding: 28px 22px 20px;
+    max-width: 325px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+    transform: scale(0.92) translateY(12px);
+    animation: dialogScaleUp 0.26s cubic-bezier(0.175, 0.885, 0.32, 1.18) forwards;
+}
+
+@keyframes dialogScaleUp {
+    to {
+        transform: scale(1) translateY(0);
+    }
+}
+
+.santander-dialog-flame {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    margin: 0 auto 12px;
+    display: block;
+}
+
+.confirm-dialog h3,
+.santander-dialog-title {
+    font-family: var(--font-headline) !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    color: #1A1A1A !important;
+    margin: 0 0 10px !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.3px !important;
+}
+
+.confirm-dialog p,
+.santander-dialog-msg {
+    font-family: var(--font-text) !important;
+    font-size: 14px !important;
+    color: #555555 !important;
+    margin: 0 0 22px !important;
+    line-height: 1.45 !important;
+}
+
+.confirm-dialog-actions,
+.santander-dialog-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.confirm-dialog-actions button,
+.santander-dialog-actions button {
+    flex: 1;
+    padding: 13px 16px;
+    border-radius: 24px;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    touch-action: manipulation;
+    transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.confirm-dialog-actions button:active,
+.santander-dialog-actions button:active {
+    transform: scale(0.96);
+}
+
+.confirm-dialog .btn-cancel,
+.santander-dialog-btn-cancel {
+    background: transparent !important;
+    border: 1.5px solid #D0D4DC !important;
+    color: #4B5563 !important;
+    font-weight: 600 !important;
+}
+
+.confirm-dialog .btn-confirm,
+.santander-dialog-btn-primary {
+    background: #EC0000 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(236, 0, 0, 0.25) !important;
+}
+
 /* Focus-visible for keyboard users */
 :focus-visible {
     outline: 2px solid var(--santander-red);
@@ -6078,19 +6187,6 @@ textarea {
 #btn-profile-sync.syncing {
     animation: spin-sync 0.8s linear infinite;
     pointer-events: none;
-    opacity: 0.6;
-}
-
-/* Confirm dialog overlay */
-.confirm-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
 }
 
 .confirm-dialog {
@@ -8199,6 +8295,65 @@ textarea {
     color: #767676 !important;
 }
 
+/* ==================== SANTANDER DESIGN SYSTEM HEADER ICONS ==================== */
+.header-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    margin-top: 4px !important;
+}
+
+.header-icon-btn {
+    background: none !important;
+    border: none !important;
+    padding: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    color: #EC0000 !important;
+    position: relative !important;
+    touch-action: manipulation !important;
+    border-radius: 50% !important;
+    transition: transform 0.15s ease, background-color 0.15s ease !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.header-icon-btn:active {
+    transform: scale(0.92) !important;
+    background-color: rgba(236, 0, 0, 0.08) !important;
+}
+
+.santander-header-svg {
+    display: block !important;
+    width: 24px !important;
+    height: 24px !important;
+}
+
+.sync-icon {
+    transition: transform 0.6s ease;
+}
+
+.sync-icon.is-spinning {
+    animation: syncSpin 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes syncSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Ocultar saldos cuando el ojo está cerrado */
+body.balances-hidden .dynamic-balance,
+body.balances-hidden .home-product-balance,
+body.balances-hidden .summary-balance,
+body.balances-hidden .infinite-card-amount,
+body.balances-hidden .card-amount {
+    filter: blur(8px) !important;
+    user-select: none !important;
+    transition: filter 0.2s ease !important;
+}
+
 /* ==================== HORIZONTAL CARD BALANCE WHITE COLOR ==================== */
 .horizontal-card,
 .horizontal-card h3,
@@ -8215,4 +8370,309 @@ textarea {
 #account-overview-view .horizontal-card-balance strong,
 #account-overview-view .horizontal-card-balance .dynamic-balance {
     color: #FFFFFF !important;
+}
+
+/* ==================== PULL TO REFRESH FLAME ANIMATION ==================== */
+.pull-to-refresh-container {
+    position: absolute;
+    top: -60px;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    pointer-events: none;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pull-to-refresh-container.refreshing {
+    transform: translateY(70px);
+}
+
+.pull-to-refresh-spinner {
+    width: 42px;
+    height: 42px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pull-to-refresh-container.refreshing .ptr-flame-icon {
+    animation: ptrRotateFlame 0.9s infinite linear;
+}
+
+.ptr-flame-icon {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+@keyframes ptrRotateFlame {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.15); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+/* ==================== SKELETON SHIMMER LOADERS ==================== */
+.skeleton-shimmer {
+    position: relative;
+    overflow: hidden !important;
+    background-color: #ECEFF1 !important;
+    color: transparent !important;
+    border-radius: 4px !important;
+}
+
+.skeleton-shimmer * {
+    visibility: hidden !important;
+}
+
+.skeleton-shimmer::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.5) 40%,
+        rgba(255, 255, 255, 0.8) 60%,
+        rgba(255, 255, 255, 0)
+    );
+    animation: shimmerSlide 1.2s infinite;
+}
+
+@keyframes shimmerSlide {
+    100% { transform: translateX(100%); }
+}
+
+/* ==================== MOVEMENTS RECEIPT BOTTOM SHEET ==================== */
+.movement-receipt-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.movement-receipt-modal.hidden-receipt-modal {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.movement-receipt-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.movement-receipt-sheet {
+    position: relative;
+    z-index: 1;
+    background: #FFFFFF;
+    border-radius: 26px 26px 0 0;
+    max-height: 88vh;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    overflow-y: auto;
+    padding: 14px 20px 32px;
+    box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.28);
+    transform: translateY(0);
+    transition: transform 0.32s cubic-bezier(0.2, 0.9, 0.3, 1);
+    box-sizing: border-box;
+}
+
+.movement-receipt-modal.hidden-receipt-modal .movement-receipt-sheet {
+    transform: translateY(100%);
+}
+
+.receipt-drag-handle {
+    width: 40px;
+    height: 4px;
+    background: #D1D5DB;
+    border-radius: 2px;
+    margin: 2px auto 12px;
+}
+
+.receipt-modal-header {
+    text-align: center;
+    position: relative;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed #E5E7EB;
+}
+
+.receipt-close-btn {
+    position: absolute;
+    top: -4px;
+    right: 0;
+    background: #F3F4F6;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    color: #4B5563;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.receipt-bank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #FFF0F0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.receipt-bank-img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.receipt-bank-badge span {
+    font-size: 13px;
+    font-weight: 700;
+    color: #EC0000;
+}
+
+.receipt-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 6px;
+}
+
+.receipt-amount-display {
+    font-size: 26px;
+    font-weight: 800;
+    color: #111827;
+    font-family: var(--font-headline);
+    letter-spacing: -0.5px;
+    margin: 6px 0;
+}
+
+.receipt-status-badge {
+    display: inline-block;
+    background: #DCFCE7;
+    color: #15803D;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+}
+
+.receipt-body {
+    padding-top: 16px;
+}
+
+.receipt-info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.receipt-label {
+    font-size: 13px;
+    color: #6B7280;
+    flex: 0 0 40%;
+}
+
+.receipt-val {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1F2937;
+    text-align: right;
+    word-break: break-word;
+}
+
+.receipt-val.code-font {
+    font-family: monospace;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.receipt-qr-section {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.receipt-qr-title {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 2px;
+}
+
+.receipt-qr-sub {
+    display: block;
+    font-size: 11px;
+    color: #6B7280;
+    line-height: 1.3;
+}
+
+.btn-share-receipt {
+    width: 100%;
+    background: #EC0000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    touch-action: manipulation;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-share-receipt:active {
+    transform: scale(0.97);
+    background: #C40000;
 }

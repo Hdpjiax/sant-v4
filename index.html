@@ -127,10 +127,22 @@
                     <p class="subtitle" id="display-subtitle">García Nievez</p>
                 </div>
                 <div class="header-actions">
-                    <span class="material-icons-outlined icon-red" id="btn-sync" role="button" tabindex="0"
-                        aria-label="Sincronizar datos">sync</span>
-                    <span class="material-icons-outlined icon-red" id="btn-open-sidebar-home" style="cursor:pointer;"
-                        role="button" tabindex="0" aria-label="Abrir menú">more_vert</span>
+                    <!-- Botón Recargar / Sincronizar oficial Santander -->
+                    <button type="button" class="header-icon-btn" id="btn-sync" aria-label="Recargar" title="Recargar">
+                        <svg class="santander-header-svg sync-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                            <path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4" stroke="#EC0000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" stroke="#EC0000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+
+                    <!-- Botón Menú Lateral: 3 líneas horizontales oficiales Santander bordes redondeados -->
+                    <button type="button" class="header-icon-btn" id="btn-open-sidebar-home" aria-label="Abrir menú" title="Abrir menú">
+                        <svg class="santander-header-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                            <line x1="3" y1="6" x2="21" y2="6" stroke="#EC0000" stroke-width="2.6" stroke-linecap="round"/>
+                            <line x1="3" y1="12" x2="21" y2="12" stroke="#EC0000" stroke-width="2.6" stroke-linecap="round"/>
+                            <line x1="3" y1="18" x2="21" y2="18" stroke="#EC0000" stroke-width="2.6" stroke-linecap="round"/>
+                        </svg>
+                    </button>
                 </div>
             </header>
             <section class="home-products">
@@ -329,39 +341,45 @@
                     <span>Transferir</span>
                 </div>
                 <div class="nav-item" id="btn-nav-retiro">
-                    <!-- Icono Retiro sin tarjeta: Billete con doblez en esquina y símbolo $ con trazo 1.5px -->
+                    <!-- Retiro sin tarjeta: Billete con doble pliegue y logo $ oficial -->
                     <svg class="santander-svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                        <rect x="3" y="6" width="18" height="12" rx="2" stroke="#EC0000" stroke-width="1.8"/>
-                        <circle cx="12" cy="12" r="3" stroke="#EC0000" stroke-width="1.5"/>
-                        <path d="M12 10.5V13.5M10.8 11.2C10.8 10.8 11.3 10.5 12 10.5C12.7 10.5 13.2 10.8 13.2 11.3C13.2 12.2 10.8 11.8 10.8 12.7C10.8 13.2 11.3 13.5 12 13.5C12.7 13.5 13.2 13.2 13.2 12.8" stroke="#EC0000" stroke-width="1.2" stroke-linecap="round"/>
-                        <path d="M3 9L6 6M21 15L18 18" stroke="#EC0000" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M3 6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V18C21 19.1046 20.1046 20 19 20H5C3.89543 20 3 19.1046 3 18V6Z" stroke="#EC0000" stroke-width="1.8"/>
+                        <!-- Doble pliegue en esquina superior izquierda e inferior derecha -->
+                        <path d="M3 9L8 4M21 15L16 20" stroke="#EC0000" stroke-width="1.5" stroke-linecap="round"/>
+                        <!-- Círculo y Símbolo $ oficial -->
+                        <circle cx="12" cy="12" r="3.2" stroke="#EC0000" stroke-width="1.4"/>
+                        <path d="M12 10V14M10.8 10.8C10.8 10.4 11.3 10.1 12 10.1C12.7 10.1 13.2 10.4 13.2 10.9C13.2 11.7 10.8 11.4 10.8 12.3C10.8 12.8 11.3 13.1 12 13.1C12.7 13.1 13.2 12.8 13.2 12.4" stroke="#EC0000" stroke-width="1.2" stroke-linecap="round"/>
                     </svg>
                     <span>Retiro sin tarjeta</span>
                 </div>
                 <div class="nav-item" id="btn-nav-pagar">
-                    <!-- Icono Pagar tarjetas propias: Tarjeta de crédito outline oficial -->
+                    <!-- Pagar tarjetas: Tarjeta con chip rectangular EMV y contactless en el lateral -->
                     <svg class="santander-svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
                         <rect x="3" y="5" width="18" height="14" rx="2.5" stroke="#EC0000" stroke-width="1.8"/>
-                        <path d="M3 9.5H21" stroke="#EC0000" stroke-width="1.8"/>
-                        <rect x="6" y="13.5" width="4" height="2.5" rx="0.5" fill="#EC0000"/>
-                        <circle cx="16.5" cy="14.7" r="1.2" fill="#EC0000"/>
+                        <!-- Chip EMV -->
+                        <rect x="6" y="11.5" width="4" height="3" rx="0.5" stroke="#EC0000" stroke-width="1.2" fill="#FFE5E5"/>
+                        <line x1="8" y1="11.5" x2="8" y2="14.5" stroke="#EC0000" stroke-width="1"/>
+                        <!-- Contactless waves en lateral derecho -->
+                        <path d="M16 10C16.8 10.8 16.8 12.2 16 13M18 8.5C19.5 10 19.5 13 18 14.5" stroke="#EC0000" stroke-width="1.3" stroke-linecap="round"/>
                     </svg>
                     <span>Pagar tarjetas propias</span>
                 </div>
                 <div class="nav-item" id="btn-nav-recargar">
-                    <!-- Icono Recargar celular: Smartphone con flecha de recarga -->
+                    <!-- Recargar celular: Teléfono con el rayo / flecha de carga vertical -->
                     <svg class="santander-svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
                         <rect x="6" y="3" width="12" height="18" rx="2.5" stroke="#EC0000" stroke-width="1.8"/>
-                        <path d="M10 18.5H14" stroke="#EC0000" stroke-width="1.8" stroke-linecap="round"/>
-                        <path d="M12 7V13M12 7L9.5 9.5M12 7L14.5 9.5" stroke="#EC0000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="18" r="0.8" fill="#EC0000"/>
+                        <!-- Flecha vertical de recarga -->
+                        <path d="M12 6V13M12 6L9.5 8.5M12 6L14.5 8.5" stroke="#EC0000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     <span>Recargar celular</span>
                 </div>
                 <div class="nav-item" id="btn-nav-ofertas">
-                    <!-- Icono Mis Ofertas: Escarapela/roseta de 8 puntas onduladas con el % centrado oficial Santander -->
+                    <!-- Mis ofertas: Escarapela octogonal con el % centrado oficial Santander -->
                     <svg class="santander-svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                        <path d="M12 2L14.4 4.8L18.1 4.3L18.8 8.1L22.2 9.8L21 13.4L23.1 16.6L19.5 17.9L18.6 21.6L14.9 21.3L12.3 24L9.7 21.3L6 21.6L5.1 17.9L1.5 16.6L3.6 13.4L2.4 9.8L5.8 8.1L6.5 4.3L10.2 4.8L12 2Z" fill="#EC0000"/>
-                        <text x="12" y="15" text-anchor="middle" fill="#FFFFFF" font-family="'Outfit', sans-serif" font-size="9" font-weight="bold">%</text>
+                        <path d="M12 2L14.6 4.6L18.3 4.2L19.2 7.8L22.6 9.4L21.6 13L23.5 16.2L20 17.7L19.3 21.4L15.6 21.2L13.2 24L10.8 21.2L7.1 21.4L6.4 17.7L2.9 16.2L4.8 13L3.8 9.4L7.2 7.8L8.1 4.2L11.8 4.6L12 2Z" fill="#EC0000"/>
+                        <circle cx="12" cy="12" r="6" fill="#EC0000"/>
+                        <text x="12" y="15.2" text-anchor="middle" fill="#FFFFFF" font-family="'Outfit', sans-serif" font-size="9.5" font-weight="800">%</text>
                     </svg>
                     <span>Mis ofertas</span>
                 </div>
@@ -1270,12 +1288,101 @@
                     </div>
                 </div>
 
-                <div class="digital-card-switch-row">
-                    <strong>Tarjeta digital prendida</strong>
+                    <div class="digital-card-switch-row">
+                        <strong>Tarjeta digital prendida</strong>
 
-                    <button type="button" class="digital-card-switch is-on" id="modal-card-switch"
-                        aria-label="Tarjeta digital prendida">
-                        <span></span>
+                        <button type="button" class="digital-card-switch is-on" id="modal-card-switch"
+                            aria-label="Tarjeta digital prendida">
+                            <span></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- PULL TO REFRESH FLAME SPINNER -->
+        <div id="pull-to-refresh" class="pull-to-refresh-container">
+            <div class="pull-to-refresh-spinner">
+                <img src="assets/santander-flame.png" alt="" class="ptr-flame-icon">
+            </div>
+        </div>
+
+        <!-- ==================== MOVEMENTS RECEIPT (CEP / SPEI) BOTTOM SHEET ==================== -->
+        <div class="movement-receipt-modal hidden-receipt-modal" id="movement-receipt-modal" aria-hidden="true">
+            <div class="movement-receipt-backdrop" id="btn-close-receipt-backdrop"></div>
+            <section class="movement-receipt-sheet" role="dialog" aria-modal="true" aria-labelledby="receipt-modal-title">
+                <div class="receipt-drag-handle"></div>
+                <header class="receipt-modal-header">
+                    <button type="button" id="btn-close-receipt-modal" class="receipt-close-btn">&times;</button>
+                    <div class="receipt-bank-badge" id="receipt-bank-badge">
+                        <img src="assets/santander-flame.png" alt="Banco" id="receipt-bank-logo" class="receipt-bank-img">
+                        <span id="receipt-bank-name">Santander</span>
+                    </div>
+                    <h2 id="receipt-modal-title" class="receipt-title">Comprobante de operación</h2>
+                    <div class="receipt-amount-display" id="receipt-amount-display">-$0.00 MXN</div>
+                    <span class="receipt-status-badge">Operación exitosa</span>
+                </header>
+
+                <div class="receipt-body">
+                    <div class="receipt-info-group">
+                        <div class="receipt-row">
+                            <span class="receipt-label">Concepto</span>
+                            <strong class="receipt-val" id="receipt-concept">—</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Fecha y hora</span>
+                            <strong class="receipt-val" id="receipt-datetime">—</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Folio de operación</span>
+                            <strong class="receipt-val" id="receipt-folio">—</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Clave de rastreo SPEI</span>
+                            <strong class="receipt-val code-font" id="receipt-tracking">—</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Cuenta / Tarjeta</span>
+                            <strong class="receipt-val" id="receipt-account">—</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Tipo de operación</span>
+                            <strong class="receipt-val" id="receipt-type">Transferencia electrónica</strong>
+                        </div>
+                    </div>
+
+                    <div class="receipt-qr-section">
+                        <div class="receipt-qr-box">
+                            <!-- QR Code SVG decorativo oficial -->
+                            <svg viewBox="0 0 100 100" width="70" height="70" fill="#222">
+                                <rect x="5" y="5" width="25" height="25" fill="#222"/>
+                                <rect x="9" y="9" width="17" height="17" fill="#FFF"/>
+                                <rect x="13" y="13" width="9" height="9" fill="#222"/>
+                                <rect x="70" y="5" width="25" height="25" fill="#222"/>
+                                <rect x="74" y="9" width="17" height="17" fill="#FFF"/>
+                                <rect x="78" y="13" width="9" height="9" fill="#222"/>
+                                <rect x="5" y="70" width="25" height="25" fill="#222"/>
+                                <rect x="9" y="74" width="17" height="17" fill="#FFF"/>
+                                <rect x="13" y="78" width="9" height="9" fill="#222"/>
+                                <rect x="35" y="10" width="10" height="10" fill="#222"/>
+                                <rect x="50" y="20" width="15" height="10" fill="#222"/>
+                                <rect x="40" y="35" width="20" height="20" fill="#222"/>
+                                <rect x="70" y="40" width="10" height="15" fill="#222"/>
+                                <rect x="10" y="40" width="15" height="10" fill="#222"/>
+                                <rect x="35" y="65" width="15" height="10" fill="#222"/>
+                                <rect x="55" y="70" width="20" height="10" fill="#222"/>
+                                <rect x="80" y="65" width="15" height="20" fill="#222"/>
+                            </svg>
+                        </div>
+                        <div class="receipt-qr-info">
+                            <span class="receipt-qr-title">Sello Digital de Validación</span>
+                            <span class="receipt-qr-sub" id="receipt-seal">Banco Santander México S.A. Institución de Banca Múltiple</span>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-share-receipt" id="btn-share-receipt">
+                        <span class="material-icons-outlined">share</span>
+                        <span>Compartir comprobante</span>
                     </button>
                 </div>
             </section>

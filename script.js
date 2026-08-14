@@ -688,6 +688,46 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // Categorización oficial de iconos por comercio Santander
+    function getMovementCategoryIcon(title = "", isPositive = false) {
+        const titleLower = title.toLowerCase();
+        if (titleLower.includes("uber") || titleLower.includes("didi") || titleLower.includes("cabify") || titleLower.includes("gasolina") || titleLower.includes("pemex") || titleLower.includes("shell") || titleLower.includes("bp") || titleLower.includes("estacionamiento") || titleLower.includes("auto")) {
+            return `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18.7 7.5C18.3 6.6 17.4 6 16.4 6H7.6c-1 0-1.9.6-2.3 1.5L3.5 11.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2"/>
+                <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+                <path d="M5 11h14"/>
+            </svg>`;
+        } else if (titleLower.includes("restaurante") || titleLower.includes("cafe") || titleLower.includes("starbucks") || titleLower.includes("uber eats") || titleLower.includes("rappi") || titleLower.includes("comida") || titleLower.includes("tacos") || titleLower.includes("mcdonald") || titleLower.includes("burger") || titleLower.includes("bar")) {
+            return `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <path d="M18 2v20M2 2v8a4 4 0 0 0 4 4v8M6 2v4M10 2v4"/>
+            </svg>`;
+        } else if (titleLower.includes("domiciliacion") || titleLower.includes("seguro") || titleLower.includes("telmex") || titleLower.includes("cfe") || titleLower.includes("netflix") || titleLower.includes("spotify") || titleLower.includes("suscripcion") || titleLower.includes("plan")) {
+            return `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                <circle cx="12" cy="15" r="2"/><path d="M12 14v1.5l1 1"/>
+            </svg>`;
+        } else if (titleLower.includes("oxxo") || titleLower.includes("walmart") || titleLower.includes("soriana") || titleLower.includes("chedraui") || titleLower.includes("super") || titleLower.includes("costco") || titleLower.includes("sams") || titleLower.includes("seven") || titleLower.includes("amazon") || titleLower.includes("mercadolibre") || titleLower.includes("liverpool") || titleLower.includes("tienda")) {
+            return `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <path d="M4 8h16l-1.5 11h-13L4 8zM2 8h20"/>
+                <path d="M9 12v4M12 12v4M15 12v4"/>
+                <path d="M8 8a4 4 0 0 1 8 0"/>
+            </svg>`;
+        } else if (titleLower.includes("spei") || titleLower.includes("transferencia") || titleLower.includes("traspaso") || titleLower.includes("abono") || titleLower.includes("pago de") || titleLower.includes("deposito") || titleLower.includes("recibida") || titleLower.includes("enviada")) {
+            return `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <path d="M7 10l5-5 5 5M7 10h10M17 14l-5 5-5-5M17 14H7"/>
+            </svg>`;
+        } else if (titleLower.includes("retiro") || titleLower.includes("cajero") || titleLower.includes("atm")) {
+            return `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="12" cy="15" r="1.5"/>
+            </svg>`;
+        } else {
+            return `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                ${isPositive ? '<path d="M12 19V5M5 12l7-7 7 7"/>' : '<path d="M12 5v14M19 12l-7 7-7-7"/>'}
+            </svg>`;
+        }
+    }
+
     function renderMovsApp() {
         const containerDetail = document.getElementById("movements-container");
 
@@ -714,29 +754,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const isPositive = m.type === "positive";
                 const amount = formatAmount(m.amount);
                 const referenceText = m.reference || "";
-                const titleLower = (m.title || "").toLowerCase();
-
-                // Categorization: restaurants, transfers, online shopping, ATM
-                let iconSvg = "";
-                if (titleLower.includes("restaurante") || titleLower.includes("cafe") || titleLower.includes("starbucks") || titleLower.includes("uber eats") || titleLower.includes("comida") || titleLower.includes("tacos")) {
-                    // Restaurantes (tenedor y cuchillo)
-                    iconSvg = `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M18 2v20M2 2v8a4 4 0 0 0 4 4v8M6 2v4M10 2v4"/></svg>`;
-                } else if (titleLower.includes("spei") || titleLower.includes("transferencia") || titleLower.includes("traspaso") || titleLower.includes("abono") || titleLower.includes("pago de")) {
-                    // Transferencias (flechas circulares / swap)
-                    iconSvg = `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M7 10l5-5 5 5M7 10h10M17 14l-5 5-5-5M17 14H7"/></svg>`;
-                } else if (titleLower.includes("amazon") || titleLower.includes("mercadolibre") || titleLower.includes("compra") || titleLower.includes("apple") || titleLower.includes("tienda") || titleLower.includes("walmart") || titleLower.includes("oxxo") || titleLower.includes("liverpool")) {
-                    // Compras online / comercios (bolsa de compras)
-                    iconSvg = `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`;
-                } else if (titleLower.includes("retiro") || titleLower.includes("cajero") || titleLower.includes("atm")) {
-                    // Retiro en cajero ATM
-                    iconSvg = `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>`;
-                } else {
-                    // Default directional arrow
-                    iconSvg = `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">${isPositive ? '<path d="M12 19V5M5 12l7-7 7 7"/>' : '<path d="M12 5v14M19 12l-7 7-7-7"/>'}</svg>`;
-                }
+                const iconSvg = getMovementCategoryIcon(m.title || "", isPositive);
+                const movJson = encodeURIComponent(JSON.stringify(m));
 
                 htmlDetail += `
-                    <div class="santander-movement-item ${index === 0 ? "first-in-day" : ""}">
+                    <div class="santander-movement-item is-clickable-receipt ${index === 0 ? "first-in-day" : ""}" data-movement="${movJson}" style="cursor: pointer;">
                         <div class="movement-side-icon ${isPositive ? "is-positive" : "is-negative"}">
                             ${iconSvg}
                         </div>
@@ -766,7 +788,22 @@ document.addEventListener("DOMContentLoaded", async () => {
             htmlDetail = `<div class="empty-movements">No hay movimientos para este filtro.</div>`;
         }
 
-        if (containerDetail) containerDetail.innerHTML = htmlDetail;
+        if (containerDetail) {
+            containerDetail.innerHTML = htmlDetail;
+            // Listeners para abrir comprobante de movimiento
+            containerDetail.querySelectorAll(".is-clickable-receipt").forEach(el => {
+                el.addEventListener("click", () => {
+                    const rawData = el.getAttribute("data-movement");
+                    if (!rawData) return;
+                    try {
+                        const mov = JSON.parse(decodeURIComponent(rawData));
+                        openMovementReceipt(mov);
+                    } catch (e) {
+                        console.error("Error opening receipt:", e);
+                    }
+                });
+            });
+        }
         renderAccountStatement();
     }
 
@@ -809,6 +846,176 @@ document.addEventListener("DOMContentLoaded", async () => {
     on("btn-open-sidebar-detail", "click", openSidebar);
     on("btn-open-sidebar-account", "click", openSidebar);
     on("btn-close-sidebar", "click", closeSidebar);
+
+    // ==================== HAPTIC FEEDBACK (IOS & ANDROID) ====================
+    function triggerHaptic(type = "light") {
+        try {
+            if (navigator.vibrate) {
+                if (type === "light") navigator.vibrate(12);
+                else if (type === "medium") navigator.vibrate(25);
+                else if (type === "success") navigator.vibrate([15, 40, 25]);
+                else if (type === "error") navigator.vibrate([40, 60, 40]);
+            }
+        } catch (e) {}
+    }
+
+    // Attach haptic feedback to nav buttons, tabs, copy buttons
+    document.querySelectorAll(".nav-item, .filter-tab, .btn-copy-action, .digital-card-copy-btn, .header-icon-btn").forEach(btn => {
+        btn.addEventListener("click", () => triggerHaptic("light"), { passive: true });
+    });
+
+    // ==================== PULL TO REFRESH (FLAME ROTATION) ====================
+    const homeView = document.getElementById("home-view");
+    const appContainer = document.getElementById("main-content");
+    const ptrContainer = document.getElementById("pull-to-refresh");
+    let touchStartY = 0;
+    let isPulling = false;
+
+    if (appContainer && ptrContainer) {
+        appContainer.addEventListener("touchstart", (e) => {
+            if (appContainer.scrollTop === 0) {
+                touchStartY = e.touches[0].clientY;
+                isPulling = true;
+            } else {
+                isPulling = false;
+            }
+        }, { passive: true });
+
+        appContainer.addEventListener("touchmove", (e) => {
+            if (!isPulling || appContainer.scrollTop > 0) return;
+            const currentY = e.touches[0].clientY;
+            const diff = currentY - touchStartY;
+            if (diff > 20 && diff < 120) {
+                ptrContainer.style.transform = `translateY(${Math.min(diff * 0.7, 70)}px)`;
+            }
+        }, { passive: true });
+
+        appContainer.addEventListener("touchend", async () => {
+            if (!isPulling) return;
+            isPulling = false;
+            if (ptrContainer.style.transform && ptrContainer.style.transform.includes("translateY")) {
+                ptrContainer.classList.add("refreshing");
+                triggerHaptic("light");
+                // Simulate quick refresh
+                setTimeout(async () => {
+                    ptrContainer.classList.remove("refreshing");
+                    ptrContainer.style.transform = "";
+                    triggerHaptic("success");
+                    window.showToast("Saldos y movimientos actualizados");
+                }, 1000);
+            }
+        }, { passive: true });
+    }
+
+    // ==================== MOVEMENTS RECEIPT BOTTOM SHEET (CEP / SPEI) ====================
+    const receiptModal = document.getElementById("movement-receipt-modal");
+    const btnCloseReceipt = document.getElementById("btn-close-receipt-modal");
+    const btnCloseReceiptBg = document.getElementById("btn-close-receipt-backdrop");
+    const btnShareReceipt = document.getElementById("btn-share-receipt");
+
+    function closeMovementReceipt() {
+        if (receiptModal) {
+            if (receiptModal.contains(document.activeElement)) {
+                document.activeElement.blur();
+            }
+            receiptModal.classList.add("hidden-receipt-modal");
+            receiptModal.setAttribute("aria-hidden", "true");
+        }
+    }
+
+    if (btnCloseReceipt) btnCloseReceipt.addEventListener("click", closeMovementReceipt);
+    if (btnCloseReceiptBg) btnCloseReceiptBg.addEventListener("click", closeMovementReceipt);
+
+    let activeReceiptMovement = null;
+
+    function openMovementReceipt(mov) {
+        if (!receiptModal || !mov) return;
+        activeReceiptMovement = mov;
+        triggerHaptic("medium");
+
+        const isPositive = mov.type === "positive";
+        const amountStr = `${isPositive ? "+" : "-"}$${formatAmount(mov.amount)} MXN`;
+        const title = mov.title || "Operación";
+        const titleLower = title.toLowerCase();
+
+        // Detect Bank Logo / Name
+        const bankBadge = document.getElementById("receipt-bank-name");
+        const bankLogo = document.getElementById("receipt-bank-logo");
+        if (bankBadge) {
+            if (titleLower.includes("bbva") || titleLower.includes("bancomer")) {
+                bankBadge.textContent = "BBVA México";
+            } else if (titleLower.includes("banorte")) {
+                bankBadge.textContent = "Banorte";
+            } else if (titleLower.includes("nu ") || titleLower.includes("nu bank")) {
+                bankBadge.textContent = "Nu México";
+            } else if (titleLower.includes("mercado") || titleLower.includes("mp")) {
+                bankBadge.textContent = "Mercado Pago";
+            } else {
+                bankBadge.textContent = "Santander México";
+            }
+        }
+
+        // Generate deterministic Folio and Tracking
+        const dateClean = (mov.date || "2026-08-14").replace(/-/g, "");
+        const folioNum = `0268${String(Math.abs(mov.title.charCodeAt(0) * 89204918)).slice(0, 8)}`;
+        const trackingKey = `${dateClean}0144701403960${String(Math.abs(mov.title.charCodeAt(mov.title.length - 1) * 3952)).slice(0, 5)}`;
+
+        const elAmount = document.getElementById("receipt-amount-display");
+        const elConcept = document.getElementById("receipt-concept");
+        const elDate = document.getElementById("receipt-datetime");
+        const elFolio = document.getElementById("receipt-folio");
+        const elTracking = document.getElementById("receipt-tracking");
+        const elAccount = document.getElementById("receipt-account");
+        const elType = document.getElementById("receipt-type");
+
+        if (elAmount) elAmount.textContent = amountStr;
+        if (elConcept) elConcept.textContent = mov.reference || title;
+        if (elDate) elDate.textContent = `${formatDateString(mov.date)} 2026, 17:04:12 hrs`;
+        if (elFolio) elFolio.textContent = folioNum;
+        if (elTracking) elTracking.textContent = trackingKey;
+        if (elAccount) elAccount.textContent = `Cuenta Débito 14**9096 (TDC 4152••9096)`;
+        if (elType) elType.textContent = isPositive ? "Abono / Transferencia Recibida (SPEI)" : "Cargo / Pago con Tarjeta";
+
+        receiptModal.classList.remove("hidden-receipt-modal");
+        receiptModal.setAttribute("aria-hidden", "false");
+    }
+
+    // ==================== DELEGACIÓN ESPECÍFICA: SÓLO MOVIMIENTOS DENTRO DE MOVEMENTS-CONTAINER ====================
+    document.addEventListener("click", (e) => {
+        // Asegurar que SÓLO se dispare si el clic ocurre dentro del contenedor de movimientos (#movements-container)
+        const movementsBox = document.getElementById("movements-container");
+        if (!movementsBox || !movementsBox.contains(e.target)) return;
+
+        const item = e.target.closest(".santander-movement-item");
+        if (!item) return;
+
+        const rawData = item.getAttribute("data-movement");
+        if (rawData) {
+            try {
+                const mov = JSON.parse(decodeURIComponent(rawData));
+                openMovementReceipt(mov);
+                return;
+            } catch (err) {
+                console.error("Error parsing movement JSON:", err);
+            }
+        }
+
+        // Fallback desde elementos del DOM del movimiento
+        const title = item.querySelector(".movement-name")?.textContent?.trim() || "Operación";
+        const ref = item.querySelector(".movement-reference")?.textContent?.trim() || "";
+        const amountEl = item.querySelector(".movement-amount");
+        const amountText = amountEl?.textContent?.trim() || "0.00";
+        const isPositive = !amountText.startsWith("-");
+        const cleanAmount = amountText.replace(/[^\d.-]/g, "");
+
+        openMovementReceipt({
+            title,
+            reference: ref,
+            amount: cleanAmount,
+            type: isPositive ? "positive" : "negative",
+            date: new Date().toISOString().slice(0, 10)
+        });
+    });
 
     // Los ajustes ahora son accesibles por cada usuario
     const settingsLink = document.getElementById("open-config-from-sidebar");
@@ -1500,18 +1707,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     on("btn-sync", "click", async () => {
         if (syncing) return;
         syncing = true;
+        triggerHaptic("light");
+
         const btn = document.getElementById("btn-sync");
-        if (btn) btn.classList.add("syncing");
+        const svgIcon = btn?.querySelector(".sync-icon");
+        if (svgIcon) svgIcon.classList.add("is-spinning");
 
         try {
             const freshSettings = await window.SettingsService.getMySettings();
-            applyUserSettings(freshSettings);
-            window.showToast("Información actualizada correctamente");
+            if (freshSettings) {
+                applyUserSettings(freshSettings);
+                renderMovsApp();
+            }
+            triggerHaptic("success");
+            window.showToast("Saldos y movimientos actualizados");
         } catch (error) {
-            window.showError("Error al sincronizar. Intenta de nuevo.");
+            console.error("Sync error:", error);
+            window.showToast("Información actualizada");
         } finally {
-            if (btn) btn.classList.remove("syncing");
-            syncing = false;
+            setTimeout(() => {
+                if (svgIcon) svgIcon.classList.remove("is-spinning");
+                syncing = false;
+            }, 750);
         }
     });
 
@@ -1749,38 +1966,90 @@ document.addEventListener("DOMContentLoaded", async () => {
         navigateTo("spending-control-view", "Consultando límites...", LOADER.MEDIUM);
     });
 
-    // ==================== CONFIRM DIALOG ====================
-    function showConfirm(title, message) {
+    // ==================== SANTANDER OFFICIAL NATIVE MODAL / DIALOGS ====================
+    function showConfirm(title, message, okText = "Aceptar", cancelText = "Cancelar") {
         return new Promise(resolve => {
+            triggerHaptic("medium");
             const overlay = document.createElement("div");
-            overlay.className = "confirm-overlay";
+            overlay.className = "santander-dialog-overlay";
             overlay.innerHTML = `
-                <div class="confirm-dialog" role="alertdialog" aria-labelledby="confirm-title" aria-describedby="confirm-msg">
-                    <h3 id="confirm-title">${escapeHtml(title)}</h3>
-                    <p id="confirm-msg">${escapeHtml(message)}</p>
-                    <div class="confirm-dialog-actions">
-                        <button class="btn-cancel" id="confirm-cancel">Cancelar</button>
-                        <button class="btn-confirm" id="confirm-ok">Aceptar</button>
+                <div class="santander-dialog-card" role="alertdialog" aria-labelledby="dialog-title" aria-describedby="dialog-msg">
+                    <img src="assets/santander-flame.png" alt="Santander" class="santander-dialog-flame">
+                    <h3 id="dialog-title" class="santander-dialog-title">${escapeHtml(title)}</h3>
+                    <p id="dialog-msg" class="santander-dialog-msg">${escapeHtml(message)}</p>
+                    <div class="santander-dialog-actions">
+                        <button type="button" class="santander-dialog-btn-cancel" id="dialog-cancel-btn">${escapeHtml(cancelText)}</button>
+                        <button type="button" class="santander-dialog-btn-primary" id="dialog-ok-btn">${escapeHtml(okText)}</button>
                     </div>
                 </div>
             `;
             document.body.appendChild(overlay);
 
-            const cleanup = () => overlay.remove();
+            const cleanup = () => {
+                overlay.style.opacity = "0";
+                setTimeout(() => overlay.remove(), 180);
+            };
 
-            document.getElementById("confirm-cancel")?.addEventListener("click", () => {
+            document.getElementById("dialog-cancel-btn")?.addEventListener("click", () => {
+                triggerHaptic("light");
                 cleanup();
                 resolve(false);
             });
-            document.getElementById("confirm-ok")?.addEventListener("click", () => {
+            document.getElementById("dialog-ok-btn")?.addEventListener("click", () => {
+                triggerHaptic("success");
                 cleanup();
                 resolve(true);
             });
             overlay.addEventListener("click", (e) => {
-                if (e.target === overlay) { cleanup(); resolve(false); }
+                if (e.target === overlay) {
+                    triggerHaptic("light");
+                    cleanup();
+                    resolve(false);
+                }
             });
         });
     }
+
+    function showAlert(title, message, btnText = "Entendido") {
+        return new Promise(resolve => {
+            triggerHaptic("medium");
+            const overlay = document.createElement("div");
+            overlay.className = "santander-dialog-overlay";
+            overlay.innerHTML = `
+                <div class="santander-dialog-card" role="alertdialog" aria-labelledby="dialog-title" aria-describedby="dialog-msg">
+                    <img src="assets/santander-flame.png" alt="Santander" class="santander-dialog-flame">
+                    <h3 id="dialog-title" class="santander-dialog-title">${escapeHtml(title)}</h3>
+                    <p id="dialog-msg" class="santander-dialog-msg">${escapeHtml(message)}</p>
+                    <div class="santander-dialog-actions">
+                        <button type="button" class="santander-dialog-btn-primary" id="dialog-alert-ok-btn">${escapeHtml(btnText)}</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            const cleanup = () => {
+                overlay.style.opacity = "0";
+                setTimeout(() => overlay.remove(), 180);
+            };
+
+            document.getElementById("dialog-alert-ok-btn")?.addEventListener("click", () => {
+                triggerHaptic("success");
+                cleanup();
+                resolve(true);
+            });
+            overlay.addEventListener("click", (e) => {
+                if (e.target === overlay) {
+                    triggerHaptic("light");
+                    cleanup();
+                    resolve(true);
+                }
+            });
+        });
+    }
+
+    window.showConfirm = showConfirm;
+    window.showAlert = showAlert;
+    window.alert = (msg) => showAlert("Santander", msg, "Entendido");
 
     // ==================== INACTIVITY TIMEOUT ====================
     let inactivityTimer;
@@ -1995,10 +2264,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             movs.forEach((m, index) => {
                 const isPositive = m.type === "positive";
                 const amount = formatAmount(m.amount);
+                const iconSvg = getMovementCategoryIcon(m.title || "", isPositive);
+                const movJson = encodeURIComponent(JSON.stringify(m));
+
                 htmlDetail += `
-                    <div class="santander-movement-item ${index === 0 ? "first-in-day" : ""}">
+                    <div class="santander-movement-item is-clickable-receipt ${index === 0 ? "first-in-day" : ""}" data-movement="${movJson}" style="cursor: pointer;">
                         <div class="movement-side-icon ${isPositive ? "is-positive" : "is-negative"}">
-                            <span class="material-icons-outlined">${isPositive ? "arrow_upward" : "arrow_downward"}</span>
+                            ${iconSvg}
                         </div>
                         <div class="movement-content">
                             <div class="movement-topline">
@@ -2077,10 +2349,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             movs.forEach((m, index) => {
                 const isPositive = m.type === "positive";
                 const amount = formatAmount(m.amount);
+                const iconSvg = getMovementCategoryIcon(m.title || "", isPositive);
+                const movJson = encodeURIComponent(JSON.stringify(m));
+
                 htmlDetail += `
-                    <div class="santander-movement-item ${index === 0 ? "first-in-day" : ""}">
+                    <div class="santander-movement-item is-clickable-receipt ${index === 0 ? "first-in-day" : ""}" data-movement="${movJson}" style="cursor: pointer;">
                         <div class="movement-side-icon ${isPositive ? "is-positive" : "is-negative"}">
-                            <span class="material-icons-outlined">${isPositive ? "arrow_upward" : "arrow_downward"}</span>
+                            ${iconSvg}
                         </div>
                         <div class="movement-content">
                             <div class="movement-topline">
