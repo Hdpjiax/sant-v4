@@ -101,8 +101,45 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     // ==================== AUTENTICACIÓN Y AJUSTES REMOTOS ====================
-    const session = await window.SantanderAuth.requireSession("register.html");
+    const session = await window.SantanderAuth.requireSession("login.html");
     if (!session) return;
+
+    // ==================== INACTIVITY AUTO-LOGOUT (APP REAL BANCARIA) ====================
+    let lastActivityTimestamp = Date.now();
+    const INACTIVITY_TIMEOUT_MS = 3 * 60 * 1000; // 3 minutos de inactividad bancaria
+
+    function resetActivityTimer() {
+        lastActivityTimestamp = Date.now();
+    }
+
+    const activityEvents = ["touchstart", "touchend", "touchmove", "mousemove", "mousedown", "keydown", "scroll", "click"];
+    activityEvents.forEach(evt => window.addEventListener(evt, resetActivityTimer, { passive: true }));
+
+    // Periodic check for inactivity
+    const inactivityInterval = setInterval(() => {
+        if (Date.now() - lastActivityTimestamp > INACTIVITY_TIMEOUT_MS) {
+            clearInterval(inactivityInterval);
+            console.log("Sesión cerrada por inactividad");
+            window.SantanderAuth.signOut();
+        }
+    }, 10000);
+
+    // Background auto-logout on iOS (when app/tab is sent to background or locked)
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            // Store time when minimized
+            localStorage.setItem("santander_background_time", Date.now().toString());
+        } else {
+            // Returned to foreground
+            const bgTime = parseInt(localStorage.getItem("santander_background_time") || "0", 10);
+            if (bgTime && (Date.now() - bgTime > 90 * 1000)) { // 90s en segundo plano en iPhone
+                clearInterval(inactivityInterval);
+                window.SantanderAuth.signOut();
+                return;
+            }
+            resetActivityTimer();
+        }
+    });
 
     const userProfile = await window.SantanderAuth.getProfile();
 
@@ -677,11 +714,31 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const isPositive = m.type === "positive";
                 const amount = formatAmount(m.amount);
                 const referenceText = m.reference || "";
+                const titleLower = (m.title || "").toLowerCase();
+
+                // Categorization: restaurants, transfers, online shopping, ATM
+                let iconSvg = "";
+                if (titleLower.includes("restaurante") || titleLower.includes("cafe") || titleLower.includes("starbucks") || titleLower.includes("uber eats") || titleLower.includes("comida") || titleLower.includes("tacos")) {
+                    // Restaurantes (tenedor y cuchillo)
+                    iconSvg = `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M18 2v20M2 2v8a4 4 0 0 0 4 4v8M6 2v4M10 2v4"/></svg>`;
+                } else if (titleLower.includes("spei") || titleLower.includes("transferencia") || titleLower.includes("traspaso") || titleLower.includes("abono") || titleLower.includes("pago de")) {
+                    // Transferencias (flechas circulares / swap)
+                    iconSvg = `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M7 10l5-5 5 5M7 10h10M17 14l-5 5-5-5M17 14H7"/></svg>`;
+                } else if (titleLower.includes("amazon") || titleLower.includes("mercadolibre") || titleLower.includes("compra") || titleLower.includes("apple") || titleLower.includes("tienda") || titleLower.includes("walmart") || titleLower.includes("oxxo") || titleLower.includes("liverpool")) {
+                    // Compras online / comercios (bolsa de compras)
+                    iconSvg = `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`;
+                } else if (titleLower.includes("retiro") || titleLower.includes("cajero") || titleLower.includes("atm")) {
+                    // Retiro en cajero ATM
+                    iconSvg = `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>`;
+                } else {
+                    // Default directional arrow
+                    iconSvg = `<svg class="movement-cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">${isPositive ? '<path d="M12 19V5M5 12l7-7 7 7"/>' : '<path d="M12 5v14M19 12l-7 7-7-7"/>'}</svg>`;
+                }
 
                 htmlDetail += `
                     <div class="santander-movement-item ${index === 0 ? "first-in-day" : ""}">
                         <div class="movement-side-icon ${isPositive ? "is-positive" : "is-negative"}">
-                            <span class="material-icons-outlined">${isPositive ? "arrow_upward" : "arrow_downward"}</span>
+                            ${iconSvg}
                         </div>
 
                         <div class="movement-content">

@@ -1,17 +1,32 @@
 /* --- ESTILOS VISUALES BASE --- */
 :root {
     --santander-red: #EC0000;
-    --text-dark: #222222;
+    --santander-red-dark: #C40000;
+    --text-dark: #1A1A1A;
     --text-gray: #767676;
     --border-color: #E9ECEF;
     --success-green: #118A43;
+    --font-headline: 'Outfit', 'Santander Headline', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-text: 'Plus Jakarta Sans', 'Santander Text', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body, input, textarea, select, button, p, span, a, div, label {
+    font-family: var(--font-text);
+}
+
+h1, h2, h3, h4,
+h1 span, h2 span, h3 span,
+.brand, .dynamic-balance, .infinite-card-amount, .home-product-balance, .greeting-name, .movement-page-title,
+#display-name {
+    font-family: var(--font-headline) !important;
+    color: #1A1A1A;
+    letter-spacing: -0.2px;
 }
 
 input, textarea, select {
@@ -8163,4 +8178,23 @@ textarea {
     font-style: normal !important;
     font-size: 12.5px !important;
     font-weight: 600 !important;
+}
+
+/* ==================== WELCOME SECTION TYPOGRAPHY HARMONIZATION ==================== */
+.welcome-section h1,
+.welcome-section h1 span,
+#display-name {
+    font-family: var(--font-headline) !important;
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    color: #1A1A1A !important;
+    letter-spacing: -0.5px !important;
+    display: inline !important;
+}
+
+.welcome-section .subtitle,
+#display-subtitle {
+    font-family: var(--font-text) !important;
+    font-size: 13px !important;
+    color: #767676 !important;
 }

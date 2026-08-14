@@ -176,13 +176,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const userId = new Uint8Array(16);
                     window.crypto.getRandomValues(userId);
 
+                    const rpHostname = (window.location.hostname && window.location.hostname !== "localhost" && !window.location.hostname.match(/^\d+\.\d+\.\d+\.\d+$/))
+                        ? window.location.hostname
+                        : undefined;
+
+                    const rpConfig = { name: "Santander México" };
+                    if (rpHostname) rpConfig.id = rpHostname;
+
                     const credential = await navigator.credentials.create({
                         publicKey: {
                             challenge: challenge,
-                            rp: { name: "Santander México" },
+                            rp: rpConfig,
                             user: {
                                 id: userId,
-                                name: user.email,
+                                name: user.email || "usuario@santander.com",
                                 displayName: user.name || "Usuario Santander"
                             },
                             pubKeyCredParams: [
