@@ -22,7 +22,7 @@ body, input, textarea, select, button, p, span, a, div, label {
 
 h1, h2, h3, h4,
 h1 span, h2 span, h3 span,
-.brand, .dynamic-balance, .infinite-card-amount, .home-product-balance, .greeting-name, .movement-page-title,
+.brand, .greeting-name, .movement-page-title,
 #display-name {
     font-family: var(--font-headline) !important;
     color: #1A1A1A;
@@ -8197,4 +8197,22 @@ textarea {
     font-family: var(--font-text) !important;
     font-size: 13px !important;
     color: #767676 !important;
+}
+
+/* ==================== HORIZONTAL CARD BALANCE WHITE COLOR ==================== */
+.horizontal-card,
+.horizontal-card h3,
+.horizontal-card p,
+.horizontal-card span,
+.horizontal-card strong,
+.horizontal-card .dynamic-balance,
+.horizontal-card-balance,
+.horizontal-card-balance span,
+.horizontal-card-balance strong,
+.horizontal-card-balance .dynamic-balance,
+#account-overview-view .horizontal-card-balance,
+#account-overview-view .horizontal-card-balance span,
+#account-overview-view .horizontal-card-balance strong,
+#account-overview-view .horizontal-card-balance .dynamic-balance {
+    color: #FFFFFF !important;
 }
