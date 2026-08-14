@@ -89,6 +89,130 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (changeUserBtn) changeUserBtn.addEventListener("click", clearRememberedUser);
     if (changeUserSheetBtn) changeUserSheetBtn.addEventListener("click", clearRememberedUser);
 
+    // ==================== REAL IPHONE FACE ID / BIOMETRIC AUTHENTICATION ====================
+    async function proceedFaceIdLogin(user) {
+        if (btnOpenSheet) {
+            btnOpenSheet.disabled = true;
+            btnOpenSheet.innerHTML = `<span class="material-icons-outlined btn-face-icon">sync</span><span>Ingresando...</span>`;
+        }
+
+        try {
+            // Check if existing session is already valid
+            const existingSession = await window.SantanderAuth.getSession();
+            if (existingSession && existingSession.user?.email === user.email) {
+                const profile = await window.SantanderAuth.getProfile();
+                window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
+                return;
+            }
+
+            // Otherwise, login with stored credential
+            if (user.saved_pwd) {
+                const clearPwd = decodeURIComponent(atob(user.saved_pwd));
+                await window.SantanderAuth.signIn(user.email, clearPwd);
+                const profile = await window.SantanderAuth.getProfile();
+                window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
+                return;
+            }
+
+            // If no password saved, open sheet
+            openPasswordSheet();
+        } catch (err) {
+            console.error("Face ID auto-login error:", err);
+            openPasswordSheet();
+        } finally {
+            if (btnOpenSheet) {
+                btnOpenSheet.disabled = false;
+                btnOpenSheet.innerHTML = `<span class="material-icons-outlined btn-face-icon">face</span><span>Ingresar</span>`;
+            }
+        }
+    }
+
+    async function handleFaceIdOrOpenSheet() {
+        const rawUser = localStorage.getItem("santander_last_user");
+        if (!rawUser) {
+            openPasswordSheet();
+            return;
+        }
+
+        let user;
+        try {
+            user = JSON.parse(rawUser);
+        } catch (e) {
+            openPasswordSheet();
+            return;
+        }
+
+        // 1. Check Native Capacitor Biometric (iOS Native app)
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.NativeBiometric) {
+            try {
+                const isAvailable = await window.Capacitor.Plugins.NativeBiometric.isAvailable();
+                if (isAvailable) {
+                    const verified = await window.Capacitor.Plugins.NativeBiometric.verifyIdentity({
+                        reason: "Acceso con Face ID para Santander",
+                        title: "Santander México",
+                        subtitle: "Inicia sesión con Face ID",
+                        negativeButtonText: "Ingresar con contraseña"
+                    });
+                    if (verified) {
+                        await proceedFaceIdLogin(user);
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.log("Native Face ID dismissed or fallback:", e);
+                openPasswordSheet();
+                return;
+            }
+        }
+
+        // 2. Real iPhone / Safari WebAuthn Face ID check (Browser / PWA / Web)
+        if (window.PublicKeyCredential && typeof window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === "function") {
+            try {
+                const isAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                if (isAvailable) {
+                    const challenge = new Uint8Array(32);
+                    window.crypto.getRandomValues(challenge);
+
+                    const userId = new Uint8Array(16);
+                    window.crypto.getRandomValues(userId);
+
+                    const credential = await navigator.credentials.create({
+                        publicKey: {
+                            challenge: challenge,
+                            rp: { name: "Santander México" },
+                            user: {
+                                id: userId,
+                                name: user.email,
+                                displayName: user.name || "Usuario Santander"
+                            },
+                            pubKeyCredParams: [
+                                { alg: -7, type: "public-key" },
+                                { alg: -257, type: "public-key" }
+                            ],
+                            authenticatorSelection: {
+                                authenticatorAttachment: "platform",
+                                userVerification: "required"
+                            },
+                            timeout: 60000
+                        }
+                    });
+
+                    if (credential) {
+                        await proceedFaceIdLogin(user);
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn("Face ID verification dismissed, opening password sheet:", err);
+                openPasswordSheet();
+                return;
+            }
+        }
+
+        // Fallback if not supported
+        openPasswordSheet();
+    }
+
     // ==================== PASSWORD BOTTOM SHEET ====================
     const bottomSheet = document.getElementById("password-bottom-sheet");
     const btnOpenSheet = document.getElementById("btn-open-login-sheet");
@@ -116,7 +240,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (bottomSheet) bottomSheet.classList.remove("active");
     }
 
-    if (btnOpenSheet) btnOpenSheet.addEventListener("click", openPasswordSheet);
+    if (btnOpenSheet) btnOpenSheet.addEventListener("click", handleFaceIdOrOpenSheet);
     if (btnCloseSheet) btnCloseSheet.addEventListener("click", closePasswordSheet);
     if (btnCloseSheetBg) btnCloseSheetBg.addEventListener("click", closePasswordSheet);
 
@@ -170,6 +294,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const user = JSON.parse(rawUser);
                 await window.SantanderAuth.signIn(user.email, passwordVal);
                 const profile = await window.SantanderAuth.getProfile();
+
+                // Update remembered password
+                user.saved_pwd = btoa(encodeURIComponent(passwordVal));
+                localStorage.setItem("santander_last_user", JSON.stringify(user));
 
                 window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
             } catch (err) {
@@ -229,7 +357,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 localStorage.setItem("santander_last_user", JSON.stringify({
                     email: profile.email,
-                    name: userName
+                    name: userName,
+                    saved_pwd: btoa(encodeURIComponent(password))
                 }));
 
                 window.location.href = profile?.role === "admin" ? "admin.html" : "index.html";
